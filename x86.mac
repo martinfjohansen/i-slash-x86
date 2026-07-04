@@ -3,10 +3,10 @@
 ; Parameter: rdi
 ; Unused: rbx, rsi, r8-r15
 ; Linux:
-:  - Caller saves: rax, rcx, rdx, rsi, rdi, r8-r11
+;  - Caller saves: rax, rcx, rdx, rsi, rdi, r8-r11
 ;  - Callee saves: rbx, rsp, rbp, r12-r15
 ; Windows:
-:  - Caller saves: rax, rcx, rdx, r8-r11, xmm0–xmm5
+;  - Caller saves: rax, rcx, rdx, r8-r11, xmm0–xmm5
 ;  - Callee saves: rbx, rbp, rsi, rdi, r12-r15, xmm6–xmm15
 
 ; SSE
@@ -2774,16 +2774,6 @@ extern free
   mov qword [rdi + %1], rax
 %endmacro
 
-%macro Xu16x8a.m 2
-  mov rax, qword [rdi + %2]
-  mov qword [rdi + %1], rax
-%endmacro
-
-%macro Xu16x16a.m 2
-  mov rax, qword [rdi + %2]
-  mov qword [rdi + %1], rax
-%endmacro
-
 %macro Xu16x16a.m 2
   mov rax, qword [rdi + %2]
   mov qword [rdi + %1], rax
@@ -2851,7 +2841,7 @@ extern free
 %endmacro
 
 ; -----------------------------------------------------------------------------
-; Cmovcc
+; Cmov
 ; x = a ? b : x. x, b must be the same types. a must be a boolean.
 
 %macro Cmov.mms64 3
@@ -2861,6 +2851,9 @@ extern free
   cmovnz rax, rdx
   mov qword [rdi + %1], rax
 %endmacro
+
+; Cmovcc
+; x = (a op b) ? b : x. x, b must be the same types. a and b must be the same types or number types.
 
 %macro Cmoveq.mms64 4
   mov rax, qword [rdi + %3]
