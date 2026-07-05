@@ -6,7 +6,7 @@
 int main(){
 	struct testS ts;
 
-	ts.a = 5;
+	ts.a = 50;
 
 	test(&ts);
 

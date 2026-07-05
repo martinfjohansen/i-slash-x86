@@ -9,6 +9,6 @@ Bgs testS
 Ens
 
 Fnc test
-  Idr a, x, 50 
+  Idr a, x, 50
   Acr y, a, x
 Ret

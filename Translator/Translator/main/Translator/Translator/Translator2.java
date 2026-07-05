@@ -703,7 +703,7 @@ public class Translator2 {
                                 success = IsNewline(token, message);
 
                                 if (success) {
-                                    struct.vars[(int) typeDec] = CreateTypeDec(type, name, false);
+                                    struct.vars[(int) typeDec] = CreateTypeDec(type, name, false, false);
 
                                     //System.out.println("\t" + new String(type) + " " + new String(name));
 
@@ -711,6 +711,8 @@ public class Translator2 {
                                 }
                             }
                         } else if (StringsEqual(token, "str".toCharArray()) || StringsEqual(token, "sta".toCharArray())) {
+                            boolean isStructArray = StringsEqual(token, "sta".toCharArray());
+
                             token = GetNextToken(tokens, tokenRef);
 
                             success = IsValidIdentifier(token, message);
@@ -723,12 +725,14 @@ public class Translator2 {
 
                                 if (success) {
                                     name = token;
+
                                     token = GetNextToken(tokens, tokenRef);
 
                                     success = IsNewline(token, message);
 
                                     if (success) {
-                                        struct.vars[(int) typeDec] = CreateTypeDec(type, name, true);
+
+                                        struct.vars[(int) typeDec] = CreateTypeDec(type, name, true, isStructArray);
 
                                         //System.out.println("\t" + new String(type) + " " + new String(name));
 
@@ -752,12 +756,13 @@ public class Translator2 {
         return success;
     }
 
-    private static Var CreateTypeDec(char[] type, char[] name, boolean isStruct) {
+    private static Var CreateTypeDec(char[] type, char[] name, boolean isStruct, boolean isStructArray) {
         Var var = new Var();
 
         var.type = type;
         var.name = name;
         var.isStruct = isStruct;
+        var.isStructArray = isStructArray;
 
         return var;
     }

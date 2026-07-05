@@ -6,7 +6,7 @@
 int main(){
 	struct testS ts;
 
-	ts.x = malloc(sizeof(void *) * 100);
+	ts.x = malloc(sizeof(struct C *) * 100);
 	ts.x[50] = malloc(sizeof(struct C));
 	ts.x[50]->x = 1.234567;
 

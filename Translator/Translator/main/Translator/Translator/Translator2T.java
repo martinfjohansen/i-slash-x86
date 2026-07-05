@@ -184,7 +184,7 @@ public class Translator2T {
         }
 
 
-        if(ins.hasTypePostfix || ins.params.length > 0) {
+        if((ins.hasTypePostfix || ins.params.length > 0) && !StringsEqual(ins.name, "Call".toCharArray())) {
             LinkedListCharactersAddString(ll, ".".toCharArray());
         }
 
@@ -211,6 +211,7 @@ public class Translator2T {
                     LinkedListCharactersAddString(ll, (new String(ins.params[1].var.st.name) + ".").toCharArray());
                 }else if(StringsEqual(ins.name, "Acw".toCharArray()) && i == 1d){
                     LinkedListCharactersAddString(ll, (new String(ins.params[0].var.st.name) + ".").toCharArray());
+                }else if(StringsEqual(ins.name, "Call".toCharArray()) && i == 0d){
                 }else{
                     LinkedListCharactersAddString(ll, (new String(fncStName) + ".").toCharArray());
                 }
@@ -380,7 +381,11 @@ public class Translator2T {
             }else if(var.isStruct){
                 LinkedListCharactersAddString(ll, "  struct ".toCharArray());
                 LinkedListCharactersAddString(ll, var.type);
-                LinkedListCharactersAddString(ll, " * ".toCharArray());
+                if(!var.isStructArray) {
+                    LinkedListCharactersAddString(ll, " * ".toCharArray());
+                }else{
+                    LinkedListCharactersAddString(ll, " ** ".toCharArray());
+                }
                 LinkedListCharactersAddString(ll, var.name);
                 LinkedListCharactersAddString(ll, ";".toCharArray());
                 LinkedListCharactersAddString(ll, "\n".toCharArray());

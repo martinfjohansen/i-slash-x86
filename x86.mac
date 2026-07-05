@@ -937,7 +937,7 @@
 ; Lt
 ; x = a < b. x is a boolean. a and b are of the same type.
 
-%macro Lt.mmu16 3
+%macro Lt.mmb1u16 3
   mov ax, word [rdi + %2]
   mov dx, word [rdi + %3]
   cmp ax, dx
@@ -945,7 +945,7 @@
   mov byte [rdi + %1], al
 %endmacro
 
-%macro Lt.mmu32 3
+%macro Lt.mmb1u32 3
   mov eax, dword [rdi + %2]
   mov edx, dword [rdi + %3]
   cmp eax, edx
@@ -953,7 +953,7 @@
   mov byte [rdi + %1], al
 %endmacro
 
-%macro Lt.mmu64 3
+%macro Lt.mmb1u64 3
   mov rax, qword [rdi + %2]
   mov rdx, qword [rdi + %3]
   cmp rax, rdx
@@ -961,12 +961,12 @@
   mov byte [rdi + %1], al
 %endmacro
 
-%macro Lt.rrru64 3
+%macro Lt.rrrb1u64 3
   cmp %2, %3
   setb %1
 %endmacro
 
-%macro Lt.iiu16 3
+%macro Lt.iib1u16 3
   mov ax, %2
   mov dx, %3
   cmp ax, dx
@@ -974,7 +974,7 @@
   mov byte [rdi + %1], al
 %endmacro
 
-%macro Lt.iiu64 3
+%macro Lt.iib1u64 3
   mov rax, %2
   mov rdx, %3
   cmp rax, rdx
@@ -982,7 +982,7 @@
   mov byte [rdi + %1], al
 %endmacro
 
-%macro Lt.mms16 3
+%macro Lt.mmb1s16 3
   mov ax, word [rdi + %2]
   mov dx, word [rdi + %3]
   cmp ax, dx
@@ -990,7 +990,7 @@
   mov byte [rdi + %1], al
 %endmacro
 
-%macro Lt.iis16 3
+%macro Lt.iib1s16 3
   mov ax, %2
   mov dx, %3
   cmp ax, dx
@@ -998,7 +998,7 @@
   mov byte [rdi + %1], al
 %endmacro
 
-%macro Lt.miu8x32 3
+%macro Lt.mib8x32u8x32 3
   vmovdqu ymm0, yword [rdi + %2]
   mov rax, %3
   movq xmm2, rax
@@ -1007,14 +1007,14 @@
   vmovdqu yword [rdi + %1], ymm0
 %endmacro
 
-%macro Lt.mms8x16 3
+%macro Lt.mmb8x32s8x16 3
   movdqu xmm0, oword [rdi + %2]
   movdqu xmm1, oword [rdi + %3]
   vpcmpgtb xmm0, xmm1, xmm0
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
-%macro Lt.mif64 3
+%macro Lt.mib1f64 3
   movsd xmm0, [rdi + %2]
   mov rax, __?float64?__(%3)
   movq xmm1, rax
@@ -1024,7 +1024,7 @@
   sete [rdi + %1]
 %endmacro
 
-%macro Lt.mis64 3
+%macro Lt.mib1s64 3
   mov rax, qword [rdi + %2]
   mov rdx, %3
   cmp rax, rdx
@@ -1032,7 +1032,7 @@
   mov byte [rdi + %1], al
 %endmacro
 
-%macro Lt.mms64 3
+%macro Lt.mmb1s64 3
   mov rax, qword [rdi + %2]
   mov rdx, qword [rdi + %3]
   cmp rax, rdx
@@ -1040,7 +1040,7 @@
   mov byte [rdi + %1], al
 %endmacro
 
-%macro Lt.mmf32x4 3
+%macro Lt.mmb32x4f32x4 3
   movdqu xmm0, oword [rdi + %2]
   movdqu xmm1, oword [rdi + %3]
   vcmpltps xmm0, xmm0, xmm1
@@ -1090,7 +1090,7 @@
 ; Gt
 ; x = a > b. x is a boolean. a and b are of the same type.
 
-%macro Gt.miu8x32 3
+%macro Gt.mib1u8x32 3
   vmovdqu ymm0, yword [rdi + %2]
   mov rax, %3
   movq xmm2, rax
@@ -1099,14 +1099,14 @@
   vmovdqu yword [rdi + %1], ymm0
 %endmacro
 
-%macro Gt.mmu8x32 3
+%macro Gt.mmb1u8x32 3
   vmovdqu ymm0, yword [rdi + %2]
   vmovdqu ymm1, yword [rdi + %3]
   vpcmpgtb ymm0, ymm0, ymm1
   vmovdqu yword [rdi + %1], ymm0
 %endmacro
 
-%macro Gt.mif64 3
+%macro Gt.mib1f64 3
   movsd xmm0, [rdi + %2]
   mov rax, __?float64?__(%3)
   movq xmm1, rax
@@ -1116,7 +1116,7 @@
   sete [rdi + %1]
 %endmacro
 
-%macro Gt.mis64 3
+%macro Gt.mib1s64 3
   mov rax, qword [rdi + %2]
   mov rdx, %3
   cmp rax, rdx
@@ -1124,14 +1124,14 @@
   mov byte [rdi + %1], al
 %endmacro
 
-%macro Gt.mmu8x16 3
+%macro Gt.mmb8x16u8x16 3
   movdqu xmm0, oword [rdi + %2]
   movdqu xmm1, oword [rdi + %3]
   vpcmpgtb xmm0, xmm0, xmm1
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
-%macro Gt.mms8x16 3
+%macro Gt.mmb8x16s8x16 3
   movdqu xmm0, oword [rdi + %2]
   movdqu xmm1, oword [rdi + %3]
   vpcmpgtb xmm0, xmm0, xmm1
@@ -1229,7 +1229,7 @@
   mov byte [rdi + %1], al
 %endmacro
 
-%macro And.mmu8 3
+%macro And.mmb8 3
   mov al, byte [rdi + %2]
   mov cl, byte [rdi + %3]
   and al, cl
@@ -1237,7 +1237,7 @@
   mov byte [rdi + %1], al
 %endmacro
 
-%macro And.miu32 3
+%macro And.mib32 3
   mov eax, dword [rdi + %2]
   mov ecx, dword [rdi + %3]
   and eax, ecx
@@ -1245,29 +1245,28 @@
 %endmacro
 
 
-%macro And.mmu8x16 3
+%macro And.mmb8x16 3
   movdqu xmm0, oword [rdi + %2]
   movdqu xmm1, oword [rdi + %3]
   vpand xmm0, xmm0, xmm1
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
-%macro And.mmu32x4 3
+%macro And.mmb32x4 3
   movdqu xmm0, oword [rdi + %2]
   movdqu xmm1, oword [rdi + %3]
   vpand xmm0, xmm0, xmm1
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
-%macro And.mmu8x32 3
+%macro And.mmb8x32 3
   vmovdqu ymm0, yword [rdi + %2]
   vmovdqu ymm1, yword [rdi + %3]
   vpand ymm0, ymm0, ymm1
   vmovdqu yword [rdi + %1], ymm0
 %endmacro
 
-; TODO: This should be And.mmb128
-%macro And.mmu16x8 3
+%macro And.mmb16x8 3
   movdqu xmm0, oword [rdi + %2]
   movdqu xmm1, oword [rdi + %3]
   pand xmm0, xmm1
@@ -1281,19 +1280,7 @@
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
-; TODO: This should be And.mmb256
-%macro And.mmu16x16 3
-  vmovdqu ymm0, yword [rdi + %2]
-  vmovdqu ymm1, yword [rdi + %3]
-  vpand ymm0, ymm0, ymm1
-  vmovdqu yword [rdi + %1], ymm0
-%endmacro
-
-%macro And.rrru8x32 3
-  vpand %1, %2, %3
-%endmacro
-
-%macro And.mmb8x32 3
+%macro And.mmb16x16 3
   vmovdqu ymm0, yword [rdi + %2]
   vmovdqu ymm1, yword [rdi + %3]
   vpand ymm0, ymm0, ymm1
@@ -1304,7 +1291,7 @@
   vpand %1, %2, %3
 %endmacro
 
-%macro And.miu8x32 3
+%macro And.mib8x32 3
   vmovdqu ymm0, yword [rdi + %2]
   vmovdqu ymm1, yword [rdi + %3]
   mov rax, %3
@@ -1869,25 +1856,25 @@
 ; Shl -- Shift left
 ; x = a << b. x and a must be bit fields. b must be a number type
 
-%macro Shl.mib32 3
+%macro Shl.mib32u64 3
   mov eax, dword [rdi + %2]
   shl eax, %3
   mov dword [rdi + %1], eax
 %endmacro
 
-%macro Shl.miu32 3
+%macro Shl.miu32u64 3
   mov eax, dword [rdi + %2]
   shl eax, %3
   mov dword [rdi + %1], eax
 %endmacro
 
-%macro Shl.mib128 3
+%macro Shl.mib128u64 3
   movdqu xmm0, oword [rdi + %2]
   pslldq xmm0, %3
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
-%macro Shl.miu32x4 3
+%macro Shl.miu32x4u64 3
   movdqu xmm0, oword [rdi + %2]
   mov rax, %3
   movq xmm1, rax
@@ -1896,7 +1883,7 @@
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
-%macro Shl.mmu32x4 3
+%macro Shl.mmu32x4u32x4 3
   movdqu xmm0, oword [rdi + %2]
   movdqu xmm1, oword [rdi + %3]
   vpsllvd xmm0, xmm0, xmm1
@@ -1960,30 +1947,21 @@
   mov dword [rdi + %1], eax
 %endmacro
 
-; TODO: Should this be the same as Or.mmb32?
-%macro Or.mmu32 3
-  mov eax, dword [rdi + %2]
-  mov edx, dword [rdi + %3]
-  or eax, edx
-  mov dword [rdi + %1], eax
-%endmacro
-
-; TODO: This should be Or.mmb256
-%macro Or.mmu8x32 3
+%macro Or.mmb8x32 3
   vmovdqu ymm0, yword [rdi + %2]
   vmovdqu ymm1, yword [rdi + %3]
   vpor ymm0, ymm0, ymm1
   vmovdqu yword [rdi + %1], ymm0
 %endmacro
 
-%macro Or.mmu8x16 3
+%macro Or.mmb8x16 3
   movdqu xmm0, oword [rdi + %2]
   movdqu xmm1, oword [rdi + %3]
   vpor xmm0, xmm0, xmm1
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
-%macro Or.mmu32x4 3
+%macro Or.mmb32x4 3
   movdqu xmm0, oword [rdi + %2]
   movdqu xmm1, oword [rdi + %3]
   vpor xmm0, xmm0, xmm1
@@ -2008,30 +1986,21 @@
   mov dword [rdi + %1], eax
 %endmacro
 
-; TODO: Should this be the same as Or.mmb32?
-%macro Xor.mmu32 3
-  mov eax, dword [rdi + %2]
-  mov edx, dword [rdi + %3]
-  xor eax, edx
-  mov dword [rdi + %1], eax
-%endmacro
-
-; TODO: This should be Or.mmb256
-%macro Xor.mmu8x32 3
+%macro Xor.mmb8x32 3
   vmovdqu ymm0, yword [rdi + %2]
   vmovdqu ymm1, yword [rdi + %3]
   vpxor ymm0, ymm0, ymm1
   vmovdqu yword [rdi + %1], ymm0
 %endmacro
 
-%macro Xor.mmu8x16 3
+%macro Xor.mmb8x16 3
   movdqu xmm0, oword [rdi + %2]
   movdqu xmm1, oword [rdi + %3]
   vpxor xmm0, xmm0, xmm1
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
-%macro Xor.mmu32x4 3
+%macro Xor.mmb32x4 3
   movdqu xmm0, oword [rdi + %2]
   movdqu xmm1, oword [rdi + %3]
   vpxor xmm0, xmm0, xmm1
@@ -2291,7 +2260,7 @@ extern free
 
 ; -----------------------------------------------------------------------------
 ; Set
-; x = SetIf(a). TODO: How does this work?
+; x = SetIf(a). The setcc instruction works with a flag as an input.
 
 %macro Set.mu64 2
   mov al, byte [rdi + %2]
@@ -2312,32 +2281,30 @@ extern free
 ; -----------------------------------------------------------------------------
 ; Movzx
 ; x = a. x and a must be the same unsigned number types.
-; TODO: Can this be a convesion instruction instead?
 
-%macro Movzx.mu8 2
-  mov al, byte [rdi + %2]
-  movzx ax, al
-  mov word [rdi + %1], ax
-%endmacro
+;%macro Movzx.mu8 2
+;  mov al, byte [rdi + %2]
+;  movzx ax, al
+;  mov word [rdi + %1], ax
+;%endmacro
 
-%macro Movzx.mu16 2
-  mov ax, word [rdi + %2]
-  movzx eax, ax
-  mov dword [rdi + %1], eax
-%endmacro
+;%macro Movzx.mu16 2
+;  mov ax, word [rdi + %2]
+;  movzx eax, ax
+;  mov dword [rdi + %1], eax
+;%endmacro
 
-%macro Movzx.mu32 2
-  mov eax, dword [rdi + %2]
-  movzx rax, eax
-  mov qword [rdi + %1], rax
-%endmacro
+;%macro Movzx.mu32 2
+;  mov eax, dword [rdi + %2]
+;  movzx rax, eax
+;  mov qword [rdi + %1], rax
+;%endmacro
 
 ; -----------------------------------------------------------------------------
 ; Usigned integer to larger unsigned types
 ; u8tou16, u8tou32, u16tou32, u32tou64
 ; x = (AtoB)a. a must be of type A, x must be of type B.
 
-; TODO Use the following format instead? cvtu16.mu8ZZZ
 %macro u8tou16.m 2
   mov al, byte [rdi + %2]
   movzx ax, al
@@ -2697,59 +2664,59 @@ extern free
 ; -----------------------------------------------------------------------------
 ; Reinterpret as a different type
 ; Xu32x4, Xb128
-; x = (B)a. x must be target type. a must be one of the supported types. TODO: Add explicit types.
+; x = (B)a. x must be target type. a must be one of the supported types.
 
 ; Pointer to integer
-%macro Xu64.m 2
+%macro Xu64.mb64 2
   mov rax, qword [rdi + %2]
   mov qword [rdi + %1], rax
 %endmacro
 
 
 ; Between array types
-%macro Xu8a.m 2
+%macro Xu8a.mu16a 2
   mov rax, qword [rdi + %2]
   mov qword [rdi + %1], rax
 %endmacro
 
-%macro Xu16a.m 2
+%macro Xu16a.mu32a 2
   mov rax, qword [rdi + %2]
   mov qword [rdi + %1], rax
 %endmacro
 
-%macro Xu64a.m 2
+%macro Xu64a.mu64x2a 2
   mov rax, qword [rdi + %2]
   mov qword [rdi + %1], rax
 %endmacro
 
 
 ; Between bit-array types
-%macro Xb8.m 2
+%macro Xb8.mu8 2
   mov al, byte [rdi + %2]
   mov byte [rdi + %1], al
 %endmacro
 
-%macro Xb16.m 2
+%macro Xb16.mu16 2
   mov ax, word [rdi + %2]
   mov word [rdi + %1], ax
 %endmacro
 
-%macro Xb32.m 2
+%macro Xb32.mu32 2
   mov eax, dword [rdi + %2]
   mov dword [rdi + %1], eax
 %endmacro
 
-%macro Xb64.m 2
+%macro Xb64.mu64 2
   mov rax, qword [rdi + %2]
   mov qword [rdi + %1], rax
 %endmacro
 
-%macro Xb128.m 2
+%macro Xb128.mu8x16 2
   movdqu xmm0, oword [rdi + %2]
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
-%macro Xb256.m 2
+%macro Xb256.mu8x32 2
   vmovdqu ymm0, yword [rdi + %2]
   vmovdqu yword [rdi + %1], ymm0
 %endmacro
@@ -2757,29 +2724,24 @@ extern free
 
 
 ; SIMD-types
-%macro Xu32x4.m 2
+%macro Xu32x4.mb32x4 2
   movdqu xmm0, oword [rdi + %2]
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
 
 ; SIMD array types
-%macro Xu16x8a.m 2
+%macro Xu16x8a.mu16a 2
   mov rax, qword [rdi + %2]
   mov qword [rdi + %1], rax
 %endmacro
 
-%macro Xu8x16a.m 2
+%macro Xu16x16a.mb16x16a 2
   mov rax, qword [rdi + %2]
   mov qword [rdi + %1], rax
 %endmacro
 
-%macro Xu16x16a.m 2
-  mov rax, qword [rdi + %2]
-  mov qword [rdi + %1], rax
-%endmacro
-
-%macro Xu16x32a.m 2
+%macro Xu16x32a.mu16a 2
   mov rax, qword [rdi + %2]
   mov qword [rdi + %1], rax
 %endmacro
@@ -2876,7 +2838,7 @@ extern free
 
 ; -----------------------------------------------------------------------------
 ; Xadd
-; TODO: What is this?
+; In one go: a' = a + b; b' = a
 
 %macro Xadd.ms64 2
   mov rax, qword [rdi + %2]
@@ -2940,7 +2902,7 @@ extern free
 
 ; -----------------------------------------------------------------------------
 ; CmpXchg -- Compare and Exchange
-; TODO: What is this?
+; x = (a == b) ? (b = c, 1) : (a = b, 0)
 
 %macro CmpXchg.mms64 4
   mov rax, qword [rdi + %2]
@@ -2955,7 +2917,7 @@ extern free
 
 ; -----------------------------------------------------------------------------
 ; Crc32 -- Cyclic redundancy check
-; TODO: What is this?
+; x = crc32(a)
 
 %macro Crc32.mu32 2
   mov eax, dword [rdi + %1]
@@ -3226,24 +3188,23 @@ extern free
 ; ExtractMask -- Extract Byte Mask
 ; x = ExtractMask(a). a is an 8xX-bit, x is X-bit
 
-%macro ExtractMask.mu8x16 2
+%macro ExtractMask.mb8x16 2
   movdqu xmm1, oword [rdi + %2]
   pmovmskb eax, xmm1
   mov word [rdi + %1], ax
 %endmacro
 
-%macro ExtractMask.mu8x32 2
+%macro ExtractMask.mb8x32 2
   vmovdqu ymm0, yword [rdi + %2]
   vpmovmskb rax, ymm0
   mov dword [rdi + %1], eax
 %endmacro
 
-; TODO: Is this possible?
-%macro ExtractMask.mu16x8 2
-  movdqu xmm1, oword [rdi + %2]
-  pmovmskb eax, xmm1
-  mov dword [rdi + %1], eax
-%endmacro
+;%macro ExtractMask.mu16x8 2
+;  movdqu xmm1, oword [rdi + %2]
+;  pmovmskb eax, xmm1
+;  mov dword [rdi + %1], eax
+;%endmacro
 
 
 
@@ -3270,8 +3231,7 @@ extern free
 ; MulStoreHigh -- Multiply Store high
 ; x = MulStoreHigh(a, b). a, b, x are the same number type.
 
-; TODO: This one is not for u32
-%macro MulStoreHigh.mmu32x4 3
+%macro MulStoreHigh.mmu16x8 3
   movdqu xmm0, oword [rdi + %2]
   movdqu xmm1, oword [rdi + %3]
   vpmulhuw xmm0, xmm0, xmm1
@@ -3406,8 +3366,7 @@ extern free
 ; CombineExtract -- Combine and extract a part offset by a constant
 ; x = CombineExtract(a, b. c). a, b are bitfields, c is a number.
 
-; TODO: Should this not be mmi?
-%macro CombineExtract.miu8x16 4
+%macro CombineExtract.mmiu8x16 4
   movdqu xmm0, oword [rdi + %2]
   movdqu xmm1, oword [rdi + %3]
   palignr xmm0, xmm1, %4
@@ -3418,8 +3377,7 @@ extern free
 ; Gather -- Gather data into array
 ; x = CombineExtract(p, a, b). p is a pointer. x, a and b are packed number types.
 
-; TODO: Should this not be mmm?
-%macro Gather.mmu32x4 4
+%macro Gather.mmmu32x4 4
   mov rax, qword [rdi + %2]
   movdqu xmm1, oword [rdi + %3]
   movdqu xmm2, oword [rdi + %4]
@@ -3496,13 +3454,19 @@ extern free
 
 ; -----------------------------------------------------------------------------
 ; DotProduct -- Dot Product
-; TODO: sort out after fixing todo
+; x = a ⋅ b -- All parameters are the same multiple type.
 
-; TODO: How to deal with the fourth and fifth parameters?
 %macro DotProduct.mmf32x4 3
   movdqu xmm0, oword [rdi + %2]
   movdqu xmm1, oword [rdi + %3]
-  dpps xmm0, xmm1, 0x9 * 16 + 0x3; %4 * 16 + %5
+  dpps xmm0, xmm1, 0b1111_1111
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+%macro DotProduct.mmf64x2 3
+  movdqu xmm0, oword [rdi + %2]
+  movdqu xmm1, oword [rdi + %3]
+  dppd xmm0, xmm1, 0b0011_0011
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
@@ -3510,36 +3474,35 @@ extern free
 ; StringSubset -- Identify the occurance of characters in a string
 ; x = StringSubset(a, b, l). x, a, b are packed bytes. l is a number.
 
-%macro StringSubset.mmu8x16 4
+%macro StringSubset.mmmiu8x16 5
   movdqu xmm0, oword [rdi + %3]
   mov rax, qword [rdi + %4]
   movdqu xmm1, oword [rdi + %2]
-  mov rdx, 16
+  mov rdx, %5
   pcmpestrm xmm0, xmm1, (0 << 6) + (0 << 2)
   vpextrw eax, xmm0, 0
   mov word [rdi + %1], ax
 %endmacro
 
-; TODO: How to deal with there really only being a byte version of this? b128?
-%macro StringSubset.mmu16x8 4
-  movdqu xmm0, oword [rdi + %3]
-  mov rax, qword [rdi + %4]
-  movdqu xmm1, oword [rdi + %2]
-  mov rdx, 16
-  pcmpestrm xmm0, xmm1, (0 << 6) + (0 << 2)
-  vpextrw eax, xmm0, 0
-  mov word [rdi + %1], ax
-%endmacro
+;%macro StringSubset.mmmiu16x8 5
+;  movdqu xmm0, oword [rdi + %3]
+;  mov rax, qword [rdi + %4]
+;  movdqu xmm1, oword [rdi + %2]
+;  mov rdx, %5
+;  pcmpestrm xmm0, xmm1, (0 << 6) + (0 << 2)
+;  vpextrw eax, xmm0, 0
+;  mov word [rdi + %1], ax
+;%endmacro
 
 ; -----------------------------------------------------------------------------
 ; StringRangeCheck -- Find members of a range
 ; x = StringRangeCheck(a, b, l). x, a, b are packed bytes. l is a number.
 
-%macro StringRangeCheck.mmu8x16 4
+%macro StringRangeCheck.mmmiu8x16 5
   movdqu xmm0, oword [rdi + %3]
   mov rax, qword [rdi + %4]
   movdqu xmm1, oword [rdi + %2]
-  mov rdx, 16
+  mov rdx, %5
   pcmpestrm xmm0, xmm1, (0 << 6) + (1 << 2)
   vpextrw eax, xmm0, 0
   mov word [rdi + %1], ax
@@ -3549,11 +3512,11 @@ extern free
 ; MatchString -- Match string
 ; x = MatchString(a, b, l). x, a, b are packed bytes. l is a number.
 
-%macro MatchString.mmu8x16 4
+%macro MatchString.mmmiu8x16 4
   movdqu xmm0, oword [rdi + %3]
   mov rax, qword [rdi + %4]
   movdqu xmm1, oword [rdi + %2]
-  mov rdx, 16
+  mov rdx, %5
   pcmpestrm xmm0, xmm1, (0 << 6) + (2 << 2)
   vpextrw eax, xmm0, 0
   mov word [rdi + %1], ax
@@ -3563,7 +3526,7 @@ extern free
 ; FindSubstring -- Locate string
 ; x = FindSubstring(a, al, b, bl). x, a, b are packed bytes. al, bl are a numbers.
 
-%macro FindSubstring.mmu8x16 5
+%macro FindSubstring.mmmiu8x16 5
   movdqu xmm0, oword [rdi + %3]
   mov rax, qword [rdi + %4]
   movdqu xmm1, oword [rdi + %2]
@@ -3573,8 +3536,7 @@ extern free
   mov word [rdi + %1], ax
 %endmacro
 
-; TODO: This naming is not quite right
-%macro FindSubstring.miu16x8 5
+%macro FindSubstring.mmiiu8x16 5
   movdqu xmm0, oword [rdi + %3]
   mov rax, %4
   movdqu xmm1, oword [rdi + %2]
