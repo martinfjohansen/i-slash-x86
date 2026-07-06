@@ -2816,6 +2816,9 @@ extern free
 
 ; Cmovcc
 ; x = (a op b) ? b : x. x, b must be the same types. a and b must be the same types or number types.
+; op can be 'a', 'ae', 'b', 'be', 'c', 'e', 'g', 'ge', 'l', 'le', 'na', 'nae', 'nb', 'nbe', 'nc', 'ne', 'ng', 'nge', 'nl', 'nle', 'no', 'np', 'ns', 'nz', 'o', 'p', 'pe', 'po', 's', 'z'
+; Comparizons: 'e', 'ne', 'g', 'ge', 'l', 'le'
+; Arithmetic: 'z', 'o', 's', 'p'
 
 %macro Cmoveq.mms64 4
   mov rax, qword [rdi + %3]
