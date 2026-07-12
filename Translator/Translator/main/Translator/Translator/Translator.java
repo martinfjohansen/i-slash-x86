@@ -1470,12 +1470,13 @@ public class Translator {
         // Java has garbage collection.
     }
 
-    public static boolean TranslateExpressions(char[] code, Array functions, Array structures, StringReference message, StringReference output) {
+    public static boolean TranslateExpressions(char[] code, Ast ast, StringReference message, StringReference output) {
         boolean success;
         StringReference [] lines, parts, expandedLines;
         double i, j;
         char [] line, name, orgline, target, type;
-        Structure structure, function;
+        Struct structure;
+        Function function;
         double state, tabs;
         boolean done, loopIf;
         LinkedListCharacters cc;
@@ -1502,9 +1503,9 @@ public class Translator {
                     if (StringsEqual(parts[0].string, "Bgs".toCharArray())) {
                         state = 1;
                         done = false;
-                        for(j = 0d; j < ArrayLength(structures) && !done; j = j + 1d){
-                            structure = ArrayIndex(structures, j).structure;
-                            name = GetStringFromStruct(structure, "name".toCharArray());
+                        for(j = 0d; j < ast.st.length && !done; j = j + 1d){
+                            structure = ast.st[(int)j];
+                            name = structure.name;
                             if(StringsEqual(name, parts[1].string)){
                                 done = true;
                             }
@@ -1513,18 +1514,18 @@ public class Translator {
                     if(StringsEqual(parts[0].string, "Fnc".toCharArray())){
                         state = 3;
                         done = false;
-                        for(j = 0d; j < ArrayLength(functions) && !done; j = j + 1d){
-                            function = ArrayIndex(functions, j).structure;
-                            name = GetStringFromStruct(function, "name".toCharArray());
+                        for(j = 0d; j < ast.fnc.length && !done; j = j + 1d){
+                            function = ast.fnc[(int)j];
+                            name = function.name;
                             if(StringsEqual(name, parts[1].string)){
                                 done = true;
                             }
                         }
 
                         done = false;
-                        for(j = 0d; j < ArrayLength(structures) && !done; j = j + 1d){
-                            structure = ArrayIndex(structures, j).structure;
-                            name = GetStringFromStruct(structure, "name".toCharArray());
+                        for(j = 0d; j < ast.st.length && !done; j = j + 1d){
+                            structure = ast.st[(int)j];
+                            name = structure.name;
                             name = AppendCharacter(name, 'S');
                             if(StringsEqual(name, parts[1].string)){
                                 done = true;

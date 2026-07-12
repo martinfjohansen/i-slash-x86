@@ -1,4 +1,7 @@
 import DataStructures.Array.Structures.Array;
+import DataStructures.Array.Structures.DataReference;
+import Translator.Translator.Ast;
+import Translator.Translator.Translator2;
 import references.references.StringReference;
 
 import java.io.BufferedWriter;
@@ -23,10 +26,28 @@ public class RunExpressionTranslator {
         message = new StringReference();
         output = new StringReference();
 
+        // New system
+        Array tokens;
+        DataReference tokensRef = new DataReference();
+        success = Translator2.Tokenize(input, tokensRef, message);
+        if(success) {
+            tokens = tokensRef.data.array;
+
+            Ast ast = new Ast();
+            success = Translator2.Parse(tokens, ast, message);
+
+            if(success){
+                success = TranslateExpressions(input, ast, message, output);
+            }
+        }
+
+        // Old system
+        /*
         success = FindFunctionsAndStructures(input, functions, structures, message);
         if(success) {
             success = TranslateExpressions(input, functions, structures, message, output);
         }
+        */
 
         if(success) {
             WriteStringToFile(args[1].toCharArray(), output.string);
