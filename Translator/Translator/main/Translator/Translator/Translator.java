@@ -1470,15 +1470,13 @@ public class Translator {
         // Java has garbage collection.
     }
 
-    public static boolean TranslateExpressions(char[] code, Ast ast, StringReference message, StringReference output) {
+    public static boolean TranslateExpressions(char [] code, StringReference message, StringReference output) {
         boolean success;
         StringReference [] lines, parts, expandedLines;
         double i, j;
-        char [] line, name, orgline, target, type;
-        Struct structure;
-        Function function;
+        char [] line, orgline, target, type;
         double state, tabs;
-        boolean done, loopIf;
+        boolean loopIf;
         LinkedListCharacters cc;
         StringReference expandedCode;
 
@@ -1502,44 +1500,41 @@ public class Translator {
                 if(state == 0) {
                     if (StringsEqual(parts[0].string, "Bgs".toCharArray())) {
                         state = 1;
-                        done = false;
-                        for(j = 0d; j < ast.st.length && !done; j = j + 1d){
-                            structure = ast.st[(int)j];
-                            name = structure.name;
-                            if(StringsEqual(name, parts[1].string)){
-                                done = true;
-                            }
-                        }
                     }
                     if(StringsEqual(parts[0].string, "Fnc".toCharArray())){
                         state = 3;
-                        done = false;
-                        for(j = 0d; j < ast.fnc.length && !done; j = j + 1d){
-                            function = ast.fnc[(int)j];
-                            name = function.name;
-                            if(StringsEqual(name, parts[1].string)){
-                                done = true;
-                            }
-                        }
-
-                        done = false;
-                        for(j = 0d; j < ast.st.length && !done; j = j + 1d){
-                            structure = ast.st[(int)j];
-                            name = structure.name;
-                            name = AppendCharacter(name, 'S');
-                            if(StringsEqual(name, parts[1].string)){
-                                done = true;
-                            }
-                        }
                     }
                 }
 
                 if(state == 1){
-                    if(StringsEqual(parts[0].string, "Ens".toCharArray())){
+                    if(StringsEqual(parts[0].string, "Ens".toCharArray())) {
                         state = 0;
                         LinkedListCharactersAddString(cc, orgline);
                         LinkedListCharactersAddString(cc, "\n".toCharArray());
                         LinkedListCharactersAddString(cc, "\n".toCharArray());
+                    }else if(StringsEqual(parts[0].string, "exp".toCharArray())){
+                        if(StringsEqual(parts[1].string, "decl:".toCharArray())) {
+                            type = parts[2].string;
+                            for(j = 3; j < parts.length; j = j + 1d) {
+                                char [] var;
+
+                                if(EndsWith(parts[(int)j].string, ",".toCharArray())){
+                                    var = Substring(parts[(int)j].string, 0d, parts[(int)j].string.length - 1d);
+                                }else{
+                                    var = parts[(int)j].string;
+                                }
+
+                                LinkedListCharactersAddString(cc, "  ".toCharArray());
+                                LinkedListCharactersAddString(cc, type);
+                                LinkedListCharactersAddString(cc, " ".toCharArray());
+                                LinkedListCharactersAddString(cc, var);
+                                LinkedListCharactersAddString(cc, "\n".toCharArray());
+                            }
+                        }else{
+                            success = false;
+                            message.string = "Unknown expression type in struct, must be \"exp decl\": ".toCharArray();
+                            message.string = AppendString(message.string, parts[2].string);
+                        }
                     }else{
                         LinkedListCharactersAddString(cc, orgline);
                         LinkedListCharactersAddString(cc, "\n".toCharArray());

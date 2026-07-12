@@ -21,25 +21,11 @@ public class RunExpressionTranslator {
         StringReference message, output;
         boolean success;
 
-        functions = CreateArray();
-        structures = CreateArray();
         message = new StringReference();
         output = new StringReference();
 
         // New system
-        Array tokens;
-        DataReference tokensRef = new DataReference();
-        success = Translator2.Tokenize(input, tokensRef, message);
-        if(success) {
-            tokens = tokensRef.data.array;
-
-            Ast ast = new Ast();
-            success = Translator2.Parse(tokens, ast, message);
-
-            if(success){
-                success = TranslateExpressions(input, ast, message, output);
-            }
-        }
+        success = TranslateExpressions(input, message, output);
 
         // Old system
         /*
