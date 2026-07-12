@@ -9,11 +9,8 @@ Bgs IndexOfCharacterS
   str NumberReference indexReference
   u8 retval
   u64 i
-  b1 found
+  exp decl: b1 found, tb10, tb11, tb12
   u64 len
-  b1 tb10
-  b1 tb11
-  b1 tb12
 Ens
 
 Fnc IndexOfCharacter

@@ -9,23 +9,12 @@ Bgs base64AS
   u8x16a output
   
   ; Working vars
-  s64 len
-  s64 i
-  u64 j
+  exp decl: s64 len, i
   b1 tb10
-  u8x16 elementu
-  b8x16 element
-  b8x16 in
-  u32x4 t0
-  u32x4 t1
-  u32x4 t2
-  u32x4 t3
-  u8x16 less
-  u8x16 input
-  b8x16 result
-  u8x16 resultu
-  u8x16 d
-  u32x4 resultx
+  exp decl: u8x16 elementu, less, input, resultu, d
+  exp decl: b8x16 element, in, result
+  exp decl: u32x4 t0, t1, t2, t3, resultx
+
   u8x16 upx
   u32 z
   u8x16 tu8x160
@@ -33,14 +22,8 @@ Bgs base64AS
   
   ; Constants
   u8x16 cInputShuffle
-  u32x4 c1
-  u32x4 c2
-  u32x4 c3
-  u32x4 c4
-  u8x16 c5
-  u8x16 c6
-  u8x16 c7
-  u8x16 cLut
+  exp decl: u32x4 c1, c2, c3, c4
+  exp decl: u8x16 c5, c6, c7, cLut
   b8x16 cLutb
 Ens
 
@@ -116,9 +99,8 @@ Fnc base64A
   ; We use a raw pointer to data
   Xu64 datap, data
 
-  ; i is our tracks input progress, j track output progress
+  ; i is our tracks input progress
   Mov i, 0
-  Mov j, 0
   
   Loop
   If exp b: i < len

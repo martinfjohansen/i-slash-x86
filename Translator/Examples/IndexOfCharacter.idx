@@ -1,22 +1,13 @@
 Bgs IndexOfCharacterAS
-	u64 i
-	u16 c
-	u16 x
-	u64 len
-	u64 xlen
+	exp decl: u64 i, len, xlen, index, zcnt, tu640, tu641
+	exp decl: u16 c, x
 	u16a str
-	u64 index
-	b1 found
-	b1 tb10
-	b1 tb11
+	exp decl: b1 found, tb10, tb11
 	u8x16a stra
 	u8x16 sc
 	u16x8 ccx
 	u8x16 cc
 	b16 mask1
-	u64 zcnt
-	u64 tu640
-	u64 tu641
 Ens
 
 Fnc IndexOfCharacterA

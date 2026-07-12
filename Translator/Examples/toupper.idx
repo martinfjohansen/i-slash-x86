@@ -14,20 +14,10 @@ Ret
 
 Bgs ToUpperILS
   u8x32a str
-  u64 len
-  u64 len32
-  u64 len1
-  u64 i
+  exp decl: u64 len, len32, len1, i
   b1 tb10
-  u8x32 a
-  u8x32 z
-  u8x32 x32
-  u8x32 x
-  u8x32 lcm
-  b8x32 tb8x320
-  b8x32 tb8x321
-  b8x32 tb8x322
-  u8x32 padding
+  exp decl: u8x32 a, z, x32, x, lcm, padding
+  exp decl: b8x32 tb8x320, tb8x321, tb8x322
 Ens
 
 Fnc ToUpperIL
