@@ -1514,6 +1514,11 @@ public class Translator {
                         LinkedListCharactersAddString(cc, "\n".toCharArray());
                     }else if(StringsEqual(parts[0].string, "exp".toCharArray())){
                         if(StringsEqual(parts[1].string, "decl:".toCharArray())) {
+                            LinkedListCharactersAddString(cc, "  ".toCharArray());
+                            LinkedListCharactersAddString(cc, "; ".toCharArray());
+                            LinkedListCharactersAddString(cc, Trim(orgline));
+                            LinkedListCharactersAddString(cc, "\n".toCharArray());
+
                             type = parts[2].string;
                             for(j = 3; j < parts.length; j = j + 1d) {
                                 char [] var;
