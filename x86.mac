@@ -799,8 +799,46 @@
   mov qword [rdi + %1], rax
 %endmacro
 
+%macro Mov.riu8 2
+  mov %1, %2
+%endmacro
+
+%macro Mov.riu16 2
+  mov %1, %2
+%endmacro
+
+%macro Mov.riu32 2
+  mov %1, %2
+%endmacro
+
+; Only works with rax, how to warn?
 %macro Mov.riu64 2
   mov %1, %2
+%endmacro
+
+%macro Mov.ris8 2
+  mov %1, %2
+%endmacro
+
+%macro Mov.ris16 2
+  mov %1, %2
+%endmacro
+
+%macro Mov.ris32 2
+  mov %1, %2
+%endmacro
+
+; Only works with rax, how to warn?
+%macro Mov.ris64 2
+  mov %1, %2
+%endmacro
+
+%macro Mov.rif32 2
+  mov %1, __?float32?__(%2)
+%endmacro
+
+%macro Mov.rif64 2
+  mov %1, __?float64?__(%2)
 %endmacro
 
 %macro Mov.ms64 2
@@ -876,6 +914,7 @@
   vmovdqu yword [rdi + %1], ymm0
 %endmacro
 
+; TODO: How to deal with Mov vs Broadcast and exp a?
 %macro Mov.riu8x32 2
   mov rax, %2
   movq xmm2, rax

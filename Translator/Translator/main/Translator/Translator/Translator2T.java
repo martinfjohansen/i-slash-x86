@@ -9,6 +9,7 @@ import static DataStructures.Array.Structures.Structures.*;
 import static Translator.Translator.Translator.GetEntryTypes;
 import static arrays.arrays.arrays.StringsEqual;
 import static lists.LinkedListCharacters.LinkedListCharactersFunctions.LinkedListCharactersFunctions.*;
+import static strings.strings.strings.AppendString;
 
 public class Translator2T {
     public static boolean Translate(Ast ast, StringReference asmRef, StringReference message) {
@@ -130,7 +131,6 @@ public class Translator2T {
         LinkedListCharacters ll;
         StringReference tmp;
 
-        success = true;
         ll = CreateLinkedListCharacter();
 
         success = true;
@@ -163,13 +163,45 @@ public class Translator2T {
     }
 
     public static boolean PrintInstruction(Instruction ins, StringReference insRef, char [] fncStName) {
-        double i;
+        double i, j, immVarCount;
         boolean success;
         LinkedListCharacters ll;
         Structure aliases;
+        char [] name;
+        Param param;
 
         ll = CreateLinkedListCharacter();
         success = true;
+
+        if(!StringsEqual(ins.name, "Mov".toCharArray())) {
+            // Preload immediates
+            // The reason is as follows: Not preloading immediates causees a combinatorial explosion of instruction macros.
+            immVarCount = 0d;
+
+            for (i = 0d; i < ins.params.length; i = i + 1d) {
+                param = ins.params[(int) i];
+                param.useImmediateVar = true;
+
+                if (StringsEqual(param.type, "literal".toCharArray())) {
+                    for (j = 0; j < ins.indentation; j = j + 1d) {
+                        LinkedListCharactersAddString(ll, "  ".toCharArray());
+                    }
+
+                    param.immediateVarName = ("i" +  new String(param.immediateType) + (int)immVarCount).toCharArray();
+                    immVarCount = immVarCount + 1d;
+
+                    LinkedListCharactersAddString(ll, "Mov.i".toCharArray());
+                    LinkedListCharactersAddString(ll, param.immediateType);
+                    LinkedListCharactersAddString(ll, " ".toCharArray());
+                    LinkedListCharactersAddString(ll, param.immediateVarName);
+                    LinkedListCharactersAddString(ll, ", ".toCharArray());
+                    LinkedListCharactersAddString(ll, param.literal);
+                    LinkedListCharactersAddString(ll, "\n".toCharArray());
+                }
+            }
+        }
+
+        // -- immediates
 
         for(i = 0; i < ins.indentation; i = i + 1d){
             LinkedListCharactersAddString(ll, "  ".toCharArray());
@@ -178,12 +210,13 @@ public class Translator2T {
         aliases = GetAliases();
 
         if(StructHasKey(aliases, ins.name)){
-            LinkedListCharactersAddString(ll, GetStringFromStruct(aliases, ins.name));
+            name = GetStringFromStruct(aliases, ins.name);
         }else{
-            LinkedListCharactersAddString(ll, ins.name);
+            name = ins.name;
         }
+        LinkedListCharactersAddString(ll, name);
 
-
+        // Instructions with suffix:
         if((ins.hasTypePostfix || ins.params.length > 0) && !StringsEqual(ins.name, "Call".toCharArray())) {
             LinkedListCharactersAddString(ll, ".".toCharArray());
         }
@@ -205,7 +238,7 @@ public class Translator2T {
         LinkedListCharactersAddString(ll, " ".toCharArray());
 
         for(i = 0d; i < ins.params.length; i = i + 1d){
-            Param param = ins.params[(int) i];
+            param = ins.params[(int) i];
             if(StringsEqual(param.type, "var".toCharArray())){
                 if(StringsEqual(ins.name, "Acr".toCharArray()) && i == 2d){
                     LinkedListCharactersAddString(ll, (new String(ins.params[1].var.st.name) + ".").toCharArray());
@@ -217,7 +250,11 @@ public class Translator2T {
                 }
                 LinkedListCharactersAddString(ll, param.varname);
             }else if(StringsEqual(param.type, "literal".toCharArray())){
-                LinkedListCharactersAddString(ll, param.literal);
+                if(param.useImmediateVar) {
+                    LinkedListCharactersAddString(ll, param.immediateVarName);
+                }else{
+                    LinkedListCharactersAddString(ll, param.literal);
+                }
             }
 
             if(i + 1d < ins.params.length) {

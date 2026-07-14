@@ -1491,6 +1491,7 @@ public class Translator {
         state = 0;
         for(i = 0d; i < lines.length && success; i = i + 1d){
             orgline = lines[(int)i].string;
+            orgline = ReplaceString(orgline, "\t".toCharArray(), "  ".toCharArray());
             line = MergeWhitespace(orgline);
             line = Trim(line);
 

@@ -1019,12 +1019,12 @@ public class Translator2 {
     public static boolean CreateParameter(Param p, char[] token, StringReference message) {
         boolean success;
 
-
         success = true;
 
         if(IsValidLiteral(token, message)){
             p.type = "literal".toCharArray();
             p.literal = token;
+            p.immediateType = "?".toCharArray();
         }else if(IsValidIdentifier(token, message)){
             p.type = "var".toCharArray();
             p.varname = token;

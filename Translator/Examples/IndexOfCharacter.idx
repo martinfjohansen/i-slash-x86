@@ -19,12 +19,12 @@ Fnc IndexOfCharacterA
 
 	Loop
 	If exp b: i < xlen & !found
-	
+
 		Idr sc, stra, i
-		
+
 		FindSubstring mask1, sc, 16, cc, 2
 		Lzcnt zcnt, mask1
-		
+
 		If exp b: zcnt != 16
 			Mov found, true
 			exp a u64: index = i * 8 + (16 - zcnt)/2
@@ -32,7 +32,7 @@ Fnc IndexOfCharacterA
 
 		Inc i
 	EndLoop
-	
+
 	exp a u64: i = xlen * 8
 
 Ret

@@ -7,4 +7,7 @@ public class Param {
 
     // Computed
     public Var var;
+    public char [] immediateType;
+    public char [] immediateVarName;
+    public boolean useImmediateVar;
 }

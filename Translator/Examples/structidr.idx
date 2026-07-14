@@ -1,0 +1,14 @@
+Bgs C
+  f64 x
+Ens
+
+Bgs testS
+	sta C x
+	str C a
+  f64 y
+Ens
+
+Fnc test
+  Idr a, x, 50
+  Acr y, a, x
+Ret

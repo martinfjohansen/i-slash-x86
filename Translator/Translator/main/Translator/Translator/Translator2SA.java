@@ -1161,6 +1161,8 @@ public class Translator2SA {
                     valid = false;
                     message.string = ("Third parameter must be a non-array number type.").toCharArray();
                 }
+            }else if (ParamIsLiteral(ins.params[2])) {
+                ins.params[2].immediateType = type;
             }
         }
 
@@ -1172,6 +1174,8 @@ public class Translator2SA {
                     valid = false;
                     message.string = ("Fourth parameter must be a non-array number type.").toCharArray();
                 }
+            }else if (ParamIsLiteral(ins.params[4])) {
+                ins.params[4].immediateType = type;
             }
         }
 
@@ -1290,6 +1294,14 @@ public class Translator2SA {
             type2 = "s64".toCharArray();
         }
 
+        if (ParamIsLiteral(ins.params[1])) {
+            ins.params[1].immediateType = type2;
+        }
+
+        if (ParamIsLiteral(ins.params[2])) {
+            ins.params[2].immediateType = type1;
+        }
+
         ins.hasTypePostfix = true;
         ins.typePostfix = type1;
 
@@ -1349,6 +1361,10 @@ public class Translator2SA {
             type2 = "s64".toCharArray();
         }
 
+        if (ParamIsLiteral(ins.params[2])) {
+            ins.params[2].immediateType = type2;
+        }
+
         if (TypeIsArrayType(type1)){
             ins.hasTypePostfix = true;
             ins.typePostfix = type1;
@@ -1397,6 +1413,10 @@ public class Translator2SA {
             type2 = ins.params[2].var.type;
         }else{
             type2 = "s64".toCharArray();
+        }
+
+        if (ParamIsLiteral(ins.params[2])) {
+            ins.params[2].immediateType = type2;
         }
 
         ins.hasTypePostfix = true;
@@ -1650,6 +1670,8 @@ public class Translator2SA {
                 success = false;
                 message.string = "Input type not the correct type.".toCharArray();
             }
+        }else if (ParamIsLiteral(ins.params[1])) {
+            ins.params[1].immediateType = type2;
         }
 
         if(ParamIsVariable(ins.params[2])){
@@ -1659,6 +1681,8 @@ public class Translator2SA {
                 success = false;
                 message.string = "Input type not the correct type.".toCharArray();
             }
+        }else if (ParamIsLiteral(ins.params[2])) {
+            ins.params[2].immediateType = type2;
         }
 
         return success;
@@ -1748,6 +1772,8 @@ public class Translator2SA {
                         success = false;
                         message.string = ("Parameter is not the correct type: " + new String(p.varname)).toCharArray();
                     }
+                }else if (ParamIsLiteral(p)) {
+                    p.immediateType = targetType;
                 }
             }
         }
@@ -1793,6 +1819,8 @@ public class Translator2SA {
                         success = false;
                         message.string = ("Parameter is not the correct type: " + new String(p.varname)).toCharArray();
                     }
+                }else if (ParamIsLiteral(p)) {
+                    p.immediateType = targetType;
                 }
             }
         }
@@ -1831,7 +1859,11 @@ public class Translator2SA {
                 if (StringsEqual(ins.params[(int) (i + 1)].type, "var".toCharArray())) {
                     memoryPostfix[(int) i] = 'm';
                 } else {
-                    memoryPostfix[(int) i] = 'i';
+                    if(StringsEqual(ins.name, "Mov".toCharArray())) {
+                        memoryPostfix[(int) i] = 'i';
+                    }else{
+                        memoryPostfix[(int) i] = 'm';
+                    }
                 }
             }
         }
