@@ -5,6 +5,9 @@ import DataStructures.Array.Structures.Structure;
 import lists.LinkedListCharacters.Structures.LinkedListCharacters;
 import references.references.StringReference;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static DataStructures.Array.Structures.Structures.*;
 import static Translator.Translator.Translator.GetEntryTypes;
 import static arrays.arrays.arrays.StringsEqual;
@@ -163,40 +166,52 @@ public class Translator2T {
     }
 
     public static boolean PrintInstruction(Instruction ins, StringReference insRef, char [] fncStName) {
-        double i, j, immVarCount;
+        double i, j, nr;
         boolean success;
         LinkedListCharacters ll;
         Structure aliases;
         char [] name;
         Param param;
+        Map<String, Double> immVarCount;
 
         ll = CreateLinkedListCharacter();
         success = true;
 
-        if(!StringsEqual(ins.name, "Mov".toCharArray())) {
+        // What instructions should keep immediates.
+        if(!StringsEqual(ins.name, "Mov".toCharArray()) && !StringsEqual(ins.name, "Movx8".toCharArray())) {
             // Preload immediates
             // The reason is as follows: Not preloading immediates causees a combinatorial explosion of instruction macros.
-            immVarCount = 0d;
+            immVarCount = new HashMap<>();
 
             for (i = 0d; i < ins.params.length; i = i + 1d) {
-                param = ins.params[(int) i];
-                param.useImmediateVar = true;
 
-                if (StringsEqual(param.type, "literal".toCharArray())) {
-                    for (j = 0; j < ins.indentation; j = j + 1d) {
-                        LinkedListCharactersAddString(ll, "  ".toCharArray());
+                // What parameters should remain immediates.
+                if(!(StringsEqual(ins.name, "Idro".toCharArray()) && i == 3)) {
+                    param = ins.params[(int) i];
+                    param.useImmediateVar = true;
+
+                    if (StringsEqual(param.type, "literal".toCharArray())) {
+                        for (j = 0; j < ins.indentation; j = j + 1d) {
+                            LinkedListCharactersAddString(ll, "  ".toCharArray());
+                        }
+
+                        if (!immVarCount.containsKey(new String(param.immediateType))) {
+                            immVarCount.put(new String(param.immediateType), 0d);
+                        }
+                        nr = immVarCount.get(new String(param.immediateType));
+
+                        param.immediateVarName = ("i" + new String(param.immediateType) + (int) nr).toCharArray();
+                        immVarCount.put(new String(param.immediateType), nr + 1d);
+
+                        LinkedListCharactersAddString(ll, "Mov.i".toCharArray());
+                        LinkedListCharactersAddString(ll, param.immediateType);
+                        LinkedListCharactersAddString(ll, " ".toCharArray());
+                        LinkedListCharactersAddString(ll, param.immediateVarName);
+                        LinkedListCharactersAddString(ll, ", ".toCharArray());
+                        LinkedListCharactersAddString(ll, param.literal);
+                        LinkedListCharactersAddString(ll, "\n".toCharArray());
+
                     }
-
-                    param.immediateVarName = ("i" +  new String(param.immediateType) + (int)immVarCount).toCharArray();
-                    immVarCount = immVarCount + 1d;
-
-                    LinkedListCharactersAddString(ll, "Mov.i".toCharArray());
-                    LinkedListCharactersAddString(ll, param.immediateType);
-                    LinkedListCharactersAddString(ll, " ".toCharArray());
-                    LinkedListCharactersAddString(ll, param.immediateVarName);
-                    LinkedListCharactersAddString(ll, ", ".toCharArray());
-                    LinkedListCharactersAddString(ll, param.literal);
-                    LinkedListCharactersAddString(ll, "\n".toCharArray());
                 }
             }
         }

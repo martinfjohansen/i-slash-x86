@@ -420,7 +420,7 @@ public class Translator2SA {
 
     public static boolean CheckParameterCount(Instruction ins, StringReference message) {
         boolean valid, found;
-        Array p0, p1, p2, p3, p4, p5;
+        Array p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11;
         Array [] ps;
         double i, j;
 
@@ -624,13 +624,29 @@ public class Translator2SA {
         ArrayAddString(p5, "MatchString".toCharArray());
         ArrayAddString(p5, "FindSubstring".toCharArray());
 
-        ps = new Array[6];
+        p5 = CreateArray();
+        p6 = CreateArray();
+        p7 = CreateArray();
+        p8 = CreateArray();
+        p9 = CreateArray();
+        ArrayAddString(p9, "Movx8".toCharArray());
+
+        p10 = CreateArray();
+        p11 = CreateArray();
+
+        ps = new Array[12];
         ps[0] = p0;
         ps[1] = p1;
         ps[2] = p2;
         ps[3] = p3;
         ps[4] = p4;
         ps[5] = p5;
+        ps[6] = p6;
+        ps[7] = p7;
+        ps[8] = p8;
+        ps[9] = p9;
+        ps[10] = p10;
+        ps[11] = p11;
 
         found = false;
         for(i = 0d; i < ps.length; i = i + 1d){
@@ -934,6 +950,8 @@ public class Translator2SA {
             valid = CheckIdw(ins, message);
         }else if(StringsEqual(ins.name, "Mov".toCharArray())){
             valid = CheckMov(ins, message);
+        }else if(StringsEqual(ins.name, "Movx8".toCharArray())){
+            valid = CheckMovx8(ins, message);
         }else if(StringsEqual(ins.name, "FindSubstring".toCharArray())){
             valid = CheckFindSubstring(ins, message);
         }else if(StringIsInArray(ins.name, noParameters)){
@@ -1273,6 +1291,37 @@ public class Translator2SA {
             }else{
                 success = false;
                 message.string = ("Input parameter to Mov must be the same as the assigned variable: was " + new String(type1) + " and " +  new String(type2)).toCharArray();
+            }
+        }
+
+        return success;
+    }
+
+    private static boolean CheckMovx8(Instruction ins, StringReference message) {
+        char[] type1, type2;
+        boolean success;
+        double i;
+
+        success = true;
+
+        // Determine the type
+        type1 = ins.params[0].var.type;
+
+        ins.hasTypePostfix = true;
+        ins.typePostfix = type1;
+
+        for(i = 1d; i < ins.params.length; i = i + 1d){
+            Param param = ins.params[(int)i];
+
+            if(ParamIsVariable(param)){
+                type2 = param.var.type;
+
+                if(StringsEqual(type1, type2)){
+                    // OK
+                }else{
+                    success = false;
+                    message.string = ("Input parameter to Movx8 must be the same as the assigned variable: was " + new String(type1) + " and " +  new String(type2)).toCharArray();
+                }
             }
         }
 
@@ -1859,7 +1908,7 @@ public class Translator2SA {
                 if (StringsEqual(ins.params[(int) (i + 1)].type, "var".toCharArray())) {
                     memoryPostfix[(int) i] = 'm';
                 } else {
-                    if(StringsEqual(ins.name, "Mov".toCharArray())) {
+                    if(StringsEqual(ins.name, "Mov".toCharArray()) || StringsEqual(ins.name, "Movx8".toCharArray())) {
                         memoryPostfix[(int) i] = 'i';
                     }else{
                         memoryPostfix[(int) i] = 'm';

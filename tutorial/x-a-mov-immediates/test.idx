@@ -1,0 +1,65 @@
+Bgs testS
+	u8 a
+	u16 b
+	u32 c
+	u64 d
+	s8 e
+	s16 f
+	s32 g
+	s64 h          
+	f32 i
+	f64 j
+	u16x8 k
+	u32x8 l
+Ens
+
+Fnc test
+	; u8
+	Mov a, 0xFF
+
+	; u16
+	Mov b, 0xFFFF
+
+	; u32
+	Mov c, 0xFFFFFFFF
+
+	; u64
+	Mov d, 0xFFFFFFFFFFFFFFFF
+	
+	; s8
+	Mov e, -128
+	
+	; s16
+	Mov f, -32768
+	
+	; s32
+	Mov g, -2147483648
+
+	; s64
+	Mov h, -9223372036854775808
+	      
+	; f32
+	Mov i, 3.1415927
+	
+	; f64
+	Mov j, 3.141592653589793
+	
+	; u16x8
+	Movx8 k, 1, 2, 3, 4, 5, 6, 7, 8
+	
+	; u32x8
+	;Movx8 l, 1, 2, 3, 4, 5, 6, 7, 8
+
+Ret
+
+
+
+
+
+
+
+
+
+
+
+

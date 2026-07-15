@@ -6,6 +6,8 @@ import lists.LinkedListCharacters.Structures.LinkedListCharacters;
 import references.references.NumberReference;
 import references.references.StringReference;
 
+import java.math.BigInteger;
+
 import static DataStructures.Array.Arrays.Arrays.*;
 import static DataStructures.Array.Structures.Structures.CreateArrayData;
 import static arrays.arrays.arrays.StringsEqual;
@@ -365,6 +367,7 @@ public class Translator2 {
         // Types
         // Computations
         ArrayAddString(ins, "Mov".toCharArray());
+        ArrayAddString(ins, "Movx8".toCharArray());
         ArrayAddString(ins, "Broadcast".toCharArray());
 
         ArrayAddString(ins, "Add".toCharArray());
@@ -921,11 +924,13 @@ public class Translator2 {
                         }
                     }
 
-                    if(insCount == function.ins.length){
+                    if(success) {
+                        if (insCount == function.ins.length) {
 
-                    }else{
-                        success = false;
-                        message.string = ("Parsed instructions was not the expected count: " + new String(function.name)).toCharArray();
+                        } else {
+                            success = false;
+                            message.string = ("Parsed instructions was not the expected count: for " + new String(function.name) + " excpected " + (int) function.ins.length + " found " + (int) insCount).toCharArray();
+                        }
                     }
 
                 } else {
@@ -1102,7 +1107,7 @@ public class Translator2 {
             // Hex
             if(StartsWith(token, "0x".toCharArray())) {
                 try {
-                    Integer.parseInt(new String(Substring(token, 2, token.length)), 16);
+                    Long.parseUnsignedLong(new String(Substring(token, 2, token.length)), 16);
                     valid = true;
                 }catch (NumberFormatException e){
                     valid = false;
