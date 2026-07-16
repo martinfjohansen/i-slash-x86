@@ -102,6 +102,16 @@
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
+%macro Add.mms16x8 3
+  movdqu xmm0, oword [rdi + %2]
+  movdqu xmm1, oword [rdi + %3]
+  paddw xmm0, xmm1
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+
+
+
 ; Future
 
 %macro Add.miu16 3
@@ -1236,6 +1246,15 @@
   pinsrq xmm0, rax, 1
   movdqu oword [rdi + %1], xmm0
 %endmacro
+
+%macro Movx8.iiiiiiiis16x8 9
+  mov rax, %2 | %3 << 16 | %4 << 32 | %5 << 48
+  movq xmm0, rax
+  mov rax, %6 | %7 << 16 | %8 << 32 | %9 << 48
+  pinsrq xmm0, rax, 1
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
 
 ; Future
 
