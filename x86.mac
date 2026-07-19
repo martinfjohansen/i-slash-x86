@@ -22,6 +22,11 @@
 ; Unused: zmm4-zmm15
 
 ; -----------------------------------------------------------------------------
+
+%assign true 1
+%assign false 0
+
+; -----------------------------------------------------------------------------
 ; Add
 ; x = a + b. x, a, b of the same type.
 
@@ -1100,8 +1105,32 @@
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
+%macro Mov.ib1 2
+  mov al, %2
+  and al, 1
+  mov byte [rdi + %1], al
+%endmacro
 
-; Future
+%macro Mov.ib8 2
+  mov al, %2
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Mov.ib16 2
+  mov ax, %2
+  mov word [rdi + %1], ax
+%endmacro
+
+%macro Mov.ib32 2
+  mov eax, %2
+  mov dword [rdi + %1], eax
+%endmacro
+
+; The first mov-instruction here is actually a special instruction that can only move to rax.
+%macro Mov.ib64 2
+  mov rax, %2
+  mov qword [rdi + %1], rax
+%endmacro
 
 %macro Mov.mb1 2
   mov al, byte [rdi + %2]
@@ -1109,8 +1138,37 @@
   mov byte [rdi + %1], al
 %endmacro
 
-%macro Mov.ib1 2
-  mov al, %2
+%macro Mov.mb8 2
+  mov al, byte [rdi + %2]
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Mov.mb16 2
+  mov ax, word [rdi + %2]
+  mov word [rdi + %1], ax
+%endmacro
+
+%macro Mov.mb32 2
+  mov eax, dword [rdi + %2]
+  mov dword [rdi + %1], eax
+%endmacro
+
+%macro Mov.mb64 2
+  mov rax, qword [rdi + %2]
+  mov qword [rdi + %1], rax
+%endmacro
+
+%macro Mov.mb16x8 2
+  movdqu xmm0, oword [rdi + %2]
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+
+
+; Future
+
+%macro Mov.mb1 2
+  mov al, byte [rdi + %2]
   and al, 1
   mov byte [rdi + %1], al
 %endmacro
@@ -1260,6 +1318,17 @@
   pinsrq xmm0, rax, 1
   movdqu oword [rdi + %1], xmm0
 %endmacro
+
+%macro Movx8.iiiiiiiib16x8 9
+  mov rax, %2 | %3 << 16 | %4 << 32 | %5 << 48
+  movq xmm0, rax
+  mov rax, %6 | %7 << 16 | %8 << 32 | %9 << 48
+  pinsrq xmm0, rax, 1
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+
+
 
 
 ; Future
@@ -1922,12 +1991,49 @@
 ; Not
 ; x = !a. x and a are booleans.
 
+; v0.1
+
 %macro Not.mb1 2
   mov al, byte [rdi + %2]
   not al
   and al, 1
   mov byte [rdi + %1], al 
 %endmacro
+
+%macro Not.mb8 2
+  mov al, byte [rdi + %2]
+  not al
+  mov byte [rdi + %1], al 
+%endmacro
+
+%macro Not.mb16 2
+  mov ax, word [rdi + %2]
+  not ax
+  mov word [rdi + %1], ax
+%endmacro
+
+%macro Not.mb32 2
+  mov eax, dword [rdi + %2]
+  not eax
+  mov dword [rdi + %1], eax
+%endmacro
+
+%macro Not.mb64 2
+  mov rax, qword [rdi + %2]
+  not rax
+  mov qword [rdi + %1], rax
+%endmacro
+
+%macro Not.mb16x8 2
+  movdqu xmm0, oword [rdi + %2]
+  pcmpeqb xmm1, xmm1
+  pxor xmm0, xmm1
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+
+
+; Future
 
 %macro Not.mu8x32 2
   vmovdqu ymm0, yword [rdi + %2]
@@ -1954,6 +2060,8 @@
 ; And
 ; x = a & b. x, a, b are booleans.
 
+; v0.1
+
 %macro And.mmb1 3
   mov al, byte [rdi + %2]
   mov cl, byte [rdi + %3]
@@ -1970,13 +2078,38 @@
   mov byte [rdi + %1], al
 %endmacro
 
-%macro And.mib32 3
+%macro And.mmb16 3
+  mov ax, word [rdi + %2]
+  mov cx, word [rdi + %3]
+  and ax, cx
+  mov word [rdi + %1], ax
+%endmacro
+
+%macro And.mmb32 3
   mov eax, dword [rdi + %2]
   mov ecx, dword [rdi + %3]
   and eax, ecx
   mov dword [rdi + %1], eax
 %endmacro
 
+%macro And.mmb64 3
+  mov rax, qword [rdi + %2]
+  mov rcx, qword [rdi + %3]
+  and rax, rcx
+  mov qword [rdi + %1], rax
+%endmacro
+
+%macro And.mmb16x8 3
+  movdqu xmm0, oword [rdi + %2]
+  movdqu xmm1, oword [rdi + %3]
+  pand xmm0, xmm1
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+
+
+
+; Future
 
 %macro And.mmb8x16 3
   movdqu xmm0, oword [rdi + %2]
@@ -1999,12 +2132,6 @@
   vmovdqu yword [rdi + %1], ymm0
 %endmacro
 
-%macro And.mmb16x8 3
-  movdqu xmm0, oword [rdi + %2]
-  movdqu xmm1, oword [rdi + %3]
-  pand xmm0, xmm1
-  movdqu oword [rdi + %1], xmm0
-%endmacro
 
 %macro And.mmb128 3
   movdqu xmm0, oword [rdi + %2]
@@ -2985,12 +3112,55 @@
 ; Or
 ; x = a | b. x, a, b must be the same bitfield types.
 
+; v0.1
+
+%macro Or.mmb1 3
+  mov al, byte [rdi + %2]
+  mov cl, byte [rdi + %3]
+  or al, cl
+  and al, 1
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Or.mmb8 3
+  mov al, byte [rdi + %2]
+  mov cl, byte [rdi + %3]
+  or al, cl
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Or.mmb16 3
+  mov ax, word [rdi + %2]
+  mov dx, word [rdi + %3]
+  or ax, dx
+  mov word [rdi + %1], ax
+%endmacro
+
 %macro Or.mmb32 3
   mov eax, dword [rdi + %2]
   mov edx, dword [rdi + %3]
   or eax, edx
   mov dword [rdi + %1], eax
 %endmacro
+
+%macro Or.mmb64 3
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  or rax, rdx
+  mov qword [rdi + %1], rax
+%endmacro
+
+%macro Or.mmb16x8 3
+  movdqu xmm0, oword [rdi + %2]
+  movdqu xmm1, oword [rdi + %3]
+  vpor xmm0, xmm0, xmm1
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+
+
+
+; Future
 
 %macro Or.mmb8x32 3
   vmovdqu ymm0, yword [rdi + %2]

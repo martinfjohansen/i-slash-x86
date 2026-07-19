@@ -24,6 +24,9 @@ int main(){
 	print_m128_u16(ts.k);
 	print_m128_s16(ts.l);
 	//print_m256_u16(ts.m);
+	
+	printf("b1: %s\n", ts.n ? "true" : "false");
+	printf("b1: %s\n", ts.o ? "true" : "false");
 
 	return 0;
 }
