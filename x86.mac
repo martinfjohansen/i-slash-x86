@@ -366,12 +366,15 @@
   movsd [rdi + %1], xmm0
 %endmacro
 
-%macro Mul.mmu16x8 3
+%macro Mul.mms16x8 3
   movdqu xmm0, oword [rdi + %2]
   movdqu xmm1, oword [rdi + %3]
   pmullw xmm0, xmm1
   movdqu oword [rdi + %1], xmm0
 %endmacro
+
+; Polyfill:
+; Mul.mmu16x8
 
 
 
@@ -915,7 +918,7 @@
   mov dword [rdi + %1], eax
 %endmacro
 
-%macro Abs.mu32 2
+%macro Abs.mu64 2
   mov rax, qword [rdi + %2]
   mov qword [rdi + %1], rax
 %endmacro
@@ -953,15 +956,16 @@
 %endmacro
 
 %macro Abs.mf32 3
-  movss xmm0, [rdi + %2]
-  absss xmm0, [rdi + %3]
-  movss [rdi + %1], xmm0
+  mov eax, dword [rdi + %2]
+	and eax, 0x7FFFFFFF
+  mov dword [rdi + %1], eax
 %endmacro
 
 %macro Abs.mf64 3
-  movsd xmm0, [rdi + %2]
-  abssd xmm0, [rdi + %3]
-  movsd [rdi + %1], xmm0
+  mov rdx, qword [rdi + %2]
+  mov rax, 0x7FFFFFFFFFFFFFFF
+	and rdx, rax
+  mov qword [rdi + %1], rdx
 %endmacro
 
 %macro Abs.mu16x8 2
@@ -969,6 +973,11 @@
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
+%macro Abs.ms16x8 2
+  movdqu xmm0, oword [rdi + %2]
+  pabsw xmm0, xmm0
+  movdqu oword [rdi + %1], xmm0
+%endmacro
 
 
 ; Future
@@ -976,12 +985,6 @@
 %macro Abs.ms8x16 2
   movdqu xmm0, oword [rdi + %2]
   pabsb xmm0, xmm0
-  movdqu oword [rdi + %1], xmm0
-%endmacro
-
-%macro Abs.ms16x8 2
-  movdqu xmm0, oword [rdi + %2]
-  pabsw xmm0, xmm0
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
@@ -1092,7 +1095,10 @@
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
-
+%macro Mov.ms16x8 2
+  movdqu xmm0, oword [rdi + %2]
+  movdqu oword [rdi + %1], xmm0
+%endmacro
 
 
 ; Future
@@ -1248,9 +1254,9 @@
 %endmacro
 
 %macro Movx8.iiiiiiiis16x8 9
-  mov rax, %2 | %3 << 16 | %4 << 32 | %5 << 48
+  mov rax, (%2 & 0xFFFF) | (%3 & 0xFFFF) << 16 | (%4 & 0xFFFF) << 32 | (%5 & 0xFFFF) << 48
   movq xmm0, rax
-  mov rax, %6 | %7 << 16 | %8 << 32 | %9 << 48
+  mov rax, (%6 & 0xFFFF) | (%7 & 0xFFFF) << 16 | (%8 & 0xFFFF) << 32 | (%9 & 0xFFFF) << 48
   pinsrq xmm0, rax, 1
   movdqu oword [rdi + %1], xmm0
 %endmacro
@@ -1389,17 +1395,19 @@
   sete [rdi + %1]
 %endmacro
 
-; Lt.mmb16x8u16x8 does not exist
-
-
-; Future
-
 %macro Lt.mmb16x8s16x8 3
   movdqu xmm0, oword [rdi + %2]
   movdqu xmm1, oword [rdi + %3]
   pcmpgtw xmm1, xmm0
   movdqu oword [rdi + %1], xmm1
 %endmacro
+
+; Polyfill
+; Lt.mmb16x8u16x8
+
+
+
+; Future
 
 %macro Lt.rrrb1u64 3
   cmp %2, %3
@@ -1419,14 +1427,6 @@
   mov rdx, %3
   cmp rax, rdx
   setb al
-  mov byte [rdi + %1], al
-%endmacro
-
-%macro Lt.mmb1s16 3
-  mov ax, word [rdi + %2]
-  mov dx, word [rdi + %3]
-  cmp ax, dx
-  setl al
   mov byte [rdi + %1], al
 %endmacro
 
@@ -1483,6 +1483,107 @@
 ; Lte
 ; x = a <= b. x is a boolean. a and b are of the same type.
 
+; v0.1
+
+%macro Lte.mmb1u8 3
+  mov al, byte [rdi + %2]
+  mov dl, byte [rdi + %3]
+  cmp al, dl
+  setbe al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Lte.mmb1u16 3
+  mov ax, word [rdi + %2]
+  mov dx, word [rdi + %3]
+  cmp ax, dx
+  setbe al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Lte.mmb1u32 3
+  mov eax, dword [rdi + %2]
+  mov edx, dword [rdi + %3]
+  cmp eax, edx
+  setbe al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Lte.mmb1u64 3
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  cmp rax, rdx
+  setbe al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Lte.mmb1s8 3
+  mov al, byte [rdi + %2]
+  mov dl, byte [rdi + %3]
+  cmp al, dl
+  setle al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Lte.mmb1s16 3
+  mov ax, word [rdi + %2]
+  mov dx, word [rdi + %3]
+  cmp ax, dx
+  setle al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Lte.mmb1s32 3
+  mov eax, dword [rdi + %2]
+  mov edx, dword [rdi + %3]
+  cmp eax, edx
+  setle al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Lte.mmb1s64 3
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  cmp rax, rdx
+  setle al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Lte.mmb1f32 3
+  movss xmm0, [rdi + %2]
+  movss xmm1, [rdi + %3]
+  cmpless xmm0, xmm1
+  movq rax, xmm0
+  cmp al, 255
+  sete [rdi + %1]
+%endmacro
+
+%macro Lte.mmb1f64 3
+  movsd xmm0, [rdi + %2]
+  movsd xmm1, [rdi + %3]
+  cmplesd xmm0, xmm1
+  movq rax, xmm0
+  cmp al, 255
+  sete [rdi + %1]
+%endmacro
+
+%macro Lte.mmb16x8s16x8 3
+  movdqu xmm0, oword [rdi + %2]
+  movdqu xmm1, oword [rdi + %3]
+  movdqu xmm2, xmm1
+  pcmpgtw xmm1, xmm0
+  pcmpeqw xmm2, xmm0
+  por xmm1, xmm2
+  movdqu oword [rdi + %1], xmm1
+%endmacro
+
+; Polyfill
+; Lte.mmb16x8u16x8
+
+
+
+; Future
+
 %macro Lte.mmu8x32 3
   vmovdqu ymm0, yword [rdi + %2]
   vmovdqu ymm1, yword [rdi + %3]
@@ -1521,6 +1622,105 @@
 ; -----------------------------------------------------------------------------
 ; Gt
 ; x = a > b. x is a boolean. a and b are of the same type.
+
+; v0.1
+
+%macro Gt.mmb1u8 3
+  mov al, byte [rdi + %2]
+  mov dl, byte [rdi + %3]
+  cmp al, dl
+  seta al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Gt.mmb1u16 3
+  mov ax, word [rdi + %2]
+  mov dx, word [rdi + %3]
+  cmp ax, dx
+  seta al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Gt.mmb1u32 3
+  mov eax, dword [rdi + %2]
+  mov edx, dword [rdi + %3]
+  cmp eax, edx
+  seta al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Gt.mmb1u64 3
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  cmp rax, rdx
+  seta al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Gt.mmb1s8 3
+  mov al, byte [rdi + %2]
+  mov dl, byte [rdi + %3]
+  cmp al, dl
+  setg al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Gt.mmb1s16 3
+  mov ax, word [rdi + %2]
+  mov dx, word [rdi + %3]
+  cmp ax, dx
+  setg al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Gt.mmb1s32 3
+  mov eax, dword [rdi + %2]
+  mov edx, dword [rdi + %3]
+  cmp eax, edx
+  setg al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Gt.mmb1s64 3
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  cmp rax, rdx
+  setg al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Gt.mmb1f32 3
+  movss xmm0, [rdi + %2]
+  movss xmm1, [rdi + %3]
+  cmpgtss xmm0, xmm1
+  movq rax, xmm0
+  cmp al, 255
+  sete [rdi + %1]
+%endmacro
+
+%macro Gt.mmb1f64 3
+  movsd xmm0, [rdi + %2]
+  movsd xmm1, [rdi + %3]
+  cmpgtsd xmm0, xmm1
+  movq rax, xmm0
+  cmp al, 255
+  sete [rdi + %1]
+%endmacro
+
+%macro Gt.mmb16x8s16x8 3
+  movdqu xmm0, oword [rdi + %2]
+  movdqu xmm1, oword [rdi + %3]
+  pcmpgtw xmm0, xmm1
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+; Polyfill
+; Gt.mmb16x8u16x8
+
+
+
+
+; Future
 
 %macro Gt.mib1u8x32 3
   vmovdqu ymm0, yword [rdi + %2]
@@ -1573,6 +1773,107 @@
 ; -----------------------------------------------------------------------------
 ; Gte
 ; x = a >= b. x is a boolean. a and b are of the same type.
+
+; v0.1
+
+%macro Gte.mmb1u8 3
+  mov al, byte [rdi + %2]
+  mov dl, byte [rdi + %3]
+  cmp al, dl
+  setae al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Gte.mmb1u16 3
+  mov ax, word [rdi + %2]
+  mov dx, word [rdi + %3]
+  cmp ax, dx
+  setae al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Gte.mmb1u32 3
+  mov eax, dword [rdi + %2]
+  mov edx, dword [rdi + %3]
+  cmp eax, edx
+  setae al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Gte.mmb1u64 3
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  cmp rax, rdx
+  setae al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Gte.mmb1s8 3
+  mov al, byte [rdi + %2]
+  mov dl, byte [rdi + %3]
+  cmp al, dl
+  setge al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Gte.mmb1s16 3
+  mov ax, word [rdi + %2]
+  mov dx, word [rdi + %3]
+  cmp ax, dx
+  setge al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Gte.mmb1s32 3
+  mov eax, dword [rdi + %2]
+  mov edx, dword [rdi + %3]
+  cmp eax, edx
+  setge al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Gte.mmb1s64 3
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  cmp rax, rdx
+  setge al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Gte.mmb1f32 3
+  movss xmm0, [rdi + %2]
+  movss xmm1, [rdi + %3]
+  cmpgess xmm0, xmm1
+  movq rax, xmm0
+  cmp al, 255
+  sete [rdi + %1]
+%endmacro
+
+%macro Gte.mmb1f64 3
+  movsd xmm0, [rdi + %2]
+  movsd xmm1, [rdi + %3]
+  cmpgesd xmm0, xmm1
+  movq rax, xmm0
+  cmp al, 255
+  sete [rdi + %1]
+%endmacro
+
+%macro Gte.mmb16x8s16x8 3
+  movdqu xmm0, oword [rdi + %2]
+  movdqu xmm2, xmm0
+  movdqu xmm1, oword [rdi + %3]
+  pcmpgtw xmm0, xmm1
+  pcmpeqw xmm2, xmm1
+  por xmm0, xmm2
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+; Polyfill
+; Gte.mmb16x8u16x8
+
+
+
+; Future
 
 %macro Gte.mmu8x32 3
   vmovdqu ymm0, yword [rdi + %2]
@@ -1956,6 +2257,109 @@
 ; Eq -- Equal
 ; x = a = b. x is a boolean. a and b are the same types.
 
+; v0.1
+
+%macro Eq.mmb1u8 3
+  mov al, byte [rdi + %2]
+  mov dl, byte [rdi + %3]
+  cmp al, dl
+  sete al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Eq.mmb1u16 3
+  mov ax, word [rdi + %2]
+  mov dx, word [rdi + %3]
+  cmp ax, dx
+  sete al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Eq.mmb1u32 3
+  mov eax, dword [rdi + %2]
+  mov edx, dword [rdi + %3]
+  cmp eax, edx
+  sete al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Eq.mmb1u64 3
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  cmp rax, rdx
+  setae al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Eq.mmb1s8 3
+  mov al, byte [rdi + %2]
+  mov dl, byte [rdi + %3]
+  cmp al, dl
+  sete al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Eq.mmb1s16 3
+  mov ax, word [rdi + %2]
+  mov dx, word [rdi + %3]
+  cmp ax, dx
+  sete al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Eq.mmb1s32 3
+  mov eax, dword [rdi + %2]
+  mov edx, dword [rdi + %3]
+  cmp eax, edx
+  sete al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Eq.mmb1s64 3
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  cmp rax, rdx
+  sete al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Eq.mmb1f32 3
+  movss xmm0, [rdi + %2]
+  movss xmm1, [rdi + %3]
+  cmpeqss xmm0, xmm1
+  movq rax, xmm0
+  cmp al, 255
+  sete [rdi + %1]
+%endmacro
+
+%macro Eq.mmb1f64 3
+  movsd xmm0, [rdi + %2]
+  movsd xmm1, [rdi + %3]
+  cmpeqsd xmm0, xmm1
+  movq rax, xmm0
+  cmp al, 255
+  sete [rdi + %1]
+%endmacro
+
+%macro Eq.mmb16x8u16x8 3
+  movdqu xmm0, oword [rdi + %2]
+  movdqu xmm1, oword [rdi + %3]
+  pcmpeqw xmm0, xmm1
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+%macro Eq.mmb16x8s16x8 3
+  movdqu xmm0, oword [rdi + %2]
+  movdqu xmm1, oword [rdi + %3]
+  pcmpeqw xmm0, xmm1
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+
+
+
+; Future
+
 %macro Eq.mmu8 3
   mov al, byte [rdi + %2]
   mov dl, byte [rdi + %3]
@@ -2129,6 +2533,113 @@
 ; Neq -- Not equal
 ; x = a != b. x is a boolean. a and b are the same types.
 
+; v0.1
+
+%macro Neq.mmb1u8 3
+  mov al, byte [rdi + %2]
+  mov dl, byte [rdi + %3]
+  cmp al, dl
+  setne al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Neq.mmb1u16 3
+  mov ax, word [rdi + %2]
+  mov dx, word [rdi + %3]
+  cmp ax, dx
+  setne al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Neq.mmb1u32 3
+  mov eax, dword [rdi + %2]
+  mov edx, dword [rdi + %3]
+  cmp eax, edx
+  setne al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Neq.mmb1u64 3
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  cmp rax, rdx
+  setne al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Neq.mmb1s8 3
+  mov al, byte [rdi + %2]
+  mov dl, byte [rdi + %3]
+  cmp al, dl
+  setne al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Neq.mmb1s16 3
+  mov ax, word [rdi + %2]
+  mov dx, word [rdi + %3]
+  cmp ax, dx
+  setne al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Neq.mmb1s32 3
+  mov eax, dword [rdi + %2]
+  mov edx, dword [rdi + %3]
+  cmp eax, edx
+  setne al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Neq.mmb1s64 3
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  cmp rax, rdx
+  setne al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Neq.mmb1f32 3
+  movss xmm0, [rdi + %2]
+  movss xmm1, [rdi + %3]
+  cmpness xmm0, xmm1
+  movq rax, xmm0
+  cmp al, 255
+  sete [rdi + %1]
+%endmacro
+
+%macro Neq.mmb1f64 3
+  movsd xmm0, [rdi + %2]
+  movsd xmm1, [rdi + %3]
+  cmpnesd xmm0, xmm1
+  movq rax, xmm0
+  cmp al, 255
+  sete [rdi + %1]
+%endmacro
+
+%macro Neq.mmb16x8u16x8 3
+  movdqu xmm0, oword [rdi + %2]
+  movdqu xmm1, oword [rdi + %3]
+  pcmpeqw xmm0, xmm1
+  pcmpeqd xmm2, xmm2 ; This is a
+  pxor xmm0, xmm2    ; not instruction
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+%macro Neq.mmb16x8s16x8 3
+  movdqu xmm0, oword [rdi + %2]
+  movdqu xmm1, oword [rdi + %3]
+  pcmpeqw xmm0, xmm1
+  pcmpeqd xmm2, xmm2 ; This is a
+  pxor xmm0, xmm2    ; not instruction
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+
+
+
+; Future
+
 %macro Neq.mmu16 3
   mov ax, word [rdi + %2]
   mov dx, word [rdi + %3]
@@ -2256,13 +2767,62 @@
 ; Inc -- Increment by 1
 ; x++. x must be a number type.
 
+; v0.1
+
+%macro Inc.mu8 1
+  inc byte [rdi + %1]
+%endmacro
+
+%macro Inc.mu16 1
+  inc word [rdi + %1]
+%endmacro
+
+%macro Inc.mu32 1
+  inc dword [rdi + %1]
+%endmacro
+
 %macro Inc.mu64 1
   inc qword [rdi + %1]
+%endmacro
+
+%macro Inc.ms8 1
+  inc byte [rdi + %1]
+%endmacro
+
+%macro Inc.ms16 1
+  inc word [rdi + %1]
+%endmacro
+
+%macro Inc.ms32 1
+  inc dword [rdi + %1]
 %endmacro
 
 %macro Inc.ms64 1
   inc qword [rdi + %1]
 %endmacro
+
+%macro Inc.mf32 1
+  movss xmm0, dword [rdi + %1]
+  mov eax, 1
+  cvtsi2ss xmm1, eax
+  addss xmm0, xmm1
+  movss dword [rdi + %1], xmm0
+%endmacro
+
+%macro Inc.mf64 1
+  movsd xmm0, qword [rdi + %1]
+  mov eax, 1
+  cvtsi2sd xmm1, eax
+  addsd xmm0, xmm1
+  movsd qword [rdi + %1], xmm0
+%endmacro
+
+; Polyfill
+; Inc.mu16x8
+; Inc.ms16x8
+
+
+; Future
 
 %macro Inc.ru64 1
   inc %1
@@ -2272,13 +2832,66 @@
 ; Dec - Decrement by 1
 ; x--. x must be a number type.
 
+; v0.1
+
+%macro Dec.mu8 1
+  dec byte [rdi + %1]
+%endmacro
+
+%macro Dec.mu16 1
+  dec word [rdi + %1]
+%endmacro
+
+%macro Dec.mu32 1
+  dec dword [rdi + %1]
+%endmacro
+
 %macro Dec.mu64 1
   dec qword [rdi + %1]
+%endmacro
+
+%macro Dec.ms8 1
+  dec byte [rdi + %1]
+%endmacro
+
+%macro Dec.ms16 1
+  dec word [rdi + %1]
+%endmacro
+
+%macro Dec.ms32 1
+  dec dword [rdi + %1]
 %endmacro
 
 %macro Dec.ms64 1
   dec qword [rdi + %1]
 %endmacro
+
+%macro Dec.mf32 1
+  movss xmm0, dword [rdi + %1]
+  mov eax, 1
+  cvtsi2ss xmm1, eax
+  subss xmm0, xmm1
+  movss dword [rdi + %1], xmm0
+%endmacro
+
+%macro Dec.mf64 1
+  movsd xmm0, qword [rdi + %1]
+  mov eax, 1
+  cvtsi2sd xmm1, eax
+  subsd xmm0, xmm1
+  movsd qword [rdi + %1], xmm0
+%endmacro
+
+; Polyfill
+; Dec.mu16x8
+; Dec.ms16x8
+
+
+; Future
+
+
+
+
 
 %macro Dec.ru64 1
   dec %1
@@ -3727,6 +4340,105 @@ extern free
 ; Min -- Minimum of two numbers
 ; x = Min(a, b). a, b, x are the same number types.
 
+; v0.1
+
+%macro Min.mmb1u8 2
+  mov al, byte [rdi + %2]
+  mov dl, byte [rdi + %3]
+  cmp al, dl
+  cmova ax, dx
+  mov byte [rdi + %2], al
+%endmacro
+
+%macro Min.mmb1u16 2
+  mov ax, word [rdi + %2]
+  mov dx, word [rdi + %3]
+  cmp ax, dx
+  cmova ax, dx
+  mov word [rdi + %2], ax
+%endmacro
+
+%macro Min.mmb1u32 2
+  mov eax, dword [rdi + %2]
+  mov edx, dword [rdi + %3]
+  cmp eax, edx
+  cmova eax, edx
+  mov dword [rdi + %2], eax
+%endmacro
+
+%macro Min.mmb1u64 2
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  cmp rax, rdx
+  cmova rax, rdx
+  mov qword [rdi + %2], rax
+%endmacro
+
+%macro Min.mmb1s8 2
+  mov al, byte [rdi + %2]
+  mov dl, byte [rdi + %3]
+  cmp al, dl
+  cmova ax, dx
+  mov byte [rdi + %2], al
+%endmacro
+
+%macro Min.mmb1s16 2
+  mov ax, word [rdi + %2]
+  mov dx, word [rdi + %3]
+  cmp ax, dx
+  cmova ax, dx
+  mov word [rdi + %2], ax
+%endmacro
+
+%macro Min.mmb1s32 2
+  mov eax, dword [rdi + %2]
+  mov edx, dword [rdi + %3]
+  cmp eax, edx
+  cmova eax, edx
+  mov dword [rdi + %2], eax
+%endmacro
+
+%macro Min.mmb1s64 2
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  cmp rax, rdx
+  cmova rax, rdx
+  mov qword [rdi + %2], rax
+%endmacro
+
+%macro Min.mmf32 3
+  movd xmm0, dword [rdi + %2]
+  movd xmm1, dword [rdi + %3]
+  minss xmm0, xmm1
+  movd dword [rdi + %1], xmm0
+%endmacro
+
+%macro Min.mmf64 3
+  movq xmm0, qword [rdi + %2]
+  movq xmm1, qword [rdi + %3]
+  minsd xmm0, xmm1
+  movq qword [rdi + %1], xmm0
+%endmacro
+
+%macro Min.mmb16x8u16x8 3
+  movdqu xmm0, oword [rdi + %2]
+  movdqu xmm1, oword [rdi + %3]
+  pminuw xmm0, xmm1
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+%macro Min.mmb16x8s16x8 3
+  movdqu xmm0, oword [rdi + %2]
+  movdqu xmm1, oword [rdi + %3]
+  pminsw xmm0, xmm1
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+
+
+
+; Future
+
 %macro Min.mmu8x16 3
   movdqu xmm0, oword [rdi + %2]
   movdqu xmm1, oword [rdi + %3]
@@ -3738,6 +4450,105 @@ extern free
 ; Max -- Maximum of two numbers
 ; x = Max(a, b). a, b, x are the same number types.
 
+; v0.1
+
+%macro Max.mmb1u8 2
+  mov al, byte [rdi + %2]
+  mov dl, byte [rdi + %3]
+  cmp al, dl
+  cmovb ax, dx
+  mov byte [rdi + %2], al
+%endmacro
+
+%macro Max.mmb1u16 2
+  mov ax, word [rdi + %2]
+  mov dx, word [rdi + %3]
+  cmp ax, dx
+  cmovb ax, dx
+  mov word [rdi + %2], ax
+%endmacro
+
+%macro Max.mmb1u32 2
+  mov eax, dword [rdi + %2]
+  mov edx, dword [rdi + %3]
+  cmp eax, edx
+  cmovb eax, edx
+  mov dword [rdi + %2], eax
+%endmacro
+
+%macro Max.mmb1u64 2
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  cmp rax, rdx
+  cmovb rax, rdx
+  mov qword [rdi + %2], rax
+%endmacro
+
+%macro Max.mmb1s8 2
+  mov al, byte [rdi + %2]
+  mov dl, byte [rdi + %3]
+  cmp al, dl
+  cmovb ax, dx
+  mov byte [rdi + %2], al
+%endmacro
+
+%macro Max.mmb1s16 2
+  mov ax, word [rdi + %2]
+  mov dx, word [rdi + %3]
+  cmp ax, dx
+  cmovb ax, dx
+  mov word [rdi + %2], ax
+%endmacro
+
+%macro Max.mmb1s32 2
+  mov eax, dword [rdi + %2]
+  mov edx, dword [rdi + %3]
+  cmp eax, edx
+  cmovb eax, edx
+  mov dword [rdi + %2], eax
+%endmacro
+
+%macro Max.mmb1s64 2
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  cmp rax, rdx
+  cmovb rax, rdx
+  mov qword [rdi + %2], rax
+%endmacro
+
+%macro Max.mmf32 3
+  movd xmm0, dword [rdi + %2]
+  movd xmm1, dword [rdi + %3]
+  maxss xmm0, xmm1
+  movd dword [rdi + %1], xmm0
+%endmacro
+
+%macro Max.mmf64 3
+  movq xmm0, qword [rdi + %2]
+  movq xmm1, qword [rdi + %3]
+  maxsd xmm0, xmm1
+  movq qword [rdi + %1], xmm0
+%endmacro
+
+%macro Max.mmb16x8u16x8 3
+  movdqu xmm0, oword [rdi + %2]
+  movdqu xmm1, oword [rdi + %3]
+  pmaxuw xmm0, xmm1
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+%macro Max.mmb16x8s16x8 3
+  movdqu xmm0, oword [rdi + %2]
+  movdqu xmm1, oword [rdi + %3]
+  pmaxsw xmm0, xmm1
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+
+
+
+; Future
+
 %macro Max.mmu8x16 3
   movdqu xmm0, oword [rdi + %2]
   movdqu xmm1, oword [rdi + %3]
@@ -3748,6 +4559,26 @@ extern free
 ; -----------------------------------------------------------------------------
 ; Sqrt -- Square root
 ; x = Sqrt(a). a, x are the same number types.
+
+; v0.1
+
+%macro Sqrt.mf32 2
+  movd xmm0, dword [rdi + %2]
+  sqrtss xmm0, xmm0
+  movd dword [rdi + %1], xmm0
+%endmacro
+
+%macro Sqrt.mf64 2
+  movq xmm0, qword [rdi + %2]
+  sqrtsd xmm0, xmm0
+  movq qword [rdi + %1], xmm0
+%endmacro
+
+
+
+
+; Future
+
 
 %macro Sqrt.mf32x4 2
   movdqu xmm0, oword [rdi + %2]

@@ -10,7 +10,8 @@ Bgs testS
 	f32 i
 	f64 j
 	u16x8 k
-	u32x8 l
+	s16x8 l
+	u32x8 m
 Ens
 
 Fnc test
@@ -47,8 +48,11 @@ Fnc test
 	; u16x8
 	Movx8 k, 1, 2, 3, 4, 5, 6, 7, 8
 	
+	; s16x8
+	Movx8 l, -1, -2, 3, 4, 5, -6, 7, -8
+	
 	; u32x8
-	;Movx8 l, 1, 2, 3, 4, 5, 6, 7, 8
+	;Movx8 m, 1, 2, 3, 4, 5, 6, 7, 8
 
 Ret
 
