@@ -992,7 +992,7 @@ public class Translator2SA {
         if(ParamIsVariable(ins.params[2])){
             ntype = ins.params[2].var.type;
         }else{
-            ntype = "u64".toCharArray();
+            ntype = "u8".toCharArray();
         }
 
         char[] btype = ins.params[0].var.type;

@@ -2414,7 +2414,7 @@
   mov rax, qword [rdi + %2]
   mov rdx, qword [rdi + %3]
   cmp rax, rdx
-  setae al
+  sete al
   mov byte [rdi + %1], al
 %endmacro
 
@@ -2481,6 +2481,50 @@
   pcmpeqw xmm0, xmm1
   movdqu oword [rdi + %1], xmm0
 %endmacro
+
+%macro Eq.mmb1b1 3
+  mov al, byte [rdi + %2]
+  and al, 1
+  mov dl, byte [rdi + %3]
+  and dl, 1
+  cmp al, dl
+  sete al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Eq.mmb1b8 3
+  mov al, byte [rdi + %2]
+  mov dl, byte [rdi + %3]
+  cmp al, dl
+  sete al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Eq.mmb1b16 3
+  mov ax, word [rdi + %2]
+  mov dx, word [rdi + %3]
+  cmp ax, dx
+  sete al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Eq.mmb1b32 3
+  mov eax, dword [rdi + %2]
+  mov edx, dword [rdi + %3]
+  cmp eax, edx
+  sete al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Eq.mmb1b64 3
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  cmp rax, rdx
+  sete al
+  mov byte [rdi + %1], al
+%endmacro
+
+
 
 
 
@@ -3028,11 +3072,47 @@
 ; Shl -- Shift left
 ; x = a << b. x and a must be bit fields. b must be a number type
 
-%macro Shl.mib32u64 3
+; v0.1
+
+%macro Shl.mmb8u8 3
+  mov al, byte [rdi + %2]
+  mov cl, byte [rdi + %3]
+  shl eax, cl
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Shl.mmb16u8 3
+  mov ax, word [rdi + %2]
+  mov cl, byte [rdi + %3]
+  shl ax, cl
+  mov word [rdi + %1], ax
+%endmacro
+
+%macro Shl.mmb32u8 3
   mov eax, dword [rdi + %2]
-  shl eax, %3
+  mov cl, byte [rdi + %3]
+  shl eax, cl
   mov dword [rdi + %1], eax
 %endmacro
+
+%macro Shl.mmb64u8 3
+  mov rax, qword [rdi + %2]
+  mov cl, byte [rdi + %3]
+  shl rax, cl
+  mov qword [rdi + %1], rax
+%endmacro
+
+%macro Shl.mmu16x8u16x8 3
+  movdqu xmm0, oword [rdi + %2]
+  movdqu xmm1, oword [rdi + %3]
+  vpsllvw xmm0, xmm0, xmm1
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+
+
+
+; Future
 
 %macro Shl.miu32u64 3
   mov eax, dword [rdi + %2]
@@ -3065,6 +3145,48 @@
 ; -----------------------------------------------------------------------------
 ; Shr - Shift right
 ; x = a >> b. x and a must be bit fields. b must be a number type
+
+; v0.1
+
+%macro Shr.mmb8u8 3
+  mov al, byte [rdi + %2]
+  mov cl, byte [rdi + %3]
+  shr eax, cl
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Shr.mmb16u8 3
+  mov ax, word [rdi + %2]
+  mov cl, byte [rdi + %3]
+  shr ax, cl
+  mov word [rdi + %1], ax
+%endmacro
+
+%macro Shr.mmb32u8 3
+  mov eax, dword [rdi + %2]
+  mov cl, byte [rdi + %3]
+  shr eax, cl
+  mov dword [rdi + %1], eax
+%endmacro
+
+%macro Shr.mmb64u8 3
+  mov rax, qword [rdi + %2]
+  mov cl, byte [rdi + %3]
+  shr rax, cl
+  mov qword [rdi + %1], rax
+%endmacro
+
+%macro Shr.mmu16x8u16x8 3
+  movdqu xmm0, oword [rdi + %2]
+  movdqu xmm1, oword [rdi + %3]
+  vpsrlvw xmm0, xmm0, xmm1
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+
+
+
+; Future
 
 %macro Shr.miu32 3
   mov eax, dword [rdi + %2]
