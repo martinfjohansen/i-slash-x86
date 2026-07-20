@@ -2183,6 +2183,8 @@
 ; If
 ; If a. a is a boolean.
 
+; v0.1
+
 %macro If.mb1 2
   mov al, 0
   mov cl, byte [rdi + %1]
@@ -2190,6 +2192,17 @@
   cmp al, cl
   je %2
 %endmacro
+
+%macro If.mb8 2
+  mov al, 0xFF
+  mov cl, byte [rdi + %1]
+  cmp al, cl
+  jne %2
+%endmacro
+
+
+
+; Future
 
 %macro If.rb1 2
   mov al, 0
@@ -2227,6 +2240,8 @@
 ; Idr
 ; x = a[b]. b must be a number. a must be an array. x must be of the same type as the array's elements.
 
+; v0.1
+
 %macro Idr.mmu8a 3
   mov rax, qword [rdi + %2]
   mov rdx, qword [rdi + %3]
@@ -2255,6 +2270,105 @@
   mov qword [rdi + %1], rax
 %endmacro
 
+%macro Idr.mms8a 3
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  mov al, byte [rax + rdx * 1]
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Idr.mms16a 3
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  mov ax, word [rax + rdx * 2]
+  mov word [rdi + %1], ax
+%endmacro
+
+%macro Idr.mms32a 3
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  mov eax, dword [rax + rdx * 4]
+  mov dword [rdi + %1], eax
+%endmacro
+
+%macro Idr.mms64a 3
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  mov rax, qword [rax + rdx * 8]
+  mov qword [rdi + %1], rax
+%endmacro
+
+%macro Idr.mmb8a 3
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  mov al, byte [rax + rdx * 1]
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Idr.mmb16a 3
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  mov ax, word [rax + rdx * 2]
+  mov word [rdi + %1], ax
+%endmacro
+
+%macro Idr.mmb32a 3
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  mov eax, dword [rax + rdx * 4]
+  mov dword [rdi + %1], eax
+%endmacro
+
+%macro Idr.mmb64a 3
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  mov rax, qword [rax + rdx * 8]
+  mov qword [rdi + %1], rax
+%endmacro
+
+%macro Idr.mmf32a 3
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  mov eax, dword [rax + rdx * 4]
+  mov dword [rdi + %1], eax
+%endmacro
+
+%macro Idr.mmf64a 3
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  mov rax, qword [rax + rdx * 8]
+  mov qword [rdi + %1], rax
+%endmacro
+
+%macro Idr.mmu16x8a 3
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  shl rdx, 4
+  movdqu xmm0, oword [rax + rdx]
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+%macro Idr.mms16x8a 3
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  shl rdx, 4
+  movdqu xmm0, oword [rax + rdx]
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+%macro Idr.mmb16x8a 3
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  shl rdx, 4
+  movdqu xmm0, oword [rax + rdx]
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+
+
+
+; Future
+
 %macro Idr.rrru64a 3
   mov %1, qword [%2 + %3 * 8]
 %endmacro
@@ -2265,14 +2379,6 @@
   shl rdx, 5
   vmovdqu ymm0, yword [rax + rdx]
   vmovdqu yword [rdi + %1], ymm0
-%endmacro
-
-%macro Idr.mmu16x8a 3
-  mov rax, qword [rdi + %2]
-  mov rdx, qword [rdi + %3]
-  shl rdx, 4
-  movdqu xmm0, oword [rax + rdx]
-  movdqu oword [rdi + %1], xmm0
 %endmacro
 
 %macro Idr.mmu16x16a 3
@@ -2316,13 +2422,6 @@
   mov rdx, %3
   mov al, byte [rax + rdx * 1]
   mov byte [rdi + %1], al
-%endmacro
-
-%macro Idr.mif64a 3
-  mov rax, qword [rdi + %2]
-  mov rdx, %3
-  mov rax, qword [rax + rdx * 8]
-  mov qword [rdi + %1], rax
 %endmacro
 
 %macro Idr.mista 3
@@ -2524,7 +2623,12 @@
   mov byte [rdi + %1], al
 %endmacro
 
-
+%macro Eq.mmb16x8b16x8 3
+  movdqu xmm0, oword [rdi + %2]
+  movdqu xmm1, oword [rdi + %3]
+  pcmpeqw xmm0, xmm1
+  movdqu oword [rdi + %1], xmm0
+%endmacro
 
 
 
@@ -2804,6 +2908,38 @@
   pcmpeqd xmm2, xmm2 ; This is a
   pxor xmm0, xmm2    ; not instruction
   movdqu oword [rdi + %1], xmm0
+%endmacro
+
+%macro Neq.mmb1b8 3
+  mov al, byte [rdi + %2]
+  mov dl, byte [rdi + %3]
+  cmp al, dl
+  setne al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Neq.mmb1b16 3
+  mov ax, word [rdi + %2]
+  mov dx, word [rdi + %3]
+  cmp ax, dx
+  setne al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Neq.mmb1b32 3
+  mov eax, dword [rdi + %2]
+  mov edx, dword [rdi + %3]
+  cmp eax, edx
+  setne al
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Neq.mmb1b64 3
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  cmp rax, rdx
+  setne al
+  mov byte [rdi + %1], al
 %endmacro
 
 
@@ -3316,12 +3452,50 @@
 ; Xor
 ; x = a ^ b. x, a, b must be the same bitfield types.
 
+; v0.1
+
+%macro Xor.mmb8 3
+  mov al, byte [rdi + %2]
+  mov dl, byte [rdi + %3]
+  xor al, dl
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Xor.mmb16 3
+  mov ax, word [rdi + %2]
+  mov dx, word [rdi + %3]
+  xor ax, dx
+  mov word [rdi + %1], ax
+%endmacro
+
 %macro Xor.mmb32 3
   mov eax, dword [rdi + %2]
   mov edx, dword [rdi + %3]
   xor eax, edx
   mov dword [rdi + %1], eax
 %endmacro
+
+%macro Xor.mmb64 3
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  xor rax, rdx
+  mov qword [rdi + %1], rax
+%endmacro
+
+%macro Xor.mmb16x8 3
+  movdqu xmm0, oword [rdi + %2]
+  movdqu xmm1, oword [rdi + %3]
+  pxor xmm0, xmm1
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+
+
+
+
+
+
+; Future
 
 %macro Xor.mmb8x32 3
   vmovdqu ymm0, yword [rdi + %2]
