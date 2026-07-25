@@ -2366,6 +2366,108 @@
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
+%macro Idr.miu8a 3
+  mov rax, qword [rdi + %2]
+  mov al, byte [rax + %3 * 1]
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Idr.miu16a 3
+  mov rax, qword [rdi + %2]
+  mov ax, word [rax + %3 * 2]
+  mov word [rdi + %1], ax
+%endmacro
+
+%macro Idr.miu32a 3
+  mov rax, qword [rdi + %2]
+  mov eax, dword [rax + %3 * 4]
+  mov dword [rdi + %1], eax
+%endmacro
+
+%macro Idr.miu64a 3
+  mov rax, qword [rdi + %2]
+  mov rax, qword [rax + %3 * 8]
+  mov qword [rdi + %1], rax
+%endmacro
+
+%macro Idr.mis8a 3
+  mov rax, qword [rdi + %2]
+  mov al, byte [rax + %3 * 1]
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Idr.mis16a 3
+  mov rax, qword [rdi + %2]
+  mov ax, word [rax + %3 * 2]
+  mov word [rdi + %1], ax
+%endmacro
+
+%macro Idr.mis32a 3
+  mov rax, qword [rdi + %2]
+  mov eax, dword [rax + %3 * 4]
+  mov dword [rdi + %1], eax
+%endmacro
+
+%macro Idr.mis64a 3
+  mov rax, qword [rdi + %2]
+  mov rax, qword [rax + %3 * 8]
+  mov qword [rdi + %1], rax
+%endmacro
+
+%macro Idr.mib8a 3
+  mov rax, qword [rdi + %2]
+  mov al, byte [rax + %3 * 1]
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Idr.mib16a 3
+  mov rax, qword [rdi + %2]
+  mov ax, word [rax + %3 * 2]
+  mov word [rdi + %1], ax
+%endmacro
+
+%macro Idr.mib32a 3
+  mov rax, qword [rdi + %2]
+  mov eax, dword [rax + %3 * 4]
+  mov dword [rdi + %1], eax
+%endmacro
+
+%macro Idr.mib64a 3
+  mov rax, qword [rdi + %2]
+  mov rax, qword [rax + %3 * 8]
+  mov qword [rdi + %1], rax
+%endmacro
+
+%macro Idr.mif32a 3
+  mov rax, qword [rdi + %2]
+  mov eax, dword [rax + %3 * 4]
+  mov dword [rdi + %1], eax
+%endmacro
+
+%macro Idr.mif64a 3
+  mov rax, qword [rdi + %2]
+  mov rax, qword [rax + %3 * 8]
+  mov qword [rdi + %1], rax
+%endmacro
+
+%macro Idr.miu16x8a 3
+  mov rax, qword [rdi + %2]
+  movdqu xmm0, oword [rax + %3 * 16]
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+%macro Idr.mis16x8a 3
+  mov rax, qword [rdi + %2]
+  movdqu xmm0, oword [rax + %3 * 16]
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+%macro Idr.mib16x8a 3
+  mov rax, qword [rdi + %2]
+  movdqu xmm0, oword [rax + %3 * 16]
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
 %macro Idr.miu16x8 3
   movdqu xmm0, oword [rdi + %2]
   vpextrw rax, xmm0, %3
@@ -2484,7 +2586,7 @@
 
 ; v0.1
 
-%macro Idro.miu16x8a 4
+%macro Idro.mmiu16x8a 4
   mov rax, qword [rdi + %2]
   mov rdx, qword [rdi + %3]
   shl rdx, 4
@@ -3630,7 +3732,7 @@ extern free
 %macro Idw.mmu16a 3
   mov rcx, qword [rdi + %2]
   mov rax, [rdi + %1]
-  lea rax, [rax + rcx * 1]
+  lea rax, [rax + rcx * 2]
   mov cx, word [rdi + %3]
   mov word [rax], cx
 %endmacro
@@ -3638,7 +3740,7 @@ extern free
 %macro Idw.mmu32a 3
   mov rcx, qword [rdi + %2]
   mov rax, [rdi + %1]
-  lea rax, [rax + rcx * 1]
+  lea rax, [rax + rcx * 4]
   mov ecx, dword [rdi + %3]
   mov dword [rax], ecx
 %endmacro
@@ -3646,7 +3748,87 @@ extern free
 %macro Idw.mmu64a 3
   mov rcx, qword [rdi + %2]
   mov rax, [rdi + %1]
+  lea rax, [rax + rcx * 8]
+  mov rcx, qword [rdi + %3]
+  mov qword [rax], rcx
+%endmacro
+
+%macro Idw.mms8a 3
+  mov rcx, qword [rdi + %2]
+  mov rax, [rdi + %1]
   lea rax, [rax + rcx * 1]
+  mov cl, byte [rdi + %3]
+  mov byte [rax], cl
+%endmacro
+
+%macro Idw.mms16a 3
+  mov rcx, qword [rdi + %2]
+  mov rax, [rdi + %1]
+  lea rax, [rax + rcx * 2]
+  mov cx, word [rdi + %3]
+  mov word [rax], cx
+%endmacro
+
+%macro Idw.mms32a 3
+  mov rcx, qword [rdi + %2]
+  mov rax, [rdi + %1]
+  lea rax, [rax + rcx * 4]
+  mov ecx, dword [rdi + %3]
+  mov dword [rax], ecx
+%endmacro
+
+%macro Idw.mms64a 3
+  mov rcx, qword [rdi + %2]
+  mov rax, [rdi + %1]
+  lea rax, [rax + rcx * 8]
+  mov rcx, qword [rdi + %3]
+  mov qword [rax], rcx
+%endmacro
+
+%macro Idw.mmb8a 3
+  mov rcx, qword [rdi + %2]
+  mov rax, [rdi + %1]
+  lea rax, [rax + rcx * 1]
+  mov cl, byte [rdi + %3]
+  mov byte [rax], cl
+%endmacro
+
+%macro Idw.mmb16a 3
+  mov rcx, qword [rdi + %2]
+  mov rax, [rdi + %1]
+  lea rax, [rax + rcx * 2]
+  mov cx, word [rdi + %3]
+  mov word [rax], cx
+%endmacro
+
+%macro Idw.mmb32a 3
+  mov rcx, qword [rdi + %2]
+  mov rax, [rdi + %1]
+  lea rax, [rax + rcx * 4]
+  mov ecx, dword [rdi + %3]
+  mov dword [rax], ecx
+%endmacro
+
+%macro Idw.mmb64a 3
+  mov rcx, qword [rdi + %2]
+  mov rax, [rdi + %1]
+  lea rax, [rax + rcx * 8]
+  mov rcx, qword [rdi + %3]
+  mov qword [rax], rcx
+%endmacro
+
+%macro Idw.mmf32a 3
+  mov rcx, qword [rdi + %2]
+  mov rax, [rdi + %1]
+  lea rax, [rax + rcx * 4]
+  mov ecx, dword [rdi + %3]
+  mov dword [rax], ecx
+%endmacro
+
+%macro Idw.mmf64a 3
+  mov rcx, qword [rdi + %2]
+  mov rax, [rdi + %1]
+  lea rax, [rax + rcx * 8]
   mov rcx, qword [rdi + %3]
   mov qword [rax], rcx
 %endmacro
@@ -3673,6 +3855,122 @@ extern free
   mov rcx, qword [rdi + %2]
   shl rcx, 4
   movdqu oword [rax + rcx], xmm0
+%endmacro
+
+%macro Idw.imu8a 3
+  mov rax, [rdi + %1]
+  lea rax, [rax + %2 * 1]
+  mov cl, byte [rdi + %3]
+  mov byte [rax], cl
+%endmacro
+
+%macro Idw.imu16a 3
+  mov rax, [rdi + %1]
+  lea rax, [rax + %2 * 2]
+  mov cx, word [rdi + %3]
+  mov word [rax], cx
+%endmacro
+
+%macro Idw.imu32a 3
+  mov rax, [rdi + %1]
+  lea rax, [rax + %2 * 4]
+  mov ecx, dword [rdi + %3]
+  mov dword [rax], ecx
+%endmacro
+
+%macro Idw.imu64a 3
+  mov rax, [rdi + %1]
+  lea rax, [rax + %2 * 8]
+  mov rcx, qword [rdi + %3]
+  mov qword [rax], rcx
+%endmacro
+
+%macro Idw.ims8a 3
+  mov rax, [rdi + %1]
+  lea rax, [rax + %2 * 1]
+  mov cl, byte [rdi + %3]
+  mov byte [rax], cl
+%endmacro
+
+%macro Idw.ims16a 3
+  mov rax, [rdi + %1]
+  lea rax, [rax + %2 * 2]
+  mov cx, word [rdi + %3]
+  mov word [rax], cx
+%endmacro
+
+%macro Idw.ims32a 3
+  mov rax, [rdi + %1]
+  lea rax, [rax + %2 * 4]
+  mov ecx, dword [rdi + %3]
+  mov dword [rax], ecx
+%endmacro
+
+%macro Idw.ims64a 3
+  mov rax, [rdi + %1]
+  lea rax, [rax + %2 * 8]
+  mov rcx, qword [rdi + %3]
+  mov qword [rax], rcx
+%endmacro
+
+%macro Idw.imb8a 3
+  mov rax, [rdi + %1]
+  lea rax, [rax + %2 * 1]
+  mov cl, byte [rdi + %3]
+  mov byte [rax], cl
+%endmacro
+
+%macro Idw.imb16a 3
+  mov rax, [rdi + %1]
+  lea rax, [rax + %2 * 2]
+  mov cx, word [rdi + %3]
+  mov word [rax], cx
+%endmacro
+
+%macro Idw.imb32a 3
+  mov rax, [rdi + %1]
+  lea rax, [rax + %2 * 4]
+  mov ecx, dword [rdi + %3]
+  mov dword [rax], ecx
+%endmacro
+
+%macro Idw.imb64a 3
+  mov rax, [rdi + %1]
+  lea rax, [rax + %2 * 8]
+  mov rcx, qword [rdi + %3]
+  mov qword [rax], rcx
+%endmacro
+
+%macro Idw.imf32a 3
+  mov rax, [rdi + %1]
+  lea rax, [rax + %2 * 4]
+  mov ecx, dword [rdi + %3]
+  mov dword [rax], ecx
+%endmacro
+
+%macro Idw.imf64a 3
+  mov rax, [rdi + %1]
+  lea rax, [rax + %2 * 8]
+  mov rcx, qword [rdi + %3]
+  mov qword [rax], rcx
+%endmacro
+
+%macro Idw.imu16x8a 3
+  movdqu xmm0, oword [rdi + %3]
+  mov rax, qword [rdi + %1]
+  movdqu oword [rax + %2 * 16], xmm0
+%endmacro
+
+%macro Idw.ims16x8a 3
+  movdqu xmm0, oword [rdi + %3]
+  mov rax, qword [rdi + %1]
+  movdqu oword [rax + %2 * 16], xmm0
+%endmacro
+
+%macro Idw.imb16x8a 3
+  movdqu xmm0, oword [rdi + %3]
+  mov rax, qword [rdi + %1]
+  movdqu oword [rax + %2 * 16], xmm0
 %endmacro
 
 %macro Idw.imu16x8 3
