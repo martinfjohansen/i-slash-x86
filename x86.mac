@@ -21,6 +21,8 @@
 ; Working registers -- zmm0, zmm1, zmm2, zmm3
 ; Unused: zmm4-zmm15
 
+; The use of pointers for arrays and structures might be OK. The memory can be made nicely contigous by using a suitable allocator to initialize static structures and arrays.
+
 ; -----------------------------------------------------------------------------
 
 %assign true 1
@@ -2364,6 +2366,23 @@
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
+%macro Idr.miu16x8 3
+  movdqu xmm0, oword [rdi + %2]
+  vpextrw rax, xmm0, %3
+  mov word [rdi + %1], ax
+%endmacro
+
+%macro Idr.mis16x8 3
+  movdqu xmm0, oword [rdi + %2]
+  vpextrw rax, xmm0, %3
+  mov word [rdi + %1], ax
+%endmacro
+
+%macro Idr.mib16x8 3
+  movdqu xmm0, oword [rdi + %2]
+  vpextrw rax, xmm0, %3
+  mov word [rdi + %1], ax
+%endmacro
 
 
 
@@ -2462,6 +2481,24 @@
 ; -----------------------------------------------------------------------------
 ; Idro -- Index Read Array with offset
 ; x = a[b + c]. b and c must be numbers. a must be an array. x must be of the same type as the array's elements.
+
+; v0.1
+
+%macro Idro.miu16x8a 4
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  shl rdx, 4
+  movdqu xmm0, [rax + rdx + %4 * 16]
+  movdqu [rdi + %1], xmm0
+%endmacro
+
+
+
+
+
+
+
+; Future
 
 %macro Idro.miu16x8a 4
   mov rax, qword [rdi + %2]
@@ -3580,6 +3617,94 @@ extern free
 ; Idw
 ; x = a[b]. b must be a number type. a must be array. x must be the same as a's element types.
 
+; v0.1
+
+%macro Idw.mmu8a 3
+  mov rcx, qword [rdi + %2]
+  mov rax, [rdi + %1]
+  lea rax, [rax + rcx * 1]
+  mov cl, byte [rdi + %3]
+  mov byte [rax], cl
+%endmacro
+
+%macro Idw.mmu16a 3
+  mov rcx, qword [rdi + %2]
+  mov rax, [rdi + %1]
+  lea rax, [rax + rcx * 1]
+  mov cx, word [rdi + %3]
+  mov word [rax], cx
+%endmacro
+
+%macro Idw.mmu32a 3
+  mov rcx, qword [rdi + %2]
+  mov rax, [rdi + %1]
+  lea rax, [rax + rcx * 1]
+  mov ecx, dword [rdi + %3]
+  mov dword [rax], ecx
+%endmacro
+
+%macro Idw.mmu64a 3
+  mov rcx, qword [rdi + %2]
+  mov rax, [rdi + %1]
+  lea rax, [rax + rcx * 1]
+  mov rcx, qword [rdi + %3]
+  mov qword [rax], rcx
+%endmacro
+
+%macro Idw.mmu16x8a 3
+  movdqu xmm0, oword [rdi + %3]
+  mov rax, qword [rdi + %1]
+  mov rcx, qword [rdi + %2]
+  shl rcx, 4
+  movdqu oword [rax + rcx], xmm0
+%endmacro
+
+%macro Idw.mms16x8a 3
+  movdqu xmm0, oword [rdi + %3]
+  mov rax, qword [rdi + %1]
+  mov rcx, qword [rdi + %2]
+  shl rcx, 4
+  movdqu oword [rax + rcx], xmm0
+%endmacro
+
+%macro Idw.mmb16x8a 3
+  movdqu xmm0, oword [rdi + %3]
+  mov rax, qword [rdi + %1]
+  mov rcx, qword [rdi + %2]
+  shl rcx, 4
+  movdqu oword [rax + rcx], xmm0
+%endmacro
+
+%macro Idw.imu16x8 3
+  movdqu xmm0, oword [rdi + %1]
+  mov eax, 0
+  mov ax, word [rdi + %3]
+  vpinsrw xmm0, eax, %2
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+%macro Idw.ims16x8 3
+  movdqu xmm0, oword [rdi + %1]
+  mov eax, 0
+  mov ax, word [rdi + %3]
+  vpinsrw xmm0, eax, %2
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+%macro Idw.imb16x8 3
+  movdqu xmm0, oword [rdi + %1]
+  mov eax, 0
+  mov ax, word [rdi + %3]
+  vpinsrw xmm0, eax, %2
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+
+
+
+
+; Future
+
 %macro Idw.iiu16a 3
   mov rcx, %2
   mov rax, [rdi + %1]
@@ -3610,14 +3735,6 @@ extern free
   mov rcx, qword [rdi + %2]
   shl rcx, 5
   vmovdqu yword [rax + rcx], ymm0
-%endmacro
-
-%macro Idw.mmu16x8a 3
-  movdqu xmm0, oword [rdi + %3]
-  mov rax, qword [rdi + %1]
-  mov rcx, qword [rdi + %2]
-  shl rcx, 4
-  movdqu oword [rax + rcx], xmm0
 %endmacro
 
 %macro Idw.mmu8x16a 3
