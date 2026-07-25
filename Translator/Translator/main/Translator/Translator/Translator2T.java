@@ -206,6 +206,7 @@ public class Translator2T {
                         LinkedListCharactersAddString(ll, "Mov.i".toCharArray());
                         LinkedListCharactersAddString(ll, param.immediateType);
                         LinkedListCharactersAddString(ll, " ".toCharArray());
+                        LinkedListCharactersAddString(ll, (new String(fncStName) + ".").toCharArray());
                         LinkedListCharactersAddString(ll, param.immediateVarName);
                         LinkedListCharactersAddString(ll, ", ".toCharArray());
                         LinkedListCharactersAddString(ll, param.literal);
@@ -266,6 +267,7 @@ public class Translator2T {
                 LinkedListCharactersAddString(ll, param.varname);
             }else if(StringsEqual(param.type, "literal".toCharArray())){
                 if(param.useImmediateVar) {
+                    LinkedListCharactersAddString(ll, (new String(fncStName) + ".").toCharArray());
                     LinkedListCharactersAddString(ll, param.immediateVarName);
                 }else{
                     LinkedListCharactersAddString(ll, param.literal);

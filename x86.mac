@@ -1169,12 +1169,6 @@
 
 ; Future
 
-%macro Mov.mb1 2
-  mov al, byte [rdi + %2]
-  and al, 1
-  mov byte [rdi + %1], al
-%endmacro
-
 %macro Mov.riu8 2
   mov %1, %2
 %endmacro
@@ -2188,11 +2182,8 @@
 ; v0.1
 
 %macro If.mb1 2
-  mov al, 0
-  mov cl, byte [rdi + %1]
-  and cl, 1
-  cmp al, cl
-  je %2
+  test byte [rdi + %1], 1
+  jz %2
 %endmacro
 
 %macro If.mb8 2
@@ -2536,13 +2527,6 @@
   mov rdx, %3
   shl rdx, 5
   vmovdqu %1, yword [%2 + rdx]
-%endmacro
-
-%macro Idr.miu8a 3
-  mov rax, qword [rdi + %2]
-  mov rdx, %3
-  mov al, byte [rax + rdx * 1]
-  mov byte [rdi + %1], al
 %endmacro
 
 %macro Idr.mista 3
@@ -4126,22 +4110,6 @@ extern free
   mov word [rax], cx
 %endmacro
 
-%macro Idw.imu8a 3
-  mov rcx, %2
-  mov rax, [rdi + %1]
-  lea rax, [rax + rcx * 1]
-  mov rcx, [rdi + %3]
-  mov [rax], rcx
-%endmacro
-
-%macro Idw.imu16a 3
-  mov rcx, %2
-  mov rax, [rdi + %1]
-  lea rax, [rax + rcx * 2]
-  mov cx, word [rdi + %3]
-  mov [rax], rcx
-%endmacro
-
 %macro Idw.mmu8x32a 3
   vmovdqu ymm0, yword [rdi + %3]
   mov rax, qword [rdi + %1]
@@ -4162,14 +4130,6 @@ extern free
   movdqu xmm0, oword [rdi + %3]
   mov rax, qword [rdi + %1]
   mov rcx, qword [rdi + %2]
-  shl rcx, 4
-  movdqu oword [rax + rcx], xmm0
-%endmacro
-
-%macro Idw.imu16x8a 3
-  movdqu xmm0, oword [rdi + %3]
-  mov rax, qword [rdi + %1]
-  mov rcx, %2
   shl rcx, 4
   movdqu oword [rax + rcx], xmm0
 %endmacro
@@ -4273,13 +4233,6 @@ extern free
   vpinsrd xmm1, eax, %2 % 8
   vinserti128 ymm0, xmm1, %3 / 8
   vmovdqu yword [rdi + %1], ymm0
-%endmacro
-
-%macro Idw.mmu64a 3
-  mov rdx, qword [rdi + %3]
-  mov rax, qword [rdi + %1]
-  mov rcx, qword [rdi + %2]
-  mov qword [rax + rcx*8], rdx
 %endmacro
 
 %macro Idw.iiu64x2 3
@@ -4704,14 +4657,137 @@ extern free
 
 ; -----------------------------------------------------------------------------
 ; Reinterpret as a different type
-; Xu32x4, Xb128
 ; x = (B)a. x must be target type. a must be one of the supported types.
 
-; Pointer to integer
+; v0.1
+
+%macro Xb8.mu8 2
+  mov al, byte [rdi + %2]
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Xu8.mb8 2
+  mov al, byte [rdi + %2]
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Xb8.ms8 2
+  mov al, byte [rdi + %2]
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Xs8.mb8 2
+  mov al, byte [rdi + %2]
+  mov byte [rdi + %1], al
+%endmacro
+
+
+%macro Xb16.mu16 2
+  mov ax, word [rdi + %2]
+  mov word [rdi + %1], ax
+%endmacro
+
+%macro Xu16.mb16 2
+  mov ax, word [rdi + %2]
+  mov word [rdi + %1], ax
+%endmacro
+
+%macro Xb16.ms16 2
+  mov ax, word [rdi + %2]
+  mov word [rdi + %1], ax
+%endmacro
+
+%macro Xs16.mb16 2
+  mov ax, word [rdi + %2]
+  mov word [rdi + %1], ax
+%endmacro
+
+
+%macro Xb32.mu32 2
+  mov eax, dword [rdi + %2]
+  mov dword [rdi + %1], eax
+%endmacro
+
+%macro Xu32.mb32 2
+  mov eax, dword [rdi + %2]
+  mov dword [rdi + %1], eax
+%endmacro
+
+%macro Xb32.ms32 2
+  mov eax, dword [rdi + %2]
+  mov dword [rdi + %1], eax
+%endmacro
+
+%macro Xs32.mb32 2
+  mov eax, dword [rdi + %2]
+  mov dword [rdi + %1], eax
+%endmacro
+
+%macro Xb32.mf32 2
+  mov eax, dword [rdi + %2]
+  mov dword [rdi + %1], eax
+%endmacro
+
+%macro Xf32.mb32 2
+  mov eax, dword [rdi + %2]
+  mov dword [rdi + %1], eax
+%endmacro
+
+
 %macro Xu64.mb64 2
   mov rax, qword [rdi + %2]
   mov qword [rdi + %1], rax
 %endmacro
+
+%macro Xb64.mu64 2
+  mov rax, qword [rdi + %2]
+  mov qword [rdi + %1], rax
+%endmacro
+
+%macro Xs64.mb64 2
+  mov rax, qword [rdi + %2]
+  mov qword [rdi + %1], rax
+%endmacro
+
+%macro Xb64.ms64 2
+  mov rax, qword [rdi + %2]
+  mov qword [rdi + %1], rax
+%endmacro
+
+%macro Xf64.mb64 2
+  mov rax, qword [rdi + %2]
+  mov qword [rdi + %1], rax
+%endmacro
+
+%macro Xb64.mf64 2
+  mov rax, qword [rdi + %2]
+  mov qword [rdi + %1], rax
+%endmacro
+
+
+%macro Xu8x16.mb8x16 2
+  movdqu xmm0, oword [rdi + %2]
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+%macro Xb8x16.mu8x16 2
+  movdqu xmm0, oword [rdi + %2]
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+%macro Xs8x16.mb8x16 2
+  movdqu xmm0, oword [rdi + %2]
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+%macro Xb8x16.ms8x16 2
+  movdqu xmm0, oword [rdi + %2]
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+
+
+; Future
 
 
 ; Between array types
@@ -4732,25 +4808,6 @@ extern free
 
 
 ; Between bit-array types
-%macro Xb8.mu8 2
-  mov al, byte [rdi + %2]
-  mov byte [rdi + %1], al
-%endmacro
-
-%macro Xb16.mu16 2
-  mov ax, word [rdi + %2]
-  mov word [rdi + %1], ax
-%endmacro
-
-%macro Xb32.mu32 2
-  mov eax, dword [rdi + %2]
-  mov dword [rdi + %1], eax
-%endmacro
-
-%macro Xb64.mu64 2
-  mov rax, qword [rdi + %2]
-  mov qword [rdi + %1], rax
-%endmacro
 
 %macro Xb128.mu8x16 2
   movdqu xmm0, oword [rdi + %2]

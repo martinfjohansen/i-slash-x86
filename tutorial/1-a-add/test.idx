@@ -1,6 +1,7 @@
 Bgs testS
   s64 x
   s64 y
+  s64 is640
 Ens
 
 Fnc test
