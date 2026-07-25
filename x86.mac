@@ -2586,13 +2586,128 @@
 
 ; v0.1
 
+%macro Idro.mmiu8a 4
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  mov al, byte [rax + rdx * 1 + %4 * 1]
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Idro.mmiu16a 4
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  mov ax, word [rax + rdx * 2 + %4 * 2]
+  mov word [rdi + %1], ax
+%endmacro
+
+%macro Idro.mmiu32a 4
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  mov eax, dword [rax + rdx * 4 + %4 * 4]
+  mov dword [rdi + %1], eax
+%endmacro
+
+%macro Idro.mmiu64a 4
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  mov rax, qword [rax + rdx * 8 + %4 * 8]
+  mov qword [rdi + %1], rax
+%endmacro
+
+%macro Idro.mmis8a 4
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  mov al, byte [rax + rdx * 1 + %4 * 1]
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Idro.mmis16a 4
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  mov ax, word [rax + rdx * 2 + %4 * 2]
+  mov word [rdi + %1], ax
+%endmacro
+
+%macro Idro.mmis32a 4
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  mov eax, dword [rax + rdx * 4 + %4 * 4]
+  mov dword [rdi + %1], eax
+%endmacro
+
+%macro Idro.mmis64a 4
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  mov rax, qword [rax + rdx * 8 + %4 * 8]
+  mov qword [rdi + %1], rax
+%endmacro
+
+%macro Idro.mmib8a 3
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  mov al, byte [rax + rdx * 1 + %4 * 1]
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro Idro.mmib16a 4
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  mov ax, word [rax + rdx * 2 + %4 * 2]
+  mov word [rdi + %1], ax
+%endmacro
+
+%macro Idro.mmib32a 4
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  mov eax, dword [rax + rdx * 4 + %4 * 4]
+  mov dword [rdi + %1], eax
+%endmacro
+
+%macro Idro.mmib64a 4
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  mov rax, qword [rax + rdx * 8 + %4 * 8]
+  mov qword [rdi + %1], rax
+%endmacro
+
+%macro Idro.mmif32a 4
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  mov eax, dword [rax + rdx * 4 + %4 * 4]
+  mov dword [rdi + %1], eax
+%endmacro
+
+%macro Idro.mmif64a 4
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  mov rax, qword [rax + rdx * 8 + %4 * 8]
+  mov qword [rdi + %1], rax
+%endmacro
+
 %macro Idro.mmiu16x8a 4
   mov rax, qword [rdi + %2]
   mov rdx, qword [rdi + %3]
   shl rdx, 4
-  movdqu xmm0, [rax + rdx + %4 * 16]
-  movdqu [rdi + %1], xmm0
+  movdqu xmm0, oword [rax + rdx + %4 * 16]
+  movdqu oword [rdi + %1], xmm0
 %endmacro
+
+%macro Idro.mmis16x8a 4
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  shl rdx, 4
+  movdqu xmm0, oword [rax + rdx + %4 * 16]
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+%macro Idro.mmib16x8a 4
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  shl rdx, 4
+  movdqu xmm0, oword [rax + rdx + %4 * 16]
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
 
 
 
