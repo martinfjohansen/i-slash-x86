@@ -1667,6 +1667,8 @@ public class Translator2SA {
                 success = false;
                 message.string = "Input type not the correct type.".toCharArray();
             }
+        }else if (ParamIsLiteral(ins.params[1])) {
+            ins.params[1].immediateType = type2;
         }
 
         if(ParamIsVariable(ins.params[2])){
@@ -1676,6 +1678,8 @@ public class Translator2SA {
                 success = false;
                 message.string = "Input type not the correct type.".toCharArray();
             }
+        }else if (ParamIsLiteral(ins.params[2])) {
+            ins.params[2].immediateType = type2;
         }
 
         return success;

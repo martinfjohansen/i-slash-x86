@@ -3,14 +3,25 @@ Bgs testS
   s64 y
   b1 tb10
   b1 x
+  s64 is640
 Ens
 
 Fnc test
 	Lt x, a, 50
+	
+	Mov y, 0
 
   If x
-    Mov y, 1
+    Add y, y, 1
   Else
-    Mov y, 2
+    Add y, y, 2
+  Endb
+  
+	Gte x, a, 50
+  
+  If x
+    Add y, y, 2
+  Else
+    Add y, y, 1
   Endb
 Ret
