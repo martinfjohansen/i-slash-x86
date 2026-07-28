@@ -4371,6 +4371,31 @@ extern free
 %endmacro
 
 ; -----------------------------------------------------------------------------
+
+%macro s16tou8.m 2
+  mov ax, word [rdi + %2]
+  cmp ax, 255
+  cmovg ax, 255
+  cmp ax, 0
+  cmovl ax, 0
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro s16tos8.m 2
+  ;pinsrw xmm0, word [rdi + %1], 0
+  vpbroadcastw xmm0, word [rdi + %2]
+  packsswb xmm0, xmm0, xmm0
+  pextrb byte [rdi + %1], xmm0, 0
+%endmacro
+
+%macro s32tos16.m 2
+  ;pinsrd xmm0, dword [rdi + %1], 0
+  vpbroadcastd xmm0, word [rdi + %2]
+  packssdw xmm0, xmm0, xmm0
+  pextrw word [rdi + %1], xmm0, 0
+%endmacro
+
+; -----------------------------------------------------------------------------
 ; Integer to floats
 ; u16tof32, s16tof32, u32tof64, s32tof64
 ; x = (AtoB)a. a must be of type A, x must be of type B.
