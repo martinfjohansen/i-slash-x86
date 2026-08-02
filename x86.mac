@@ -4643,20 +4643,7 @@ extern free
 ; u16tou8, u32tou16, u64tou32
 ; x = (AtoB)a. a must be of type A, x must be of type B.
 
-%macro u16tou8.m 2
-  mov ax, word [rdi + %2]
-  mov byte [rdi + %1], al
-%endmacro
 
-%macro u32tou16.m 2
-  mov eax, dword [rdi + %2]
-  mov word [rdi + %1], ax
-%endmacro
-
-%macro u64tou32.m 2
-  mov rax, qword [rdi + %2]
-  mov dword [rdi + %1], eax
-%endmacro
 
 ; -----------------------------------------------------------------------------
 ; Usigned integer to smaller unsigned types
@@ -4684,20 +4671,7 @@ extern free
 ; s16tos8, s32tos16, s64tos32
 ; x = (AtoB)a. a must be of type A, x must be of type B.
 
-%macro s16tos8.m 2
-  mov ax, word [rdi + %2]
-  mov byte [rdi + %1], al
-%endmacro
 
-%macro s32tos16.m 2
-  mov eax, dword [rdi + %2]
-  mov word [rdi + %1], ax
-%endmacro
-
-%macro s64tos32.m 2
-  mov rax, qword [rdi + %2]
-  mov dword [rdi + %1], eax
-%endmacro
 
 ; -----------------------------------------------------------------------------
 ; floats to integers
