@@ -1344,13 +1344,15 @@
 
 ; -----------------------------------------------------------------------------
 ; Broadcast
-; TODO
+; x = (AtoB)a.
 
 %macro Broadcast.mu16x8 2
-  mov rax, 0
-  mov ax, word [rdi + %2]
-  movq xmm1, rax
-  vpbroadcastw xmm0, xmm1
+  vpbroadcastw xmm0, word [rdi + %2]
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+%macro Broadcast.ms16x8 2
+  vpbroadcastw xmm0, word [rdi + %2]
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
@@ -4295,9 +4297,46 @@ extern free
 ;%endmacro
 
 ; -----------------------------------------------------------------------------
-; Usigned integer to larger unsigned types
-; u8tou16, u8tou32, u16tou32, u32tou64
+; Conversion instructions
 ; x = (AtoB)a. a must be of type A, x must be of type B.
+
+; v0.1
+
+%macro s8tos16.m 2
+  mov al, byte [rdi + %2]
+  movsx ax, al
+  mov word [rdi + %1], ax
+%endmacro
+
+%macro s8tos32.m 2
+  mov al, byte [rdi + %2]
+  movsx eax, al
+  mov dword [rdi + %1], eax
+%endmacro
+
+%macro s8tos64.m 2
+  mov al, byte [rdi + %2]
+  movsx rax, al
+  mov qword [rdi + %1], rax
+%endmacro
+
+%macro s16tos32.m 2
+  mov ax, word [rdi + %2]
+  movsx eax, ax
+  mov dword [rdi + %1], eax
+%endmacro
+
+%macro s16tos64.m 2
+  mov ax, word [rdi + %2]
+  movsx eax, ax
+  mov dword [rdi + %1], eax
+%endmacro
+
+%macro s32tos64.m 2
+  mov eax, dword [rdi + %2]
+  movsxd rax, eax
+  mov qword [rdi + %1], rax
+%endmacro
 
 %macro u8tou16.m 2
   mov al, byte [rdi + %2]
@@ -4311,27 +4350,153 @@ extern free
   mov dword [rdi + %1], eax
 %endmacro
 
+%macro u8tou64.m 2
+  mov al, byte [rdi + %2]
+  movzx rax, al
+  mov qword [rdi + %1], rax
+%endmacro
+
 %macro u16tou32.m 2
   mov ax, word [rdi + %2]
   movzx eax, ax
   mov dword [rdi + %1], eax
 %endmacro
 
-%macro u32tou64.m 2
-  mov eax, dword [rdi + %2]
-  movzx rax, eax
+%macro u16tou64.m 2
+  mov ax, word [rdi + %2]
+  movzx rax, ax
   mov qword [rdi + %1], rax
 %endmacro
 
-; -----------------------------------------------------------------------------
-; Usigned integer to larger signed types
-; u8tos16, u16tos32, u32tos64
-; x = (AtoB)a. a must be of type A, x must be of type B.
+; "mov rax, eax" zeroes out the upper part of rax
+%macro u32tou64.m 2
+  mov eax, dword [rdi + %2]
+  mov rax, eax
+  mov qword [rdi + %1], rax
+%endmacro
+
+;%macro s16tou8.m 2
+;  mov ax, word [rdi + %2]
+;  cmp ax, 255
+;  cmovg ax, 255
+;  cmp ax, 0
+;  cmovl ax, 0
+;  mov byte [rdi + %1], al
+;%endmacro
+
+%macro s16tos8.m 2
+  ;pinsrw xmm0, word [rdi + %1], 0
+  vpbroadcastw xmm0, word [rdi + %2]
+  packsswb xmm0, xmm0, xmm0
+  pextrb byte [rdi + %1], xmm0, 0
+%endmacro
+
+%macro s32tos16.m 2
+  ;pinsrd xmm0, dword [rdi + %1], 0
+  vpbroadcastd xmm0, dword [rdi + %2]
+  packssdw xmm0, xmm0, xmm0
+  pextrw word [rdi + %1], xmm0, 0
+%endmacro
+
+%macro u16tou8.m 2
+  ;pinsrw xmm0, word [rdi + %1], 0
+  vpbroadcastw xmm0, word [rdi + %2]
+  packuswb xmm0, xmm0, xmm0
+  pextrb byte [rdi + %1], xmm0, 0
+%endmacro
+
+%macro u32tou16.m 2
+  ;pinsrd xmm0, dword [rdi + %1], 0
+  vpbroadcastd xmm0, word [rdi + %2]
+  packusdw xmm0, xmm0, xmm0
+  pextrw word [rdi + %1], xmm0, 0
+%endmacro
+
+%macro u64tou32.m 2
+  ;pinsrq xmm0, qword [rdi + %1], 0
+  vpbroadcastq xmm0, qword [rdi + %2]
+  vpmovusqd xmm0, xmm0
+  pextrd dword [rdi + %1], xmm0, 0
+%endmacro
+
+%macro s64tos32.m 2
+  ;pinsrq xmm0, qword [rdi + %1], 0
+  vpbroadcastq xmm0, qword [rdi + %2]
+  vpmovsqd xmm0, xmm0
+  pextrd dword [rdi + %1], xmm0, 0
+%endmacro
+
+; Light polyfill
+
+; Note: cmovl does not support moves to r8
+%macro s8tou8.m 2
+  mov al, byte [rdi + %2]
+  cmp al, 0
+  cmovl ax, 0
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro s16tou16.m 2
+  mov ax, word [rdi + %2]
+  cmp ax, 0
+  cmovl ax, 0
+  mov word [rdi + %1], ax
+%endmacro
+
+%macro s32tou32.m 2
+  mov eax, dword [rdi + %2]
+  cmp eax, 0
+  cmovl eax, 0
+  mov dword [rdi + %1], eax
+%endmacro
+
+%macro s64tou64.m 2
+  mov rax, qword [rdi + %2]
+  cmp rax, 0
+  cmovl rax, 0
+  mov qword [rdi + %1], rax
+%endmacro
+
+%macro u8tos8.m 2
+  mov al, byte [rdi + %2]
+  cmp al, 0x7F
+  cmova ax, 0x7F
+  mov byte [rdi + %1], al
+%endmacro
+
+%macro u16tos16.m 2
+  mov ax, word [rdi + %2]
+  cmp ax, 0x7FFF
+  cmova ax, 0x7FFF
+  mov word [rdi + %1], ax
+%endmacro
+
+%macro u32tos32.m 2
+  mov eax, dword [rdi + %2]
+  cmp eax, 0x7FFF_FFFF
+  cmova eax, 0x7FFF_FFFF
+  mov dword [rdi + %1], eax
+%endmacro
+
+; Note: Cmp does not support 64-bit immediate
+%macro u64tos64.m 2
+  mov rax, qword [rdi + %2]
+  mov rcx, 0x7FFF_FFFF_FFFF_FFFF
+  cmp rax, rcx
+  cmova rax, rcx
+  mov qword [rdi + %1], rax
+%endmacro
 
 %macro u8tos16.m 2
   mov al, byte [rdi + %2]
   movzx ax, al
   mov word [rdi + %1], ax
+%endmacro
+
+%macro u8tos32.m 2
+  mov al, byte [rdi + %2]
+  movzx eax, al
+  mov dword [rdi + %1], eax
 %endmacro
 
 %macro u16tos32.m 2
@@ -4346,54 +4511,106 @@ extern free
   mov qword [rdi + %1], rax
 %endmacro
 
+%macro f32tof64.m 2
+  movss xmm0, dword [rdi + %2]
+  cvtss2sd xmm0, xmm0
+  movsd [rdi + %1], xmm0
+%endmacro
+
+%macro f64tof32.m 2
+  movsd xmm0, qword [rdi + %2]
+  cvtsd2ss xmm0, xmm0
+  movss dword [rdi + %1], xmm0
+%endmacro
+
+%macro f32tou32.m 2
+  movss xmm0, [rdi + %2]
+  cvttss2si eax, xmm0
+  mov dword [rdi + %1], eax
+%endmacro
+
+%macro f32tos32.m 2
+  movss xmm0, [rdi + %2]
+  cvttss2si eax, xmm0
+  mov dword [rdi + %1], eax
+%endmacro
+
+%macro f32tou64.m 2
+  movss xmm0, [rdi + %2]
+  cvttss2si rax, xmm0
+  mov dword [rdi + %1], rax
+%endmacro
+
+%macro f32tos64.m 2
+  movss xmm0, [rdi + %2]
+  cvttss2si rax, xmm0
+  mov qword [rdi + %1], rax
+%endmacro
+
+%macro f64tou64.m 2
+  movsd xmm0, [rdi + %2]
+  cvttsd2si rax, xmm0
+  mov qword [rdi + %1], rax
+%endmacro
+
+%macro f64tos64.m 2
+  movsd xmm0, [rdi + %2]
+  cvttsd2si rax, xmm0
+  mov qword [rdi + %1], rax
+%endmacro
+
+%macro s32tof32.m 2
+  mov eax, dword [rdi + %2]
+  cvtsi2ss xmm0, eax
+  movsd [rdi + %1], xmm0
+%endmacro
+
+%macro s32tof64.m 2
+  mov eax, dword [rdi + %2]
+  cvtsi2sd xmm0, eax
+  movsq [rdi + %1], xmm0
+%endmacro
+
+%macro s64tof32.m 2
+  mov rax, qword [rdi + %2]
+  cvtsi2ss xmm0, rax
+  movsd [rdi + %1], xmm0
+%endmacro
+
+%macro s64tof64.m 2
+  mov rax, qword [rdi + %2]
+  cvtsi2sd xmm0, rax
+  movsq [rdi + %1], xmm0
+%endmacro
+
+; Future
+
+
+; -----------------------------------------------------------------------------
+; Usigned integer to larger unsigned types
+; u8tou16, u8tou32, u16tou32, u32tou64
+; x = (AtoB)a. a must be of type A, x must be of type B.
+
+
+
+
+; -----------------------------------------------------------------------------
+; Usigned integer to larger signed types
+; u8tos16, u16tos32, u32tos64
+; x = (AtoB)a. a must be of type A, x must be of type B.
+
+
+
 
 ; -----------------------------------------------------------------------------
 ; Signed integer to larger signed types
 ; s8tos16, s16tos32, s32tos64
 ; x = (AtoB)a. a must be of type A, x must be of type B.
 
-%macro s8tos16.m 2
-  mov al, byte [rdi + %2]
-  movsx ax, al
-  mov word [rdi + %1], ax
-%endmacro
 
-%macro s16tos32.m 2
-  mov ax, word [rdi + %2]
-  movsx eax, ax
-  mov dword [rdi + %1], eax
-%endmacro
-
-%macro s32tos64.m 2
-  mov eax, dword [rdi + %2]
-  movsxd rax, eax
-  mov qword [rdi + %1], rax
-%endmacro
 
 ; -----------------------------------------------------------------------------
 
-%macro s16tou8.m 2
-  mov ax, word [rdi + %2]
-  cmp ax, 255
-  cmovg ax, 255
-  cmp ax, 0
-  cmovl ax, 0
-  mov byte [rdi + %1], al
-%endmacro
-
-%macro s16tos8.m 2
-  ;pinsrw xmm0, word [rdi + %1], 0
-  vpbroadcastw xmm0, word [rdi + %2]
-  packsswb xmm0, xmm0, xmm0
-  pextrb byte [rdi + %1], xmm0, 0
-%endmacro
-
-%macro s32tos16.m 2
-  ;pinsrd xmm0, dword [rdi + %1], 0
-  vpbroadcastd xmm0, word [rdi + %2]
-  packssdw xmm0, xmm0, xmm0
-  pextrw word [rdi + %1], xmm0, 0
-%endmacro
 
 ; -----------------------------------------------------------------------------
 ; Integer to floats
@@ -4414,29 +4631,12 @@ extern free
   movss [rdi + %1], xmm0
 %endmacro
 
-%macro u32tof64.m 2
-  mov eax, dword [rdi + %2]
-  movzx rax, eax
-  cvtsi2sd xmm0, rax
-  movsd [rdi + %1], xmm0
-%endmacro
-
-%macro s32tof64.m 2
-  mov eax, dword [rdi + %2]
-  cvtsi2sd xmm0, eax
-  movsd [rdi + %1], xmm0
-%endmacro
-
 ; -----------------------------------------------------------------------------
 ; Floats to larger types
 ; f32tof64
 ; x = (AtoB)a. a must be of type A, x must be of type B.
 
-%macro f32tof64.m 2
-  movss xmm0, dword [rdi + %2]
-  cvtss2sd xmm0, xmm0
-  movsd [rdi + %1], xmm0
-%endmacro
+
 
 ; -----------------------------------------------------------------------------
 ; Usigned integer to smaller unsigned types
@@ -4504,40 +4704,12 @@ extern free
 ; f32tou16, f32tos16, f64tou32, f64tos32
 ; x = (AtoB)a. a must be of type A, x must be of type B.
 
-%macro f32tou16.m 2
-  movss xmm0, [rdi + %2]
-  cvttss2si eax, xmm0
-  mov word [rdi + %1], ax
-%endmacro
 
-%macro f32tos16.m 2
-  movss xmm0, [rdi + %2]
-  cvttss2si eax, xmm0
-  mov word [rdi + %1], ax
-%endmacro
-
-%macro f64tou32.m 2
-  movsd xmm0, [rdi + %2]
-  cvttsd2si eax, xmm0
-  mov dword [rdi + %1], eax
-%endmacro
-
-%macro f64tos32.m 2
-  movsd xmm0, [rdi + %2]
-  cvttsd2si eax, xmm0
-  mov dword [rdi + %1], eax
-%endmacro
 
 ; -----------------------------------------------------------------------------
 ; Floats to smaller floats
 ; f64tof32
 ; x = (AtoB)a. a must be of type A, x must be of type B.
-
-%macro f64tof32.m 2
-  movsd xmm0, qword [rdi + %2]
-  cvtsd2ss xmm0, xmm0
-  movss dword [rdi + %1], xmm0
-%endmacro
 
 ; -----------------------------------------------------------------------------
 ; Packed integers to larger types
