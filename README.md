@@ -30,7 +30,26 @@ There are many examples available here: [https://github.com/martinfjohansen/i-sl
 
 ## Features
 
-Coming soon.
+### All instructions of the x86
+All instructions of the x86 will gradually become available.
+
+### Type detection and checking
+The type of the instruction used is detected based on the types of the variables passed to it.
+
+Types and instructions are checked for validity.
+
+### Immediate extraction
+Immediates are extracted into separate instructions.
+
+### Labels
+Labels for control flow is computed.
+
+### Expressions
+Various expression types can be used to generate instruction sequences. These include arithmetic, bitwise, boolean-relational and declaration expressions.
+
+## Language design
+
+###
 
 ## Other ISAs
 
