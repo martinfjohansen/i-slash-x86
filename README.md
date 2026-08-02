@@ -25,7 +25,7 @@ Coming soon.
 
 ### Examples
 
-There are many examples available here: [tree/main/tutorial/](tree/main/tutorial/).
+There are many examples available here: [https://github.com/martinfjohansen/i-slash-x86/tree/main/tutorial](https://github.com/martinfjohansen/i-slash-x86/tree/main/tutorial).
 
 
 ## Features
