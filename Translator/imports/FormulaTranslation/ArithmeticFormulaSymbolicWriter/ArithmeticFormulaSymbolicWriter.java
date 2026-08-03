@@ -234,7 +234,7 @@ public class ArithmeticFormulaSymbolicWriter{
 				tf.string = AppendString(tf.string, ")".toCharArray());
 				tf.string = AppendString(tf.string, ";\n".toCharArray());
 			}else{
-				tf.string = AppendString(tf.string, "<failed>".toCharArray());
+				tf.string = AppendString(tf.string, "<failed> (4)".toCharArray());
 			}
 		}
 	}

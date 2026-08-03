@@ -27,6 +27,8 @@ Coming soon.
 
 There are many examples available here: [https://github.com/martinfjohansen/i-slash-x86/tree/main/tutorial](https://github.com/martinfjohansen/i-slash-x86/tree/main/tutorial).
 
+Tested on Ubuntu 24 with nasm NASM version 2.15 and GCC 13.3.
+
 
 ## Features
 

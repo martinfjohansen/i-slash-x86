@@ -1593,7 +1593,7 @@ public class Translator {
                             message.string = AppendString(message.string, parts[2].string);
                         }
                     }else if(StringsEqual(parts[0].string, "exp".toCharArray())){
-                        type = Substring(parts[2].string, 0d, parts[2].string.length - 1d);
+                        type = "".toCharArray();
 
                         if(loopIf) {
                             PrintTabs(cc, tabs + 1d);
@@ -1604,10 +1604,10 @@ public class Translator {
                         LinkedListCharactersAddString(cc, line);
                         LinkedListCharactersAddString(cc, "\n".toCharArray());
 
-                        line = Substring(line, parts[0].string.length + 1d + parts[1].string.length + 1d + parts[2].string.length, line.length);
+                        line = Substring(line, parts[0].string.length + 1d + parts[1].string.length, line.length);
 
                         line = Trim(line);
-                        target = parts[3].string;
+                        target = parts[2].string;
                         line = Substring(line, target.length, line.length);
                         line = Trim(line);
                         line = Substring(line, 1, line.length);
@@ -1615,15 +1615,11 @@ public class Translator {
 
                         expandedCode = new StringReference();
 
-                        if(StringsEqual(parts[1].string, "bw".toCharArray()) && EndsWith(parts[2].string, ":".toCharArray())) {
+                        if(StringsEqual(parts[1].string, "bw:".toCharArray())) {
                             success = BitwiseFormulaToTFormFunctions(line, "".toCharArray(), "".toCharArray(), type, false, false, false, target, expandedCode, message);
-                        }else if(StringsEqual(parts[1].string, "a".toCharArray()) && EndsWith(parts[2].string, ":".toCharArray())) {
+                        }else if(StringsEqual(parts[1].string, "a:".toCharArray())) {
                             success = ArithmeticFormulaToTFormFunctions(line, "".toCharArray(), "".toCharArray(), type, false, false, false, target, expandedCode, message);
-                        }else if(StringsEqual(parts[1].string, "b".toCharArray()) && EndsWith(parts[2].string, ":".toCharArray())) {
-                            if(type.length == 0){
-                                type = "b1".toCharArray();
-                            }
-
+                        }else if(StringsEqual(parts[1].string, "b:".toCharArray())) {
                             success = BooleanFormulaToTFormFunctions(line, "".toCharArray(), "".toCharArray(), type, false, false, false, target, false, expandedCode, message);
                         }else{
                             success = false;

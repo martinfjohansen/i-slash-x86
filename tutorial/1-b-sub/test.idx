@@ -1,8 +1,9 @@
 Bgs testS
   s64 x
   s64 y
+  s64 is640
 Ens
 
 Fnc test
-  exp a s64: y = x - 5
+  exp a: y = x - 5
 Ret

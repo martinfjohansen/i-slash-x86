@@ -71,7 +71,7 @@ public class RunTranslator {
         }
 
         if(success) {
-            System.out.println("success: " + success);
+            //System.out.println("success: " + success);
         }else{
             System.out.println("failed: " +  new String(message.string));
         }

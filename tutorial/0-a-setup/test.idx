@@ -4,5 +4,5 @@ Bgs testS
 Ens
 
 Fnc test
-  exp a s64: y = x
+  exp a: y = x
 Ret
