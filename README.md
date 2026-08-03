@@ -123,6 +123,10 @@ There are a number of complexities when it comes to conversions. In this languag
  
 If rounding or modulus is desired, then those must be applied before the conversion.
 
+## Calling Functions of Other Calling Conversions
+To call functions of other calling conventions, use a wrapper with a function structure and call the other function from, for example, C.
+
+
 ## Other ISAs
 There are also plans for similar langiuages, I/arm, I/riscv and I/power. The suite of languages are called I/x.
 
