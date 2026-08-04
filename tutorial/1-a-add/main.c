@@ -13,7 +13,7 @@ int main(){
 	fprintf(stderr, "test(%ld) = %ld\n", ts.x, ts.y);
 
 	if(ts.y == 53){
-		failures = 2;
+
 	}else{
 		failures = 1;
 	}

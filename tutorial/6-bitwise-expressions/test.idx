@@ -6,6 +6,7 @@ Bgs testS
 	b32 tb320
 	b32 tb321
 	b32 tb322
+	u8 iu80
 Ens
 
 Fnc test

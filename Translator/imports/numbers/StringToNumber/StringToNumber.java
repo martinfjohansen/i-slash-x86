@@ -9,7 +9,9 @@ import static strings.strings.strings.*;
 import references.references.*;
 import static references.references.references.*;
 
-import static m18math.math.math.*;
+import static math.math.math.*;
+
+import static math.Decimal15E2.Decimal15E2.*;
 
 import static lists.NumberList.NumberList.*;
 
@@ -41,6 +43,8 @@ import static lists.CharacterList.CharacterList.*;
 
 
 import static numbers.NumberToString.NumberToString.*;
+
+import static numbers.NumberComputations.NumberComputations.*;
 
 public class StringToNumber{
 	public static boolean CreateNumberFromDecimalStringWithCheck(char [] string, NumberReference decimalReference, StringReference message){

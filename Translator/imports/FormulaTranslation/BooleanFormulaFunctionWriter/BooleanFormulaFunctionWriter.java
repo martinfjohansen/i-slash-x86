@@ -5,11 +5,11 @@ import static java.lang.Math.*;
 import references.references.*;
 import static references.references.references.*;
 
-import static nnumbers.NumberToString.NumberToString.*;
+import static numbers.NumberToString.NumberToString.*;
 
-import static nnumbers.NumberComputations.NumberComputations.*;
+import static numbers.NumberComputations.NumberComputations.*;
 
-import static nnumbers.StringToNumber.StringToNumber.*;
+import static numbers.StringToNumber.StringToNumber.*;
 
 import static charCharacters.Characters.Characters.*;
 
@@ -56,15 +56,21 @@ import static FormulaTranslation.BooleanFormula.BooleanFormula.*;
 
 import static FormulaTranslation.ArithmeticFormulaPratt.ArithmeticFormulaPratt.*;
 
+import static FormulaTranslation.StructuralFormula.StructuralFormula.*;
+
 import static FormulaTranslation.ArithmeticFormula.ArithmeticFormula.*;
 
 import static FormulaTranslation.BitwiseFormula.BitwiseFormula.*;
 
 import static FormulaTranslation.ArithmeticFormulaFunctionWriter.ArithmeticFormulaFunctionWriter.*;
 
+import static FormulaTranslation.StructuralFormulaFunctionWriter.StructuralFormulaFunctionWriter.*;
+
 import static FormulaTranslation.TS.TS.*;
 
 import static FormulaTranslation.ArithmeticFormulaEvaluator.ArithmeticFormulaEvaluator.*;
+
+import static FormulaTranslation.StructuralFormulaSymbolicWriter.StructuralFormulaSymbolicWriter.*;
 
 import static FormulaTranslation.BooleanFormulaSymbolicWriter.BooleanFormulaSymbolicWriter.*;
 
@@ -133,7 +139,7 @@ public class BooleanFormulaFunctionWriter{
 					assignedT.numberValue = t;
 					tf.string = AppendString(tf.string, "t".toCharArray());
 					tf.string = AppendString(tf.string, tprefix);
-					numberString = nCreateStringDecimalFromNumber(t);
+					numberString = CreateStringDecimalFromNumber(t);
 					tf.string = AppendString(tf.string, numberString);
 				}else{
 					tf.string = AppendString(tf.string, target);
@@ -161,7 +167,7 @@ public class BooleanFormulaFunctionWriter{
 				}else{
 					tf.string = AppendString(tf.string, "t".toCharArray());
 					tf.string = AppendString(tf.string, tprefix);
-					numberString = nCreateStringDecimalFromNumber(tl);
+					numberString = CreateStringDecimalFromNumber(tl);
 					tf.string = AppendString(tf.string, numberString);
 				}
 				tf.string = AppendString(tf.string, ", ".toCharArray());
@@ -185,7 +191,7 @@ public class BooleanFormulaFunctionWriter{
 				}else{
 					tf.string = AppendString(tf.string, "t".toCharArray());
 					tf.string = AppendString(tf.string, tprefix);
-					numberString = nCreateStringDecimalFromNumber(tr);
+					numberString = CreateStringDecimalFromNumber(tr);
 					tf.string = AppendString(tf.string, numberString);
 				}
 				if(parenthesis){
@@ -222,7 +228,7 @@ public class BooleanFormulaFunctionWriter{
 					assignedT.numberValue = t;
 					tf.string = AppendString(tf.string, "t".toCharArray());
 					tf.string = AppendString(tf.string, tprefix);
-					numberString = nCreateStringDecimalFromNumber(t);
+					numberString = CreateStringDecimalFromNumber(t);
 					tf.string = AppendString(tf.string, numberString);
 				}else{
 					tf.string = AppendString(tf.string, target);
@@ -235,7 +241,7 @@ public class BooleanFormulaFunctionWriter{
 				}else{
 					tf.string = AppendString(tf.string, "t".toCharArray());
 					tf.string = AppendString(tf.string, tprefix);
-					numberString = nCreateStringDecimalFromNumber(tl);
+					numberString = CreateStringDecimalFromNumber(tl);
 					tf.string = AppendString(tf.string, numberString);
 				}
 				if(parenthesis){
@@ -259,7 +265,7 @@ public class BooleanFormulaFunctionWriter{
 			if(target.length == 0d){
 				tf.string = AppendString(tf.string, "t".toCharArray());
 				tf.string = AppendString(tf.string, tprefix);
-				numberString = nCreateStringDecimalFromNumber(t);
+				numberString = CreateStringDecimalFromNumber(t);
 				tf.string = AppendString(tf.string, numberString);
 			}else{
 				tf.string = AppendString(tf.string, target);

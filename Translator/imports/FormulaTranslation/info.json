@@ -1,11 +1,11 @@
 {
   "name": "FormulaTranslation",
-  "version": "0.1.10",
+  "version": "0.1.11",
   "organization namespace": "no.inductive.libraries",
   "scientific namespace": "computerscience.development.formulas",
   "imports": [
     ["", "no.inductive.idea10.programs", "references", "0.1.5"],
-    ["", "no.inductive.idea10.programs", "numbers", "0.1.32"],
+    ["", "no.inductive.idea10.programs", "numbers", "0.1.33"],
     ["char", "no.inductive.libraries", "Characters", "0.1.4"],
     ["arrays", "no.inductive.idea10.programs", "arrays", "0.9.7"],
     ["", "no.inductive.idea10.programs", "strings", "0.9.16"],

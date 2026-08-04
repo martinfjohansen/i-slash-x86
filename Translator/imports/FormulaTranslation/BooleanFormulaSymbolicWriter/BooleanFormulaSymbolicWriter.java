@@ -5,11 +5,11 @@ import static java.lang.Math.*;
 import references.references.*;
 import static references.references.references.*;
 
-import static nnumbers.NumberToString.NumberToString.*;
+import static numbers.NumberToString.NumberToString.*;
 
-import static nnumbers.NumberComputations.NumberComputations.*;
+import static numbers.NumberComputations.NumberComputations.*;
 
-import static nnumbers.StringToNumber.StringToNumber.*;
+import static numbers.StringToNumber.StringToNumber.*;
 
 import static charCharacters.Characters.Characters.*;
 
@@ -56,15 +56,21 @@ import static FormulaTranslation.BooleanFormula.BooleanFormula.*;
 
 import static FormulaTranslation.ArithmeticFormulaPratt.ArithmeticFormulaPratt.*;
 
+import static FormulaTranslation.StructuralFormula.StructuralFormula.*;
+
 import static FormulaTranslation.ArithmeticFormula.ArithmeticFormula.*;
 
 import static FormulaTranslation.BitwiseFormula.BitwiseFormula.*;
 
 import static FormulaTranslation.ArithmeticFormulaFunctionWriter.ArithmeticFormulaFunctionWriter.*;
 
+import static FormulaTranslation.StructuralFormulaFunctionWriter.StructuralFormulaFunctionWriter.*;
+
 import static FormulaTranslation.TS.TS.*;
 
 import static FormulaTranslation.ArithmeticFormulaEvaluator.ArithmeticFormulaEvaluator.*;
+
+import static FormulaTranslation.StructuralFormulaSymbolicWriter.StructuralFormulaSymbolicWriter.*;
 
 import static FormulaTranslation.BitwiseFormulaFunctionWriter.BitwiseFormulaFunctionWriter.*;
 
@@ -132,14 +138,14 @@ public class BooleanFormulaSymbolicWriter{
 
 				t.numberValue = t.numberValue + 1d;
 				tf.string = AppendString(tf.string, "t".toCharArray());
-				nCreateStringFromNumberWithCheck(t.numberValue, 10d, numberString);
+				CreateStringFromNumberWithCheck(t.numberValue, 10d, numberString);
 				tf.string = AppendString(tf.string, numberString.string);
 				tf.string = AppendString(tf.string, " = ".toCharArray());
 				if(ast.l.leaf){
 					tf.string = AppendString(tf.string, ast.l.value);
 				}else{
 					tf.string = AppendString(tf.string, "t".toCharArray());
-					nCreateStringFromNumberWithCheck(tl, 10d, numberString);
+					CreateStringFromNumberWithCheck(tl, 10d, numberString);
 					tf.string = AppendString(tf.string, numberString.string);
 				}
 				tf.string = AppendString(tf.string, " ".toCharArray());
@@ -149,7 +155,7 @@ public class BooleanFormulaSymbolicWriter{
 					tf.string = AppendString(tf.string, ast.r.value);
 				}else{
 					tf.string = AppendString(tf.string, "t".toCharArray());
-					nCreateStringFromNumberWithCheck(tr, 10d, numberString);
+					CreateStringFromNumberWithCheck(tr, 10d, numberString);
 					tf.string = AppendString(tf.string, numberString.string);
 				}
 				tf.string = AppendString(tf.string, ";\n".toCharArray());
@@ -159,11 +165,11 @@ public class BooleanFormulaSymbolicWriter{
 
 				t.numberValue = t.numberValue + 1d;
 				tf.string = AppendString(tf.string, "t".toCharArray());
-				nCreateStringFromNumberWithCheck(t.numberValue, 10d, numberString);
+				CreateStringFromNumberWithCheck(t.numberValue, 10d, numberString);
 				tf.string = AppendString(tf.string, numberString.string);
 				tf.string = AppendString(tf.string, " = ".toCharArray());
 				tf.string = AppendString(tf.string, "t".toCharArray());
-				nCreateStringFromNumberWithCheck(tl, 10d, numberString);
+				CreateStringFromNumberWithCheck(tl, 10d, numberString);
 				tf.string = AppendString(tf.string, numberString.string);
 				tf.string = AppendString(tf.string, ";\n".toCharArray());
 			}else if(StringsEqual(ast.value, "!".toCharArray())){
@@ -174,7 +180,7 @@ public class BooleanFormulaSymbolicWriter{
 
 				t.numberValue = t.numberValue + 1d;
 				tf.string = AppendString(tf.string, "t".toCharArray());
-				nCreateStringFromNumberWithCheck(t.numberValue, 10d, numberString);
+				CreateStringFromNumberWithCheck(t.numberValue, 10d, numberString);
 				tf.string = AppendString(tf.string, numberString.string);
 				tf.string = AppendString(tf.string, " = ".toCharArray());
 				tf.string = AppendString(tf.string, "!".toCharArray());
@@ -182,7 +188,7 @@ public class BooleanFormulaSymbolicWriter{
 					tf.string = AppendString(tf.string, ast.l.value);
 				}else{
 					tf.string = AppendString(tf.string, "t".toCharArray());
-					nCreateStringFromNumberWithCheck(tl, 10d, numberString);
+					CreateStringFromNumberWithCheck(tl, 10d, numberString);
 					tf.string = AppendString(tf.string, numberString.string);
 				}
 				tf.string = AppendString(tf.string, ";\n".toCharArray());

@@ -1,13 +1,13 @@
 {
   "name": "numbers",
-  "version": "0.1.28",
+  "version": "0.1.33",
   "organization namespace": "no.inductive.idea10.programs",
   "scientific namespace": "mathematics.arithmetic.numbers",
   "imports": [
-    ["", "no.inductive.idea10.programs", "strings", "0.9.14"],
+    ["", "no.inductive.idea10.programs", "strings", "0.9.16"],
     ["", "no.inductive.idea10.programs", "references", "0.1.5"],
-    ["", "no.inductive.idea10.programs", "math", "0.1.18"],
-    ["", "no.inductive.idea10.programs", "lists", "0.1.13"]
+    ["", "no.inductive.idea10.programs", "math", "0.1.20"],
+    ["", "no.inductive.idea10.programs", "lists", "0.1.14"]
   ],
   "development imports": [
     ["", "no.inductive.idea10.programs", "testing", "0.1.8"]

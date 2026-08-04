@@ -4,12 +4,21 @@
 
 int main(){
 	struct testS ts;
+	int failures = 0;
 
 	ts.x = 21;
 
 	test(&ts);
 
-	printf("test(%ld) = %ld\n", ts.x, ts.y);
+	fprintf(stderr, "test(%ld) = %ld\n", ts.x, ts.y);
+	
+	if(ts.y == 16){
+
+	}else{
+		failures = 1;
+	}
+	
+	printf("%d\n", failures);
 
 	return 0;
 }

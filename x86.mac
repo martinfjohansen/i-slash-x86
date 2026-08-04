@@ -2479,6 +2479,12 @@
   mov word [rdi + %1], ax
 %endmacro
 
+%macro Idr.mmsta 3
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  mov rax, qword [rax + rdx * 8]
+  mov qword [rdi + %1], rax
+%endmacro
 
 
 ; Future
@@ -4387,14 +4393,14 @@ extern free
 %macro s16tos8.m 2
   ;pinsrw xmm0, word [rdi + %1], 0
   vpbroadcastw xmm0, word [rdi + %2]
-  packsswb xmm0, xmm0, xmm0
+  packsswb xmm0, xmm0
   pextrb byte [rdi + %1], xmm0, 0
 %endmacro
 
 %macro s32tos16.m 2
   ;pinsrd xmm0, dword [rdi + %1], 0
   vpbroadcastd xmm0, dword [rdi + %2]
-  packssdw xmm0, xmm0, xmm0
+  packssdw xmm0, xmm0
   pextrw word [rdi + %1], xmm0, 0
 %endmacro
 

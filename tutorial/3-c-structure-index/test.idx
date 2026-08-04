@@ -6,6 +6,7 @@ Bgs testS
 	sta C x
 	str C a
   f64 y
+  s64 is640
 Ens
 
 Fnc test

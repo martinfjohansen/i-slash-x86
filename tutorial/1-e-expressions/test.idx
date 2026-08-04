@@ -3,6 +3,7 @@ Bgs testS
   s64 y
   s64 ts640
   s64 ts641
+  s64 is640
 Ens
 
 Fnc test

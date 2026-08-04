@@ -545,6 +545,48 @@ public class Translator2SA {
         ArrayAddString(p2, "MovAndDuplicate".toCharArray());
         ArrayAddString(p2, "MovAndDuplicateOdd".toCharArray());
         ArrayAddString(p2, "Rdrand".toCharArray());
+        ArrayAddString(p2, "s8tos16".toCharArray());
+        ArrayAddString(p2, "s8tos32".toCharArray());
+        ArrayAddString(p2, "s8tos64".toCharArray());
+        ArrayAddString(p2, "s16tos32".toCharArray());
+        ArrayAddString(p2, "s16tos64".toCharArray());
+        ArrayAddString(p2, "s32tos64".toCharArray());
+        ArrayAddString(p2, "u8tou16".toCharArray());
+        ArrayAddString(p2, "u8tou32".toCharArray());
+        ArrayAddString(p2, "u8tou64".toCharArray());
+        ArrayAddString(p2, "u16tou32".toCharArray());
+        ArrayAddString(p2, "u16tou64".toCharArray());
+        ArrayAddString(p2, "u32tou64".toCharArray());
+        ArrayAddString(p2, "s16tos8".toCharArray());
+        ArrayAddString(p2, "s32tos16".toCharArray());
+        ArrayAddString(p2, "u16tou8".toCharArray());
+        ArrayAddString(p2, "u32tou16".toCharArray());
+        ArrayAddString(p2, "u64tou32".toCharArray());
+        ArrayAddString(p2, "s64tos32".toCharArray());
+        ArrayAddString(p2, "s8tou8".toCharArray());
+        ArrayAddString(p2, "s16tou16".toCharArray());
+        ArrayAddString(p2, "s32tou32".toCharArray());
+        ArrayAddString(p2, "s64tou64".toCharArray());
+        ArrayAddString(p2, "u8tos8".toCharArray());
+        ArrayAddString(p2, "u16tos16".toCharArray());
+        ArrayAddString(p2, "u32tos32".toCharArray());
+        ArrayAddString(p2, "u64tos64".toCharArray());
+        ArrayAddString(p2, "u8tos16".toCharArray());
+        ArrayAddString(p2, "u8tos32".toCharArray());
+        ArrayAddString(p2, "u16tos32".toCharArray());
+        ArrayAddString(p2, "u32tos64".toCharArray());
+        ArrayAddString(p2, "f32tof64".toCharArray());
+        ArrayAddString(p2, "f64tof32".toCharArray());
+        ArrayAddString(p2, "f32tou32".toCharArray());
+        ArrayAddString(p2, "f32tos32".toCharArray());
+        ArrayAddString(p2, "f32tou64".toCharArray());
+        ArrayAddString(p2, "f32tos64".toCharArray());
+        ArrayAddString(p2, "f64tou64".toCharArray());
+        ArrayAddString(p2, "f64tos64".toCharArray());
+        ArrayAddString(p2, "s32tof32".toCharArray());
+        ArrayAddString(p2, "s32tof64".toCharArray());
+        ArrayAddString(p2, "s64tof32".toCharArray());
+        ArrayAddString(p2, "s64tof64".toCharArray());
 
         p3 = CreateArray();
         ArrayAddString(p3, "Add".toCharArray());
@@ -1049,7 +1091,7 @@ public class Translator2SA {
                     // OK
                 }else{
                     valid = false;
-                    message.string = ("Thirs parameter to operation must be number type: was " + new String(ins.params[1].var.type)).toCharArray();
+                    message.string = ("Third parameter to operation must be number type: was " + new String(ins.params[1].var.type)).toCharArray();
                 }
             }else{
                 valid = false;
@@ -1058,6 +1100,11 @@ public class Translator2SA {
         }else{
             valid = false;
             message.string = ("Operation must assign to non-array multiple bitfield type: was " + new String(type)).toCharArray();
+        }
+
+        if(ParamIsVariable(ins.params[2])) {
+        }else if (ParamIsLiteral(ins.params[2])) {
+            ins.params[2].immediateType = ntype;
         }
 
         return valid;

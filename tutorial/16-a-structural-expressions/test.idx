@@ -1,0 +1,30 @@
+Bgs testS
+  s64 a
+  b1 tb10
+  b1 tb11
+  s64 y
+  s64 is640
+  str s s
+  s64a ar
+Ens
+
+Bgs s
+  s64 a
+  s64 b
+  s64a ar
+  str t t
+Ens
+
+Bgs t
+  s64 a
+  s64 b
+Ens
+
+Fnc test
+  Acr y, s, a
+  exp s s64: y = s.a
+  ;exp s s64: y = s.ar[5]; TODO: This translates wrongly
+  exp s s64: y = ar[5]
+  ;exp s s64: ar[5] = a; TODO: How to make this work?
+  ;exp s s64: y = s.a.a; TODO: This gives the wrong intermediate type.
+Ret

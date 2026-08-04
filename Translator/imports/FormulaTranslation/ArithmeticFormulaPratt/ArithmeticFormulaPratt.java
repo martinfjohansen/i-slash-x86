@@ -5,11 +5,11 @@ import static java.lang.Math.*;
 import references.references.*;
 import static references.references.references.*;
 
-import static nnumbers.NumberToString.NumberToString.*;
+import static numbers.NumberToString.NumberToString.*;
 
-import static nnumbers.NumberComputations.NumberComputations.*;
+import static numbers.NumberComputations.NumberComputations.*;
 
-import static nnumbers.StringToNumber.StringToNumber.*;
+import static numbers.StringToNumber.StringToNumber.*;
 
 import static charCharacters.Characters.Characters.*;
 
@@ -54,15 +54,21 @@ import static math.Decimal15E2.Decimal15E2.*;
 
 import static FormulaTranslation.BooleanFormula.BooleanFormula.*;
 
+import static FormulaTranslation.StructuralFormula.StructuralFormula.*;
+
 import static FormulaTranslation.ArithmeticFormula.ArithmeticFormula.*;
 
 import static FormulaTranslation.BitwiseFormula.BitwiseFormula.*;
 
 import static FormulaTranslation.ArithmeticFormulaFunctionWriter.ArithmeticFormulaFunctionWriter.*;
 
+import static FormulaTranslation.StructuralFormulaFunctionWriter.StructuralFormulaFunctionWriter.*;
+
 import static FormulaTranslation.TS.TS.*;
 
 import static FormulaTranslation.ArithmeticFormulaEvaluator.ArithmeticFormulaEvaluator.*;
+
+import static FormulaTranslation.StructuralFormulaSymbolicWriter.StructuralFormulaSymbolicWriter.*;
 
 import static FormulaTranslation.BooleanFormulaSymbolicWriter.BooleanFormulaSymbolicWriter.*;
 
@@ -159,7 +165,7 @@ public class ArithmeticFormulaPratt{
 				rexp.node.leaf = false;
 			}else{
 				success = false;
-				message.string = "Epected \')\'.".toCharArray();
+				message.string = "Expected \')\'.".toCharArray();
 			}
 		}else if(StringsEqual(tok, "(".toCharArray())){
 			success = PrattParseExpression(tokens, cur, MIN_BINDING_POWER, expr, message);
@@ -172,7 +178,7 @@ public class ArithmeticFormulaPratt{
 				rexp.node.leaf = false;
 			}else{
 				success = false;
-				message.string = "Epected \')\'.".toCharArray();
+				message.string = "Expected \')\'.".toCharArray();
 			}
 		}else if(StringsEqual(tok, "+".toCharArray()) || StringsEqual(tok, "-".toCharArray())){
 			if(StringsEqual(tok, "-".toCharArray())){

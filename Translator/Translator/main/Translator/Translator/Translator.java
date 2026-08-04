@@ -3,6 +3,7 @@ package Translator.Translator;
 import DataStructures.Array.Structures.Array;
 import DataStructures.Array.Structures.DataReference;
 import DataStructures.Array.Structures.Structure;
+import FormulaTranslation.StructuralFormulaFunctionWriter.StructuralFormulaFunctionWriter;
 import lists.LinkedListCharacters.Structures.LinkedListCharacters;
 import references.references.*;
 
@@ -11,6 +12,7 @@ import static DataStructures.Array.Structures.Structures.*;
 import static FormulaTranslation.ArithmeticFormulaFunctionWriter.ArithmeticFormulaFunctionWriter.ArithmeticFormulaToTFormFunctions;
 import static FormulaTranslation.BitwiseFormulaFunctionWriter.BitwiseFormulaFunctionWriter.BitwiseFormulaToTFormFunctions;
 import static FormulaTranslation.BooleanFormulaFunctionWriter.BooleanFormulaFunctionWriter.BooleanFormulaToTFormFunctions;
+import static FormulaTranslation.StructuralFormulaFunctionWriter.StructuralFormulaFunctionWriter.StructuralFormulaToTFormFunctions;
 import static JSON.Parser.Parser.ReadJSON;
 import static arrays.arrays.arrays.CopyString;
 import static arrays.arrays.arrays.StringsEqual;
@@ -1593,7 +1595,7 @@ public class Translator {
                             message.string = AppendString(message.string, parts[2].string);
                         }
                     }else if(StringsEqual(parts[0].string, "exp".toCharArray())){
-                        type = "".toCharArray();
+                        type = Substring(parts[2].string, 0d, parts[2].string.length - 1d);
 
                         if(loopIf) {
                             PrintTabs(cc, tabs + 1d);
@@ -1604,10 +1606,10 @@ public class Translator {
                         LinkedListCharactersAddString(cc, line);
                         LinkedListCharactersAddString(cc, "\n".toCharArray());
 
-                        line = Substring(line, parts[0].string.length + 1d + parts[1].string.length, line.length);
+                        line = Substring(line, parts[0].string.length + 1d + parts[1].string.length + 1d + parts[2].string.length, line.length);
 
                         line = Trim(line);
-                        target = parts[2].string;
+                        target = parts[3].string;
                         line = Substring(line, target.length, line.length);
                         line = Trim(line);
                         line = Substring(line, 1, line.length);
@@ -1615,12 +1617,17 @@ public class Translator {
 
                         expandedCode = new StringReference();
 
-                        if(StringsEqual(parts[1].string, "bw:".toCharArray())) {
+                        if(StringsEqual(parts[1].string, "bw".toCharArray()) && EndsWith(parts[2].string, ":".toCharArray())) {
                             success = BitwiseFormulaToTFormFunctions(line, "".toCharArray(), "".toCharArray(), type, false, false, false, target, expandedCode, message);
-                        }else if(StringsEqual(parts[1].string, "a:".toCharArray())) {
+                        }else if(StringsEqual(parts[1].string, "a".toCharArray()) && EndsWith(parts[2].string, ":".toCharArray())) {
                             success = ArithmeticFormulaToTFormFunctions(line, "".toCharArray(), "".toCharArray(), type, false, false, false, target, expandedCode, message);
-                        }else if(StringsEqual(parts[1].string, "b:".toCharArray())) {
+                        }else if(StringsEqual(parts[1].string, "b".toCharArray()) && EndsWith(parts[2].string, ":".toCharArray())) {
+                            if(type.length == 0){
+                                type = "b1".toCharArray();
+                            }
                             success = BooleanFormulaToTFormFunctions(line, "".toCharArray(), "".toCharArray(), type, false, false, false, target, false, expandedCode, message);
+                        }else if(StringsEqual(parts[1].string, "s".toCharArray()) && EndsWith(parts[2].string, ":".toCharArray())) {
+                            success = StructuralFormulaToTFormFunctions(line, "".toCharArray(), "".toCharArray(), type, false, false, false, target, expandedCode, message);
                         }else{
                             success = false;
                             message.string = "Unknown expression type: ".toCharArray();

@@ -3,6 +3,7 @@ Bgs testS
   b1 tb10
   b1 tb11
   b1 y
+  s64 is640
 Ens
 
 Fnc test

@@ -1,4 +1,4 @@
-package FormulaTranslation.ArithmeticFormula;
+package FormulaTranslation.StructuralFormula;
 
 import static java.lang.Math.*;
 
@@ -56,7 +56,7 @@ import static FormulaTranslation.BooleanFormula.BooleanFormula.*;
 
 import static FormulaTranslation.ArithmeticFormulaPratt.ArithmeticFormulaPratt.*;
 
-import static FormulaTranslation.StructuralFormula.StructuralFormula.*;
+import static FormulaTranslation.ArithmeticFormula.ArithmeticFormula.*;
 
 import static FormulaTranslation.BitwiseFormula.BitwiseFormula.*;
 
@@ -83,8 +83,8 @@ import static FormulaTranslation.BitwiseFormulaSymbolicWriter.BitwiseFormulaSymb
 
 import static FormulaTranslation.BooleanFormulaFunctionWriter.BooleanFormulaFunctionWriter.*;
 
-public class ArithmeticFormula{
-	public static boolean TokenizeArithmeticFormula(char [] f, StringArrayReference tokens, StringReference message){
+public class StructuralFormula{
+	public static boolean TokenizeStructuralFormula(char [] f, StringArrayReference tokens, StringReference message){
 		boolean success;
 		double i;
 		LinkedListStrings ll;
@@ -102,23 +102,14 @@ public class ArithmeticFormula{
 			}else if(f[(int)(i)] == ')'){
 				LinkedListAddString(ll, ")".toCharArray());
 				i = i + 1d;
-			}else if(f[(int)(i)] == '+'){
-				LinkedListAddString(ll, "+".toCharArray());
+			}else if(f[(int)(i)] == '.'){
+				LinkedListAddString(ll, ".".toCharArray());
 				i = i + 1d;
-			}else if(f[(int)(i)] == '-'){
-				LinkedListAddString(ll, "-".toCharArray());
+			}else if(f[(int)(i)] == '['){
+				LinkedListAddString(ll, "[".toCharArray());
 				i = i + 1d;
-			}else if(f[(int)(i)] == '*'){
-				LinkedListAddString(ll, "*".toCharArray());
-				i = i + 1d;
-			}else if(f[(int)(i)] == '/'){
-				LinkedListAddString(ll, "/".toCharArray());
-				i = i + 1d;
-			}else if(f[(int)(i)] == '^'){
-				LinkedListAddString(ll, "^".toCharArray());
-				i = i + 1d;
-			}else if(f[(int)(i)] == '%'){
-				LinkedListAddString(ll, "%".toCharArray());
+			}else if(f[(int)(i)] == ']'){
+				LinkedListAddString(ll, "]".toCharArray());
 				i = i + 1d;
 			}else if(f[(int)(i)] == ' ' || f[(int)(i)] == '\t' || f[(int)(i)] == '\n'){
 				i = i + 1d;
@@ -154,13 +145,13 @@ public class ArithmeticFormula{
 		return success;
 	}
 
-	public static boolean ParseArithmeticTokens(StringReference [] tokens, ASTNode ast, StringReference message){
+	public static boolean ParseStructuralTokens(StringReference [] tokens, ASTNode ast, StringReference message){
 		boolean success;
 		NumberReference cur;
 
 		cur = CreateNumberReference(0d);
 
-		success = ParseAdditionOrSubtraction(tokens, cur, ast, message);
+		success = ParseStructureAccess(tokens, cur, ast, message);
 
 		if(success){
 			success = TokenIs(tokens, cur, "<end>".toCharArray());
@@ -173,19 +164,19 @@ public class ArithmeticFormula{
 		return success;
 	}
 
-	public static boolean ParseAdditionOrSubtraction(StringReference [] tokens, NumberReference cur, ASTNode ast, StringReference message){
+	public static boolean ParseStructureAccess(StringReference [] tokens, NumberReference cur, ASTNode ast, StringReference message){
 		boolean success;
 		ASTNode t, t1;
 		char [] op;
 
 		t = new ASTNode();
-		success = ParseMultiplicationOrDivision(tokens, cur, t, message);
+		success = ParseLiteralVariableParenthesis(tokens, cur, t, message);
 
-		for(; success && (TokenIs(tokens, cur, "+".toCharArray()) || TokenIs(tokens, cur, "-".toCharArray())); ){
+		for(; success && TokenIs(tokens, cur, ".".toCharArray()); ){
 			op = Index(tokens, cur);
 			AddToNumberReference(cur, 1d);
 			t1 = new ASTNode();
-			success = ParseMultiplicationOrDivision(tokens, cur, t1, message);
+			success = ParseLiteralVariableParenthesis(tokens, cur, t1, message);
 			if(success){
 				t = CreateASTNode(t, t1, op);
 			}
@@ -198,65 +189,15 @@ public class ArithmeticFormula{
 		return success;
 	}
 
-	public static boolean ParseMultiplicationOrDivision(StringReference [] tokens, NumberReference cur, ASTNode ast, StringReference message){
+	public static boolean ParseLiteralVariableParenthesis(StringReference [] tokens, NumberReference cur, ASTNode ast, StringReference message){
 		boolean success;
-		ASTNode t, t1;
-		char [] op;
-
-		t = new ASTNode();
-		success = ParseExponentiation(tokens, cur, t, message);
-
-		for(; success && (TokenIs(tokens, cur, "*".toCharArray()) || TokenIs(tokens, cur, "/".toCharArray()) || TokenIs(tokens, cur, "mod".toCharArray())); ){
-			op = Index(tokens, cur);
-			AddToNumberReference(cur, 1d);
-			t1 = new ASTNode();
-			success = ParseExponentiation(tokens, cur, t1, message);
-			if(success){
-				t = CreateASTNode(t, t1, op);
-			}
-		}
-
-		if(success){
-			AssignASTNode(ast, t);
-		}
-
-		return success;
-	}
-
-	public static boolean ParseExponentiation(StringReference [] tokens, NumberReference cur, ASTNode ast, StringReference message){
-		boolean success;
-		ASTNode t, t1;
-		char [] op;
-
-		t = new ASTNode();
-		success = ParseLiteralVariableUnaryParenthesis(tokens, cur, t, message);
-
-		if(success && TokenIs(tokens, cur, "^".toCharArray())){
-			op = Index(tokens, cur);
-			AddToNumberReference(cur, 1d);
-			t1 = new ASTNode();
-			success = ParseExponentiation(tokens, cur, t1, message);
-			if(success){
-				t = CreateASTNode(t, t1, op);
-			}
-		}
-
-		if(success){
-			AssignASTNode(ast, t);
-		}
-
-		return success;
-	}
-
-	public static boolean ParseLiteralVariableUnaryParenthesis(StringReference [] tokens, NumberReference cur, ASTNode ast, StringReference message){
-		boolean success;
-		ASTNode t;
+		ASTNode t, a;
 		char [] token;
 
 		success = true;
 
 		token = Index(tokens, cur);
-		if(IsKnownArithmeticFunction(token)){
+		if(IsKnownStructuralFunction(token)){
 			AddToNumberReference(cur, 1d);
 
 			success = TokenIs(tokens, cur, "(".toCharArray());
@@ -264,7 +205,7 @@ public class ArithmeticFormula{
 				AddToNumberReference(cur, 1d);
 
 				t = new ASTNode();
-				success = ParseAdditionOrSubtraction(tokens, cur, t, message);
+				success = ParseStructureAccess(tokens, cur, t, message);
 
 				if(success){
 					success = TokenIs(tokens, cur, ")".toCharArray());
@@ -282,28 +223,43 @@ public class ArithmeticFormula{
 				message.string = "Expected \'(\'.".toCharArray();
 			}
 		}else if(charIsLetter(token[0])){
-			ast.leaf = true;
-			ast.value = token;
 			AddToNumberReference(cur, 1d);
-		}else if(charIsNumber(token[0])){
-			if(NextTokenIs(tokens, cur, "%".toCharArray())){
-				ast.leaf = false;
-				ast.value = "%".toCharArray();
-				ast.l = new ASTNode();
-				ast.l.leaf = true;
-				ast.l.value = token;
+
+			if(TokenIs(tokens, cur, "[".toCharArray())){
 				AddToNumberReference(cur, 1d);
-				AddToNumberReference(cur, 1d);
+
+				a = new ASTNode();
+				a.leaf = true;
+				a.value = token;
+				t = new ASTNode();
+				success = ParseStructureAccess(tokens, cur, t, message);
+
+				if(success){
+					ast.value = "[]".toCharArray();
+					ast.l = a;
+					ast.r = t;
+					ast.leaf = false;
+
+					success = TokenIs(tokens, cur, "]".toCharArray());
+					if(success){
+						AddToNumberReference(cur, 1d);
+					}else{
+						message.string = "Expected \']\'.".toCharArray();
+					}
+				}
 			}else{
 				ast.leaf = true;
 				ast.value = token;
-				AddToNumberReference(cur, 1d);
 			}
+		}else if(charIsNumber(token[0])){
+			ast.leaf = true;
+			ast.value = token;
+			AddToNumberReference(cur, 1d);
 		}else if(TokenIs(tokens, cur, "(".toCharArray())){
 			AddToNumberReference(cur, 1d);
 
 			t = new ASTNode();
-			success = ParseAdditionOrSubtraction(tokens, cur, t, message);
+			success = ParseStructureAccess(tokens, cur, t, message);
 
 			if(success){
 				ast.value = "()".toCharArray();
@@ -317,21 +273,6 @@ public class ArithmeticFormula{
 					message.string = "Expected \')\'.".toCharArray();
 				}
 			}
-		}else if(TokenIs(tokens, cur, "-".toCharArray()) || TokenIs(tokens, cur, "+".toCharArray())){
-			AddToNumberReference(cur, 1d);
-
-			t = new ASTNode();
-			success = ParseExponentiation(tokens, cur, t, message);
-
-			if(success){
-				if(StringsEqual(token, "-".toCharArray())){
-					ast.value = "unary-".toCharArray();
-				}else{
-					ast.value = "unary+".toCharArray();
-				}
-				ast.l = t;
-				ast.leaf = false;
-			}
 		}else{
 			success = false;
 			message.string = "Unexpected token.".toCharArray();
@@ -340,12 +281,8 @@ public class ArithmeticFormula{
 		return success;
 	}
 
-	public static boolean IsKnownArithmeticFunction(char [] token){
-		return StringsEqual(token, "sqrt".toCharArray()) || StringsEqual(token, "ceil".toCharArray()) || StringsEqual(token, "floor".toCharArray()) || StringsEqual(token, "truncate".toCharArray()) || StringsEqual(token, "abs".toCharArray()) || StringsEqual(token, "log".toCharArray()) || StringsEqual(token, "ln".toCharArray()) || StringsEqual(token, "exp".toCharArray()) || StringsEqual(token, "sin".toCharArray()) || StringsEqual(token, "cos".toCharArray()) || StringsEqual(token, "tan".toCharArray()) || StringsEqual(token, "asin".toCharArray()) || StringsEqual(token, "acos".toCharArray()) || StringsEqual(token, "atan".toCharArray()) || StringsEqual(token, "gamma".toCharArray()) || StringsEqual(token, "cbrt".toCharArray());
-	}
-
-	public static boolean IsKnownMatrixFunction(char [] token){
-		return StringsEqual(token, "trace".toCharArray()) || StringsEqual(token, "inverse".toCharArray()) || StringsEqual(token, "norm".toCharArray()) || StringsEqual(token, "minor".toCharArray());
+	public static boolean IsKnownStructuralFunction(char [] token){
+		return StringsEqual(token, "len".toCharArray());
 	}
 
   public static void delete(Object object){

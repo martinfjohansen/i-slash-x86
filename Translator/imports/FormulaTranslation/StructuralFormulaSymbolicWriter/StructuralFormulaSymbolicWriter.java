@@ -1,4 +1,4 @@
-package FormulaTranslation.ArithmeticFormulaSymbolicWriter;
+package FormulaTranslation.StructuralFormulaSymbolicWriter;
 
 import static java.lang.Math.*;
 
@@ -70,8 +70,6 @@ import static FormulaTranslation.TS.TS.*;
 
 import static FormulaTranslation.ArithmeticFormulaEvaluator.ArithmeticFormulaEvaluator.*;
 
-import static FormulaTranslation.StructuralFormulaSymbolicWriter.StructuralFormulaSymbolicWriter.*;
-
 import static FormulaTranslation.BooleanFormulaSymbolicWriter.BooleanFormulaSymbolicWriter.*;
 
 import static FormulaTranslation.BitwiseFormulaFunctionWriter.BitwiseFormulaFunctionWriter.*;
@@ -79,59 +77,46 @@ import static FormulaTranslation.BitwiseFormulaFunctionWriter.BitwiseFormulaFunc
 import FormulaTranslation.ASTNodes.*;
 import static FormulaTranslation.ASTNodes.ASTNodes.*;
 
+import static FormulaTranslation.ArithmeticFormulaSymbolicWriter.ArithmeticFormulaSymbolicWriter.*;
+
 import static FormulaTranslation.BitwiseFormulaSymbolicWriter.BitwiseFormulaSymbolicWriter.*;
 
 import static FormulaTranslation.BooleanFormulaFunctionWriter.BooleanFormulaFunctionWriter.*;
 
-public class ArithmeticFormulaSymbolicWriter{
-	public static char [] ASTToArithmeticFormula(ASTNode ast){
+public class StructuralFormulaSymbolicWriter{
+	public static char [] ASTToStructuralFormula(ASTNode ast){
 		char [] f, p1, p2;
 
 		if(ast.leaf){
 			f = ast.value;
-		}else if(StringsEqual(ast.value, "unary-".toCharArray())){
+		}else if(StringsEqual(ast.value, ".".toCharArray())){
 			f = new char [0];
-			p1 = ASTToArithmeticFormula(ast.l);
-			f = AppendString(f, "-".toCharArray());
+			p1 = ASTToStructuralFormula(ast.l);
+			p2 = ASTToStructuralFormula(ast.r);
 			f = AppendString(f, p1);
-		}else if(StringsEqual(ast.value, "unary+".toCharArray())){
+			f = AppendString(f, ".".toCharArray());
+			f = AppendString(f, p2);
+		}else if(IsKnownStructuralFunction(ast.value)){
 			f = new char [0];
-			p1 = ASTToArithmeticFormula(ast.l);
-			f = AppendString(f, "+".toCharArray());
-			f = AppendString(f, p1);
-		}else if(StringsEqual(ast.value, "%".toCharArray())){
-			f = new char [0];
-			f = AppendString(f, ast.l.value);
-			f = AppendString(f, "%".toCharArray());
-		}else if(IsKnownArithmeticFunction(ast.value)){
-			f = new char [0];
-			p1 = ASTToArithmeticFormula(ast.l);
+			p1 = ASTToStructuralFormula(ast.l);
 			f = AppendString(f, ast.value);
 			f = AppendString(f, "(".toCharArray());
 			f = AppendString(f, p1);
 			f = AppendString(f, ")".toCharArray());
+		}else if(StringsEqual(ast.value, "[]".toCharArray())){
+			f = new char [0];
+			p1 = ASTToStructuralFormula(ast.l);
+			p2 = ASTToStructuralFormula(ast.r);
+			f = AppendString(f, p1);
+			f = AppendString(f, "[".toCharArray());
+			f = AppendString(f, p2);
+			f = AppendString(f, "]".toCharArray());
 		}else if(StringsEqual(ast.value, "()".toCharArray())){
 			f = new char [0];
-			p1 = ASTToArithmeticFormula(ast.l);
+			p1 = ASTToStructuralFormula(ast.l);
 			f = AppendString(f, "(".toCharArray());
 			f = AppendString(f, p1);
 			f = AppendString(f, ")".toCharArray());
-		}else if(StringsEqual(ast.value, "+".toCharArray()) || StringsEqual(ast.value, "-".toCharArray()) || StringsEqual(ast.value, "mod".toCharArray())){
-			f = new char [0];
-			p1 = ASTToArithmeticFormula(ast.l);
-			p2 = ASTToArithmeticFormula(ast.r);
-			f = AppendString(f, p1);
-			f = AppendString(f, " ".toCharArray());
-			f = AppendString(f, ast.value);
-			f = AppendString(f, " ".toCharArray());
-			f = AppendString(f, p2);
-		}else if(StringsEqual(ast.value, "*".toCharArray()) || StringsEqual(ast.value, "/".toCharArray()) || StringsEqual(ast.value, "^".toCharArray())){
-			f = new char [0];
-			p1 = ASTToArithmeticFormula(ast.l);
-			p2 = ASTToArithmeticFormula(ast.r);
-			f = AppendString(f, p1);
-			f = AppendString(f, ast.value);
-			f = AppendString(f, p2);
 		}else{
 			f = "<failed>".toCharArray();
 		}
@@ -139,7 +124,7 @@ public class ArithmeticFormulaSymbolicWriter{
 		return f;
 	}
 
-	public static void ArithmeticASTToTForm(ASTNode ast, StringReference tf, NumberReference t){
+	public static void StructuralASTToTForm(ASTNode ast, StringReference tf, NumberReference t){
 		double tl, tr;
 		StringReference numberString;
 		numberString = new StringReference();
@@ -150,12 +135,12 @@ public class ArithmeticFormulaSymbolicWriter{
 		if(!ast.leaf){
 			if(StringsEqual(ast.value, "+".toCharArray()) || StringsEqual(ast.value, "-".toCharArray()) || StringsEqual(ast.value, "mod".toCharArray()) || StringsEqual(ast.value, "*".toCharArray()) || StringsEqual(ast.value, "/".toCharArray()) || StringsEqual(ast.value, "^".toCharArray())){
 				if(!ast.l.leaf){
-					ArithmeticASTToTForm(ast.l, tf, t);
+					StructuralASTToTForm(ast.l, tf, t);
 					tl = t.numberValue;
 				}
 
 				if(!ast.r.leaf){
-					ArithmeticASTToTForm(ast.r, tf, t);
+					StructuralASTToTForm(ast.r, tf, t);
 					tr = t.numberValue;
 				}
 
@@ -183,10 +168,10 @@ public class ArithmeticFormulaSymbolicWriter{
 				}
 				tf.string = AppendString(tf.string, ";\n".toCharArray());
 			}else if(StringsEqual(ast.value, "()".toCharArray())){
-				ArithmeticASTToTForm(ast.l, tf, t);
+				StructuralASTToTForm(ast.l, tf, t);
 			}else if(StringsEqual(ast.value, "unary-".toCharArray()) || StringsEqual(ast.value, "unary+".toCharArray())){
 				if(!ast.l.leaf){
-					ArithmeticASTToTForm(ast.l, tf, t);
+					StructuralASTToTForm(ast.l, tf, t);
 					tl = t.numberValue;
 				}
 
@@ -210,7 +195,7 @@ public class ArithmeticFormulaSymbolicWriter{
 				tf.string = AppendString(tf.string, ";\n".toCharArray());
 			}else if(IsKnownArithmeticFunction(ast.value)){
 				if(!ast.l.leaf){
-					ArithmeticASTToTForm(ast.l, tf, t);
+					StructuralASTToTForm(ast.l, tf, t);
 					tl = t.numberValue;
 				}
 
@@ -245,7 +230,7 @@ public class ArithmeticFormulaSymbolicWriter{
 		}
 	}
 
-	public static char [] ArithmeticFormulaToTForm(char [] f){
+	public static char [] StructuralFormulaToTForm(char [] f){
 		char [] af;
 		StringArrayReference tokens;
 		boolean success;
@@ -265,7 +250,7 @@ public class ArithmeticFormulaSymbolicWriter{
 			if(success){
 				tf = CreateStringReference("".toCharArray());
 				t = CreateNumberReference(0d);
-				ArithmeticASTToTForm(ast, tf, t);
+				StructuralASTToTForm(ast, tf, t);
 				af = tf.string;
 			}else{
 				af = errorMessage.string;

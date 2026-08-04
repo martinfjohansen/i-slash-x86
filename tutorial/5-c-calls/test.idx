@@ -5,6 +5,7 @@ Bgs testS
 Ens
 
 Fnc test
+	; y = fn(x)
   Acw fns, x, x
   Call fn, fns
   Acr y, fns, x
@@ -12,6 +13,7 @@ Ret
 
 Bgs fnS
   s64 x
+  s64 is640
 Ens
 
 Fnc fn

@@ -5,13 +5,22 @@
 
 int main(){
 	struct testS ts;
+	int failures = 0;
 
 	ts.fns = malloc(sizeof(struct fnS));
 	ts.x = 10;
 
 	test(&ts);
 
-	printf("test(...) = %ld\n", ts.y);
+	fprintf(stderr, "test(...) = %ld\n", ts.y);
+	
+	if(ts.y == 30){
+
+	}else{
+		failures = 1;
+	}
+	
+	printf("%d\n", failures);
 
 	return 0;
 }

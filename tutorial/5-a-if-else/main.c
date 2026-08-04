@@ -5,12 +5,21 @@
 
 int main(){
 	struct testS ts;
+	int failures = 0;
 
 	ts.a = 50;
 
 	test(&ts);
 
-	printf("test(...) = %ld\n", ts.y);
+	fprintf(stderr, "test(...) = %ld\n", ts.y);
+	
+	if(ts.y == 4){
+
+	}else{
+		failures = 1;
+	}
+	
+	printf("%d\n", failures);
 
 	return 0;
 }

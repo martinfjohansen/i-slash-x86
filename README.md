@@ -49,6 +49,8 @@ Labels for control flow is computed.
 ### Expressions
 Various expression types can be used to generate instruction sequences. These include arithmetic, bitwise, boolean-relational and declaration expressions.
 
+Arithmetic, bitwise and boolean-relational expressions including a type specificer. This type is used for intermediate results. This ensures consistent computations during the evaluation of an expression, no surprising and implicit conversions.
+
 
 ## Language design
 

@@ -117,6 +117,9 @@ String instructions (PCMPxSTRy) -- 512 different operations
  - b. Range check -- Does a character fit into one of the ranges?
  - c. Match -- one-to-one match
  - d. Substring -- Where does the string occur?
+ 
+# 16. Structural expressions
+ - a. Structural expressions
 
 # Not included yet
  - x. Move selected values based on mask (MASKMOVx)

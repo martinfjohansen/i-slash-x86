@@ -2,11 +2,13 @@ Bgs testS
   f64 x
   s8 y
   f32 a
-  s16 b
+  s32 b
+  s16 c
 Ens
 
 Fnc test
   f64tof32 a, x
-  f32tos16 b, a
-  s16tos8 y, b
+  f32tos32 b, a
+  s32tos16 c, b
+  s16tos8 y, c
 Ret

@@ -5,13 +5,22 @@
 
 int main(){
 	struct testS ts;
+	int failures = 0;
 
 	ts.c = malloc(sizeof(double) * 100);
 	ts.c->x = 1.234567;
 
 	test(&ts);
 
-	printf("test(...) = %f\n", ts.y);
+	fprintf(stderr, "test(...) = %f\n", ts.y);
+	
+	if(ts.y == 1.234567){
+
+	}else{
+		failures = 1;
+	}
+	
+	printf("%d\n", failures);
 
 	return 0;
 }
