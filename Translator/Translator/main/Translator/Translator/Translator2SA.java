@@ -2007,6 +2007,10 @@ public class Translator2SA {
                         memoryPostfix[(int) i] = 'm';
                     }
                 }
+
+                if(StringsEqual(ins.name, "Idro".toCharArray()) && i == 2){
+                    memoryPostfix[(int) i] = 'i';
+                }
             }
         }
 

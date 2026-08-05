@@ -1,6 +1,6 @@
 Bgs StringsEqualAS
   exp decl: u16a a, b
-  exp decl: u64 length, xlen, i, j
+  exp decl: u64 length, xlen, i, j, iu640
   exp decl: u16x8 a1, a2, a3, a4
   exp decl: u16x8 b1, b2, b3, b4
   exp decl: b16x8 tu16x80, tu16x81, tu16x82
@@ -9,7 +9,7 @@ Bgs StringsEqualAS
   exp decl: u16x8a aa, ba
   b16 m
   exp decl: b1 tb10, tb11, equal
-  u16 mn
+  exp decl: u16 mn, iu160
 Ens
 
 Fnc StringsEqualA
