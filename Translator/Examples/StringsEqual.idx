@@ -34,7 +34,7 @@ Fnc StringsEqualA
     Idro b3, ba, j, 2
     Idro b4, ba, j, 3
 
-    exp b u16x8: all = ((a1 = b1) & (a2 = b2)) & ((a3 = b3) & (a4 = b4))
+    exp b b16x8: all = ((a1 = b1) & (a2 = b2)) & ((a3 = b3) & (a4 = b4))
     Xb8x16 allx, all
     ExtractMask m, allx
     Xu16 mn, m

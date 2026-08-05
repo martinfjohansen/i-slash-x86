@@ -4967,6 +4967,11 @@ extern free
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
+%macro Xu8x16a.mu16a 2
+  mov rax, qword [rdi + %2]
+  mov qword [rdi + %1], rax
+%endmacro
+
 
 
 ; Future

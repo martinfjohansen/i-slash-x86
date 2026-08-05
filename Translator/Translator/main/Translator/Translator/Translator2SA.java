@@ -666,7 +666,6 @@ public class Translator2SA {
         ArrayAddString(p5, "MatchString".toCharArray());
         ArrayAddString(p5, "FindSubstring".toCharArray());
 
-        p5 = CreateArray();
         p6 = CreateArray();
         p7 = CreateArray();
         p8 = CreateArray();
