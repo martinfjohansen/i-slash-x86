@@ -4972,6 +4972,15 @@ extern free
   mov qword [rdi + %1], rax
 %endmacro
 
+%macro Xb16x8.mu16x8 2
+  movdqu xmm0, oword [rdi + %2]
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+%macro Xu8x16.mb16x8 2
+  movdqu xmm0, oword [rdi + %2]
+  movdqu oword [rdi + %1], xmm0
+%endmacro
 
 
 ; Future
@@ -5340,13 +5349,13 @@ extern free
 ; Lzcnt -- Leading zero count
 ; x = Lzcnt(a). a is a bitfield, x a number.
 
-%macro Lzcnt.mb64 2
+%macro Lzcnt.mu64b64 2
   mov rax, qword [rdi + %2]
   lzcnt rax, rax
   mov qword [rdi + %1], rax
 %endmacro
 
-%macro Lzcnt.mu16 2
+%macro Lzcnt.mu64b16 2
   mov rax, 0
   mov ax, word [rdi + %2]
   lzcnt rax, rax
@@ -6032,9 +6041,9 @@ extern free
 ; FindSubstring -- Locate string
 ; x = FindSubstring(a, al, b, bl). x, a, b are packed bytes. al, bl are a numbers.
 
-%macro FindSubstring.mmmiu8x16 5
-  movdqu xmm0, oword [rdi + %3]
-  mov rax, qword [rdi + %4]
+%macro FindSubstring.mmmmu64 5
+  movdqu xmm0, oword [rdi + %4]
+  mov rax, qword [rdi + %3]
   movdqu xmm1, oword [rdi + %2]
   mov rdx, qword [rdi + %5]
   pcmpestrm xmm0, xmm1, (0 << 6) + (3 << 2)
@@ -6042,9 +6051,9 @@ extern free
   mov word [rdi + %1], ax
 %endmacro
 
-%macro FindSubstring.mmiiu8x16 5
-  movdqu xmm0, oword [rdi + %3]
-  mov rax, %4
+%macro FindSubstring.mmiiu64 5
+  movdqu xmm0, oword [rdi + %4]
+  mov rax, %3
   movdqu xmm1, oword [rdi + %2]
   mov rdx, %5
   pcmpestrm xmm0, xmm1, (0 << 6) + (3 << 2)

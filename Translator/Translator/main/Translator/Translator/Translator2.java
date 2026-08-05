@@ -503,6 +503,7 @@ public class Translator2 {
         ArrayAddString(ins, "Xu8x16a".toCharArray());
         ArrayAddString(ins, "Xu8x16".toCharArray());
         ArrayAddString(ins, "Xb8x16".toCharArray());
+        ArrayAddString(ins, "Xb16x8".toCharArray());
 
         ArrayAddString(ins, "Cmov".toCharArray());
         ArrayAddString(ins, "Set".toCharArray());

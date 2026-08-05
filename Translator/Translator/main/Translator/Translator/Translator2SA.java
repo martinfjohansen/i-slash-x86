@@ -587,6 +587,7 @@ public class Translator2SA {
         ArrayAddString(p2, "s32tof64".toCharArray());
         ArrayAddString(p2, "s64tof32".toCharArray());
         ArrayAddString(p2, "s64tof64".toCharArray());
+        ArrayAddString(p2, "Xb16x8".toCharArray());
 
         p3 = CreateArray();
         ArrayAddString(p3, "Add".toCharArray());
@@ -976,7 +977,7 @@ public class Translator2SA {
         ArrayAddString(reint, "Xb128".toCharArray());
         ArrayAddString(reint, "Xb256".toCharArray());
         ArrayAddString(reint, "Xu16".toCharArray());
-
+        ArrayAddString(reint, "Xb16x8".toCharArray());
 
         // No parameters
         Array noParameters = CreateArray();
