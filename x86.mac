@@ -2816,14 +2816,14 @@
 %macro Eq.mmb16x8u16x8 3
   movdqu xmm0, oword [rdi + %2]
   movdqu xmm1, oword [rdi + %3]
-  pcmpeqw xmm0, xmm1
+  vpcmpeqw xmm0, xmm0, xmm1
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
 %macro Eq.mmb16x8s16x8 3
   movdqu xmm0, oword [rdi + %2]
   movdqu xmm1, oword [rdi + %3]
-  pcmpeqw xmm0, xmm1
+  vpcmpeqw xmm0, xmm0, xmm1
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
@@ -2872,7 +2872,7 @@
 %macro Eq.mmb16x8b16x8 3
   movdqu xmm0, oword [rdi + %2]
   movdqu xmm1, oword [rdi + %3]
-  pcmpeqw xmm0, xmm1
+  vpcmpeqw xmm0, xmm0, xmm1
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
