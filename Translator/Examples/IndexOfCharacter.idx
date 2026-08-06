@@ -1,11 +1,12 @@
 Bgs IndexOfCharacterAS
-	exp decl: u64 i, len, xlen, index, zcnt, tu640, tu641
+	exp decl: u64 i, len, xlen, index, zcnt, tu640, tu641, iu640, iu641
 	exp decl: u16 c, x
 	u16a str
 	exp decl: b1 found, tb10, tb11
 	u8x16a stra
 	u8x16 sc
 	u16x8 ccx
+	b16x8 cca
 	u8x16 cc
 	b16 mask1
 Ens
@@ -13,7 +14,8 @@ Ens
 Fnc IndexOfCharacterA
 	Xu8x16a stra, str
 	Broadcast ccx, c
-	Xu8x16 cc, ccx
+	Xb16x8 cca, ccx
+	Xu8x16 cc, cca
 
 	exp a u64: xlen = len / 8
 
@@ -36,6 +38,3 @@ Fnc IndexOfCharacterA
 	exp a u64: i = xlen * 8
 
 Ret
-
-
-

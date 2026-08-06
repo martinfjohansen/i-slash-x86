@@ -6043,19 +6043,19 @@ extern free
 
 %macro FindSubstring.mmmmu64 5
   movdqu xmm0, oword [rdi + %4]
-  mov rax, qword [rdi + %3]
+  mov rax, qword [rdi + %5]
   movdqu xmm1, oword [rdi + %2]
-  mov rdx, qword [rdi + %5]
+  mov rdx, qword [rdi + %3]
   pcmpestrm xmm0, xmm1, (0 << 6) + (3 << 2)
   vpextrw eax, xmm0, 0
   mov word [rdi + %1], ax
 %endmacro
 
-%macro FindSubstring.mmiiu64 5
+%macro FindSubstring.mimiu64 5
   movdqu xmm0, oword [rdi + %4]
-  mov rax, %3
+  mov rax, %5
   movdqu xmm1, oword [rdi + %2]
-  mov rdx, %5
+  mov rdx, %3
   pcmpestrm xmm0, xmm1, (0 << 6) + (3 << 2)
   vpextrw eax, xmm0, 0
   mov word [rdi + %1], ax
