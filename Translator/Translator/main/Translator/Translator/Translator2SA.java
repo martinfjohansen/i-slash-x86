@@ -1436,15 +1436,15 @@ public class Translator2SA {
             ins.params[1].immediateType = type2;
         }
 
-        if (ParamIsLiteral(ins.params[2])) {
-            ins.params[2].immediateType = type1;
-        }
-
         ins.hasTypePostfix = true;
         ins.typePostfix = type1;
 
         if (TypeIsArrayType(type1)) {
             char[] elementType = Substring(type1, 0, type1.length - 1d);
+
+            if (ParamIsLiteral(ins.params[2])) {
+                ins.params[2].immediateType = elementType;
+            }
 
             if(ParamIsVariable(ins.params[2])) {
                 if (StringsEqual(ins.params[2].var.type, elementType)) {
@@ -1462,6 +1462,10 @@ public class Translator2SA {
         }else if (TypeIsMultipleType(type1)){
             StringReference[] parts = SplitByCharacter(type1, 'x');
             char[] elementType = parts[0].string;
+
+            if (ParamIsLiteral(ins.params[2])) {
+                ins.params[2].immediateType = elementType;
+            }
 
             if(ParamIsVariable(ins.params[2])) {
                 if (StringsEqual(ins.params[2].var.type, elementType)) {
@@ -2008,7 +2012,7 @@ public class Translator2SA {
                     }
                 }
 
-                if(StringsEqual(ins.name, "Idro".toCharArray()) && i == 2){
+                if(StringsEqual(ins.name, "Idro".toCharArray()) && i == 2 || StringsEqual(ins.name, "Idw".toCharArray()) && i == 0 || StringsEqual(ins.name, "Idr".toCharArray()) && i == 1){
                     memoryPostfix[(int) i] = 'i';
                 }
             }

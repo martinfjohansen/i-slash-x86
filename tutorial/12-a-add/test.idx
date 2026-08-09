@@ -5,6 +5,8 @@ Bgs testS
   u32x4 a
   u32x4 b
   u32x4 c
+  f32 if320
+  u32 iu320
 Ens
 
 Fnc test

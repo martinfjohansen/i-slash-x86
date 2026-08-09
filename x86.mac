@@ -11,15 +11,15 @@
 
 ; SSE
 ; Working registers -- xmm0, xmm1, xmm2
-; Unused: xmm3-xmm15
+; Unused: xmm3-xmm15 (31)
 
 ; AVX
 ; Working registers -- ymm0, ymm1, ymm2, ymm3
-; Unused: ymm4-ymm15
+; Unused: ymm4-ymm15 (31)
 
 ; AVX-512
 ; Working registers -- zmm0, zmm1, zmm2, zmm3
-; Unused: zmm4-zmm15
+; Unused: zmm4-zmm31
 
 ; The use of pointers for arrays and structures might be OK. The memory can be made nicely contigous by using a suitable allocator to initialize static structures and arrays.
 
@@ -976,6 +976,11 @@
 %endmacro
 
 %macro Abs.mu16x8 2
+  movdqu xmm0, oword [rdi + %2]
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+%macro Abs.mu32x4 2
   movdqu xmm0, oword [rdi + %2]
   movdqu oword [rdi + %1], xmm0
 %endmacro
@@ -4212,10 +4217,25 @@ extern free
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
+%macro Idw.imu32x4 3
+  movdqu xmm0, oword [rdi + %1]
+  mov eax, dword [rdi + %3]
+  vpinsrd xmm0, eax, %2
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
 %macro Idw.iiu32x4 3
   movdqu xmm0, oword [rdi + %1]
   mov eax, %3
   vpinsrd xmm0, eax, %2
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+%macro Idw.imf32x4 3
+  movdqu xmm0, oword [rdi + %1]
+  mov eax, dword [rdi + %3]
+  movq xmm1, rax
+  insertps xmm0, xmm1, %2 << 4
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
