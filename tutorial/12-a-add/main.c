@@ -18,6 +18,8 @@ int main(){
 	print_m128_u32(ts.a);
 	print_m128_u32(ts.b);
 	print_m128_u32(ts.c);
+	
+	print_m512_f64(ts.g);
 
 	/*if(ts.y == 0x6add1e80){
 		printf("success\n");

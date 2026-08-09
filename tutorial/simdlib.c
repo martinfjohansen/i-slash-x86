@@ -11,6 +11,18 @@ void print_m128_f64(__m128 reg) {
     printf("f64: %f, %f\n", values[0], values[1]);
 }
 
+void print_m256_f64(__m256 reg) {
+    double *values = (double *)&reg;
+    
+    printf("f64: %f, %f, %f, %f\n", values[0], values[1], values[2], values[3]);
+}
+
+void print_m512_f64(__m512 reg) {
+    double *values = (double *)&reg;
+    
+    printf("f64: %f, %f, %f, %f, %f, %f, %f, %f\n", values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7]);
+}
+
 void print_m128_u8(__m128 reg) {
     uint8_t *values = (uint8_t *)&reg;
     

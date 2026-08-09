@@ -7,6 +7,8 @@ Bgs testS
   u32x4 c
   f32 if320
   u32 iu320
+  f64x8 g
+  f64 if640
 Ens
 
 Fnc test
@@ -42,6 +44,16 @@ Fnc test
   Sub c, a, b
   Mul c, a, b
   Abs c, c
+  
+  ; f64x8 tests
+  Idw g, 0, 1.0
+  Idw g, 1, 2.0
+  Idw g, 2, 3.0
+  Idw g, 3, 4.0
+  Idw g, 4, 5.0
+  Idw g, 5, 6.0
+  Idw g, 6, 7.0
+  Idw g, 7, 8.0
 Ret
 
 

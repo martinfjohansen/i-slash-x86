@@ -4233,10 +4233,18 @@ extern free
 
 %macro Idw.imf32x4 3
   movdqu xmm0, oword [rdi + %1]
-  mov eax, dword [rdi + %3]
-  movq xmm1, rax
+  movd xmm1, dword [rdi + %3]
   insertps xmm0, xmm1, %2 << 4
   movdqu oword [rdi + %1], xmm0
+%endmacro
+
+%macro Idw.imf64x8 3
+  vmovdqu64 zmm0, zword [rdi + %1]
+  vmovq xmm1, qword [rdi + %3]
+  mov eax, 1 << %2
+  kmovw k1, eax
+  vbroadcastsd zmm0 {k1}, xmm1
+  vmovdqu64 zword [rdi + %1], zmm0
 %endmacro
 
 %macro Idw.iif32x4 3
