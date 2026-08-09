@@ -192,6 +192,20 @@
   vmovdqu yword [rdi + %1], ymm0
 %endmacro
 
+%macro Add.mmf64x8 3
+  vmovdqu64 zmm0, zword [rdi + %2]
+  vmovdqu64 zmm1, zword [rdi + %3]
+  vaddpd zmm0, zmm0, zmm1
+  vmovdqu64 zword [rdi + %1], zmm0
+%endmacro
+
+%macro Add.mmf32x16 3
+  vmovdqu64 zmm0, zword [rdi + %2]
+  vmovdqu64 zmm1, zword [rdi + %3]
+  vaddps zmm0, zmm0, zmm1
+  vmovdqu64 zword [rdi + %1], zmm0
+%endmacro
+
 ; -----------------------------------------------------------------------------
 ; Sub
 ; x = a - b. a, b, c of the same type.
