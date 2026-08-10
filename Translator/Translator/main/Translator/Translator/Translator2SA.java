@@ -2005,14 +2005,14 @@ public class Translator2SA {
                 if (StringsEqual(ins.params[(int) (i + 1)].type, "var".toCharArray())) {
                     memoryPostfix[(int) i] = 'm';
                 } else {
-                    if(StringsEqual(ins.name, "Mov".toCharArray()) || StringsEqual(ins.name, "Movx8".toCharArray())) {
+                    if(StringsEqual(ins.name, "Mov".toCharArray()) || StringsEqual(ins.name, "Movx8".toCharArray()) || StringsEqual(ins.name, "Idw".toCharArray()) && i == 0 || StringsEqual(ins.name, "Idr".toCharArray()) && i == 1) {
                         memoryPostfix[(int) i] = 'i';
                     }else{
                         memoryPostfix[(int) i] = 'm';
                     }
                 }
 
-                if(StringsEqual(ins.name, "Idro".toCharArray()) && i == 2 || StringsEqual(ins.name, "Idw".toCharArray()) && i == 0 || StringsEqual(ins.name, "Idr".toCharArray()) && i == 1){
+                if(StringsEqual(ins.name, "Idro".toCharArray()) && i == 2){
                     memoryPostfix[(int) i] = 'i';
                 }
             }

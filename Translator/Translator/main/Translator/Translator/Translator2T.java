@@ -186,7 +186,7 @@ public class Translator2T {
             for (i = 0d; i < ins.params.length; i = i + 1d) {
 
                 // What parameters should remain immediates.
-                if(!(StringsEqual(ins.name, "Idro".toCharArray()) && i == 3) && !(StringsEqual(ins.name, "Idw".toCharArray()) && i == 1) && !(StringsEqual(ins.name, "Idr".toCharArray()) && i == 2)) {
+                if(!(StringsEqual(ins.name, "Idro".toCharArray()) && i == 3)) {
                     param = ins.params[(int) i];
                     param.useImmediateVar = true;
 
