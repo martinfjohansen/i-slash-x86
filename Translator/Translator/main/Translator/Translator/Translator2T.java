@@ -184,13 +184,15 @@ public class Translator2T {
             immVarCount = new HashMap<>();
 
             for (i = 0d; i < ins.params.length; i = i + 1d) {
+                param = ins.params[(int) i];
 
-                // What parameters should remain immediates.
-                if(!(StringsEqual(ins.name, "Idro".toCharArray()) && i == 3)) {
-                    param = ins.params[(int) i];
-                    param.useImmediateVar = true;
+                if (StringsEqual(param.type, "literal".toCharArray())) {
 
-                    if (StringsEqual(param.type, "literal".toCharArray())) {
+                    // What parameters should remain immediates.
+                    if(!(StringsEqual(ins.name, "Idro".toCharArray()) && i == 3) && !(StringsEqual(ins.name, "Idr".toCharArray()) && i == 2) && !(StringsEqual(ins.name, "Idw".toCharArray()) && i == 1)) {
+
+                        param.useImmediateVar = true;
+
                         for (j = 0; j < ins.indentation; j = j + 1d) {
                             LinkedListCharactersAddString(ll, "  ".toCharArray());
                         }
@@ -211,7 +213,6 @@ public class Translator2T {
                         LinkedListCharactersAddString(ll, ", ".toCharArray());
                         LinkedListCharactersAddString(ll, param.literal);
                         LinkedListCharactersAddString(ll, "\n".toCharArray());
-
                     }
                 }
             }
