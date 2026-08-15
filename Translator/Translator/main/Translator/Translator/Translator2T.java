@@ -149,6 +149,8 @@ public class Translator2T {
         LinkedListCharactersAddString(ll, ("  push r13\n").toCharArray());
         LinkedListCharactersAddString(ll, ("  push r14\n").toCharArray());
         LinkedListCharactersAddString(ll, ("  push r15\n").toCharArray());
+        LinkedListCharactersAddString(ll, ("  push rbp\n").toCharArray());
+        LinkedListCharactersAddString(ll, ("  push rbp\n").toCharArray());
 
         for(i = 0d; i < fnc.ins.length && success; i = i + 1d){
             tmp = new StringReference();
@@ -158,6 +160,8 @@ public class Translator2T {
             }
         }
 
+        LinkedListCharactersAddString(ll, ("  pop rbp\n").toCharArray());
+        LinkedListCharactersAddString(ll, ("  pop rbp\n").toCharArray());
         LinkedListCharactersAddString(ll, ("  pop r15\n").toCharArray());
         LinkedListCharactersAddString(ll, ("  pop r14\n").toCharArray());
         LinkedListCharactersAddString(ll, ("  pop r13\n").toCharArray());

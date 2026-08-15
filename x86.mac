@@ -2728,15 +2728,7 @@
 
 ; Future
 
-%macro Idro.miu16x8a 4
-  mov rax, qword [rdi + %2]
-  mov rdx, qword [rdi + %3]
-  shl rdx, 4
-  movdqu xmm0, [rax + rdx + %4 * 16]
-  movdqu [rdi + %1], xmm0
-%endmacro
-
-%macro Idro.miu16x16a 4
+%macro Idro.mmiu16x16a 4
   mov rax, qword [rdi + %2]
   mov rdx, qword [rdi + %3]
   shl rdx, 5
@@ -3048,10 +3040,10 @@
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
-%macro Eq.mmu16x16 3
+%macro Eq.mmb16x16u16x16 3
   vmovdqu ymm0, yword [rdi + %2]
   vmovdqu ymm1, yword [rdi + %3]
-  vpcmpeqb ymm0, ymm0, ymm1
+  vpcmpeqw ymm0, ymm0, ymm1
   vmovdqu yword [rdi + %1], ymm0
 %endmacro
 
@@ -5072,7 +5064,18 @@ extern free
   mov qword [rdi + %1], rax
 %endmacro
 
+
 %macro Xu16x16a.mb16x16a 2
+  mov rax, qword [rdi + %2]
+  mov qword [rdi + %1], rax
+%endmacro
+
+%macro Xb8x32.mb16x16 2
+  vmovdqu ymm0, yword [rdi + %2]
+  vmovdqu yword [rdi + %1], ymm0
+%endmacro
+
+%macro Xu16x16a.mu16a 2
   mov rax, qword [rdi + %2]
   mov qword [rdi + %1], rax
 %endmacro
