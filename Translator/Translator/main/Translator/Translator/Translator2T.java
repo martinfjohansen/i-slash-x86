@@ -143,8 +143,12 @@ public class Translator2T {
 
         functionStructureName = (new String(fnc.name) + "S").toCharArray();
 
-        LinkedListCharactersAddString(ll, (new String(fnc.name) + ":").toCharArray());
-        LinkedListCharactersAddString(ll, "\n".toCharArray());
+        LinkedListCharactersAddString(ll, (new String(fnc.name) + ":" + "\n").toCharArray());
+        // Callee saved register Linux x64 ABI
+        LinkedListCharactersAddString(ll, ("  push r12\n").toCharArray());
+        LinkedListCharactersAddString(ll, ("  push r13\n").toCharArray());
+        LinkedListCharactersAddString(ll, ("  push r14\n").toCharArray());
+        LinkedListCharactersAddString(ll, ("  push r15\n").toCharArray());
 
         for(i = 0d; i < fnc.ins.length && success; i = i + 1d){
             tmp = new StringReference();
@@ -154,6 +158,10 @@ public class Translator2T {
             }
         }
 
+        LinkedListCharactersAddString(ll, ("  pop r15\n").toCharArray());
+        LinkedListCharactersAddString(ll, ("  pop r14\n").toCharArray());
+        LinkedListCharactersAddString(ll, ("  pop r13\n").toCharArray());
+        LinkedListCharactersAddString(ll, ("  pop r12\n").toCharArray());
         LinkedListCharactersAddString(ll, "ret".toCharArray());
         LinkedListCharactersAddString(ll, "\n".toCharArray());
 

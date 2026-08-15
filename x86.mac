@@ -2119,7 +2119,7 @@
 %macro And.mmb16x8 3
   movdqu xmm0, oword [rdi + %2]
   movdqu xmm1, oword [rdi + %3]
-  pand xmm0, xmm1
+  vpand xmm0, xmm0, xmm1
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
@@ -2153,7 +2153,7 @@
 %macro And.mmb128 3
   movdqu xmm0, oword [rdi + %2]
   movdqu xmm1, oword [rdi + %3]
-  pand xmm0, xmm1
+  vpand xmm0, xmm0, xmm1
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
@@ -2192,7 +2192,7 @@
 %macro Andnot.mmb128 3
   movdqu xmm0, oword [rdi + %2]
   movdqu xmm1, oword [rdi + %3]
-  pandn xmm0, xmm1
+  vpandn xmm0, xmm0, xmm1
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
