@@ -1375,6 +1375,11 @@
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
+%macro Broadcast.mu16x16 2
+  vpbroadcastw ymm0, word [rdi + %2]
+  vmovdqu yword [rdi + %1], ymm0
+%endmacro
+
 ; -----------------------------------------------------------------------------
 ; Loop
 ; No parameters
@@ -2736,6 +2741,14 @@
   vmovdqu yword [rdi + %1], ymm0
 %endmacro
 
+%macro Idro.mmiu8x16a 4
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  shl rdx, 4
+  movdqu xmm0, oword [rax + rdx + %4 * 16]
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
 ; -----------------------------------------------------------------------------
 ; Eq -- Equal
 ; x = a = b. x is a boolean. a and b are the same types.
@@ -3678,6 +3691,13 @@
 ; Future
 
 %macro Or.mmb8x32 3
+  vmovdqu ymm0, yword [rdi + %2]
+  vmovdqu ymm1, yword [rdi + %3]
+  vpor ymm0, ymm0, ymm1
+  vmovdqu yword [rdi + %1], ymm0
+%endmacro
+
+%macro Or.mmb16x16 3
   vmovdqu ymm0, yword [rdi + %2]
   vmovdqu ymm1, yword [rdi + %3]
   vpor ymm0, ymm0, ymm1
@@ -5400,6 +5420,14 @@ extern free
   mov qword [rdi + %1], rax
 %endmacro
 
+%macro Lzcnt.mu64b32 2
+  mov rax, 0
+  mov eax, dword [rdi + %2]
+  lzcnt rax, rax
+  sub rax, 32
+  mov qword [rdi + %1], rax
+%endmacro
+
 %macro Lzcnt.mu64b16 2
   mov rax, 0
   mov ax, word [rdi + %2]
@@ -5548,6 +5576,11 @@ extern free
 ;  mov dword [rdi + %1], eax
 ;%endmacro
 
+%macro ExtractMask.mb8x64 2
+  vmovdqu64 zmm0, zword [rdi + %2]
+  vpcmpub k1, zmm0, zmm0, 6
+  kmovq qword [rdi + %1], k1
+%endmacro
 
 
 ; -----------------------------------------------------------------------------
@@ -6035,21 +6068,21 @@ extern free
 ; x = StringSubset(a, b, l). x, a, b are packed bytes. l is a number.
 
 %macro StringSubset.mmmiu8x16 5
-  movdqu xmm0, oword [rdi + %3]
+  movdqu xmm1, oword [rdi + %3]
   mov rax, qword [rdi + %4]
-  movdqu xmm1, oword [rdi + %2]
+  movdqu xmm2, oword [rdi + %2]
   mov rdx, %5
-  pcmpestrm xmm0, xmm1, (0 << 6) + (0 << 2)
+  pcmpestrm xmm1, xmm2, (0 << 6) + (0 << 2)
   vpextrw eax, xmm0, 0
   mov word [rdi + %1], ax
 %endmacro
 
 ;%macro StringSubset.mmmiu16x8 5
-;  movdqu xmm0, oword [rdi + %3]
+;  movdqu xmm1, oword [rdi + %3]
 ;  mov rax, qword [rdi + %4]
-;  movdqu xmm1, oword [rdi + %2]
+;  movdqu xmm2, oword [rdi + %2]
 ;  mov rdx, %5
-;  pcmpestrm xmm0, xmm1, (0 << 6) + (0 << 2)
+;  pcmpestrm xmm1, xmm2, (0 << 6) + (0 << 2)
 ;  vpextrw eax, xmm0, 0
 ;  mov word [rdi + %1], ax
 ;%endmacro
@@ -6059,11 +6092,11 @@ extern free
 ; x = StringRangeCheck(a, b, l). x, a, b are packed bytes. l is a number.
 
 %macro StringRangeCheck.mmmiu8x16 5
-  movdqu xmm0, oword [rdi + %3]
+  movdqu xmm1, oword [rdi + %3]
   mov rax, qword [rdi + %4]
-  movdqu xmm1, oword [rdi + %2]
+  movdqu xmm2, oword [rdi + %2]
   mov rdx, %5
-  pcmpestrm xmm0, xmm1, (0 << 6) + (1 << 2)
+  pcmpestrm xmm1, xmm2, (0 << 6) + (1 << 2)
   vpextrw eax, xmm0, 0
   mov word [rdi + %1], ax
 %endmacro
@@ -6073,11 +6106,11 @@ extern free
 ; x = MatchString(a, b, l). x, a, b are packed bytes. l is a number.
 
 %macro MatchString.mmmiu8x16 4
-  movdqu xmm0, oword [rdi + %3]
+  movdqu xmm1, oword [rdi + %3]
   mov rax, qword [rdi + %4]
-  movdqu xmm1, oword [rdi + %2]
+  movdqu xmm2, oword [rdi + %2]
   mov rdx, %5
-  pcmpestrm xmm0, xmm1, (0 << 6) + (2 << 2)
+  pcmpestrm xmm1, xmm2, (0 << 6) + (2 << 2)
   vpextrw eax, xmm0, 0
   mov word [rdi + %1], ax
 %endmacro
@@ -6087,21 +6120,21 @@ extern free
 ; x = FindSubstring(a, al, b, bl). x, a, b are packed bytes. al, bl are a numbers.
 
 %macro FindSubstring.mmmmu64 5
-  movdqu xmm0, oword [rdi + %4]
+  movdqu xmm1, oword [rdi + %4]
   mov rax, qword [rdi + %5]
-  movdqu xmm1, oword [rdi + %2]
+  movdqu xmm2, oword [rdi + %2]
   mov rdx, qword [rdi + %3]
-  pcmpestrm xmm0, xmm1, (0 << 6) + (3 << 2)
+  pcmpestrm xmm1, xmm2, (0 << 6) + (3 << 2)
   vpextrw eax, xmm0, 0
   mov word [rdi + %1], ax
 %endmacro
 
 %macro FindSubstring.mimiu64 5
-  movdqu xmm0, oword [rdi + %4]
+  movdqu xmm1, oword [rdi + %4]
   mov rax, %5
-  movdqu xmm1, oword [rdi + %2]
+  movdqu xmm2, oword [rdi + %2]
   mov rdx, %3
-  pcmpestrm xmm0, xmm1, (0 << 6) + (3 << 2)
+  pcmpestrm xmm1, xmm2, (0 << 6) + (3 << 2)
   vpextrw eax, xmm0, 0
   mov word [rdi + %1], ax
 %endmacro
