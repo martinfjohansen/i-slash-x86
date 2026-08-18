@@ -1380,6 +1380,11 @@
   vmovdqu yword [rdi + %1], ymm0
 %endmacro
 
+%macro Broadcast.mu16x32 2
+  vpbroadcastw zmm0, word [rdi + %2]
+  vmovdqu16 zword [rdi + %1], zmm0
+%endmacro
+
 ; -----------------------------------------------------------------------------
 ; Loop
 ; No parameters
@@ -3739,6 +3744,13 @@
   movdqu xmm1, oword [rdi + %3]
   vpor xmm0, xmm0, xmm1
   movdqu oword [rdi + %1], xmm0
+%endmacro
+
+%macro Or.mmb16x32 3
+  vmovdqu16 zmm0, zword [rdi + %2]
+  vmovdqu16 zmm1, zword [rdi + %3]
+  vporq zmm0, zmm0, zmm1
+  vmovdqu16 zword [rdi + %1], zmm0
 %endmacro
 
 %macro Or.mmb32x4 3
