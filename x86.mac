@@ -5197,6 +5197,28 @@ extern free
 %endmacro
 
 ; -----------------------------------------------------------------------------
+; IsZero
+; x = a = 0. x can be bit or number. a must be a boolean.
+
+%macro IsZero.mb32 2
+  mov eax, dword [rdi + %2]
+  test eax, eax
+  setz al
+  mov byte [rdi + %1], al
+%endmacro
+
+; -----------------------------------------------------------------------------
+; IsNonZero
+; x = a != 0. x can be bit or number. a must be a boolean.
+
+%macro IsNonZero.mb32 2
+  mov eax, dword [rdi + %2]
+  test eax, eax
+  setnz al
+  mov byte [rdi + %1], al
+%endmacro
+
+; -----------------------------------------------------------------------------
 ; Cmov
 ; x = a ? b : x. x, b must be the same types. a must be a boolean.
 

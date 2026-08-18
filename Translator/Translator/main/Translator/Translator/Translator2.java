@@ -403,6 +403,7 @@ public class Translator2 {
         ArrayAddString(ins, "Bsr".toCharArray());
         ArrayAddString(ins, "Bt".toCharArray());
         ArrayAddString(ins, "IsZero".toCharArray());
+        ArrayAddString(ins, "IsNonZero".toCharArray());
 
         ArrayAddString(ins, "Lt".toCharArray());
         ArrayAddString(ins, "Lte".toCharArray());

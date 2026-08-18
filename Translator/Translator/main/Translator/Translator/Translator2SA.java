@@ -458,6 +458,7 @@ public class Translator2SA {
         ArrayAddString(p2, "New".toCharArray());
         ArrayAddString(p2, "Set".toCharArray());
         ArrayAddString(p2, "IsZero".toCharArray());
+        ArrayAddString(p2, "IsNonZero".toCharArray());
         ArrayAddString(p2, "Movzx".toCharArray());
         ArrayAddString(p2, "u8tou16".toCharArray());
         ArrayAddString(p2, "u8tou32".toCharArray());
@@ -1061,7 +1062,7 @@ public class Translator2SA {
             valid = CheckLen(ins, message);
         }else if(StringsEqual(ins.name, "Call".toCharArray())){
             valid = CheckCall(ins, message);
-        }else if(StringsEqual(ins.name, "IsZero".toCharArray())){
+        }else if(StringsEqual(ins.name, "IsZero".toCharArray()) || StringsEqual(ins.name, "IsNonZero".toCharArray())){
             valid = CheckIsZero(ins, message);
         }else{
             valid = false;
