@@ -200,10 +200,10 @@
 %endmacro
 
 %macro Add.mmf32x16 3
-  vmovdqu64 zmm0, zword [rdi + %2]
-  vmovdqu64 zmm1, zword [rdi + %3]
+  vmovdqu32 zmm0, zword [rdi + %2]
+  vmovdqu32 zmm1, zword [rdi + %3]
   vaddps zmm0, zmm0, zmm1
-  vmovdqu64 zword [rdi + %1], zmm0
+  vmovdqu32 zword [rdi + %1], zmm0
 %endmacro
 
 ; -----------------------------------------------------------------------------
@@ -3079,7 +3079,15 @@
   vmovdqu16 zmm0, zword [rdi + %2]
   vmovdqu16 zmm1, zword [rdi + %3]
   vpcmpeqw k1, zmm0, zmm1
+  vpmovm2w zmm0, k1
   vmovdqu16 zword [rdi + %1], zmm0
+%endmacro
+
+%macro Eq.mmb32u16x32 3
+  vmovdqu16 zmm0, zword [rdi + %2]
+  vmovdqu16 zmm1, zword [rdi + %3]
+  vpcmpeqw k1, zmm0, zmm1
+  kmovd dword [rdi + %1], k1
 %endmacro
 
 %macro Eq.mms8x16 3
@@ -5605,7 +5613,7 @@ extern free
 
 %macro ExtractMask.mb8x64 2
   vmovdqu8 zmm0, zword [rdi + %2]
-  vpcmpub k1, zmm0, zmm0, 6
+  vpmovb2m k1, zmm0
   kmovq qword [rdi + %1], k1
 %endmacro
 
