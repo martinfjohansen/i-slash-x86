@@ -1,30 +1,36 @@
 Bgs StringsEqualAS
+	; Input -- copy in at the start
   exp decl: u16a a, b
-  exp decl: u64 length, xlen, i, j, iu640
-  exp decl: u16x8 a1, a2, a3, a4
-  exp decl: u16x8 b1, b2, b3, b4
-  exp decl: b16x8 tu16x80, tu16x81, tu16x82
-  b16x8 all
-  b8x16 allx
-  exp decl: u16x8a aa, ba
-  b16 m
-  exp decl: b1 tb10, tb11, equal
-  exp decl: u16 mn, iu160
+  exp decl: u64 length
+
+  ; Output -- copy out at the end
+  u64 i
+  b1 equal
+
+  ; Working -- can be put into registers
+  exp decl: u64 xlen, j, iu640, n
+  exp decl: u16x32 a1, a2, a3, a4
+  exp decl: u16x32 b1, b2, b3, b4
+  exp decl: b64 tb640, tb641, tb642, all
+  exp decl: u16x32a aa, ba
+  b64 m
+  exp decl: b1 equalx, tb10, tb11
+  exp decl: u64 mn
 Ens
 
 Fnc StringsEqualA
-  Xu16x8a aa, a
-  Xu16x8a ba, b
+  Xu16x32a aa, a
+  Xu16x32a ba, b
 
-  Mov equal, true
-  Mov i, 0
+  Mov equalx, true
+  Mov n, 0
   Mov j, 0
-  
-  ; length is the number of 16-bit characters. We will process 8 of these 4 times per iteration = 32
-  exp a u64: xlen = length / 32
-  
+
+  ; length is the number of 16-bit characters. We will process 32 of these 4 times per iteration = 128
+  exp a u64: xlen = length / 128
+
   Loop
-  If exp b: i < xlen & equal
+  If exp b: n < xlen & equalx
     Idro a1, aa, j, 0
     Idro a2, aa, j, 1
     Idro a3, aa, j, 2
@@ -34,21 +40,23 @@ Fnc StringsEqualA
     Idro b3, ba, j, 2
     Idro b4, ba, j, 3
 
-    exp b b16x8: all = ((a1 = b1) & (a2 = b2)) & ((a3 = b3) & (a4 = b4))
-    Xb8x16 allx, all
-    ExtractMask m, allx
-    Xu16 mn, m
-    If exp b: mn != 65535
-      Mov equal, false
+    exp b b64: all = ((a1 = b1) & (a2 = b2)) & ((a3 = b3) & (a4 = b4))
+    Not all, all
+    Xu64 mn, all
+    Not
+    If exp b: mn != 0
+      Mov equalx, false
     Endb
 
-    Inc i
-    
+    Inc n
+
     ; We process 4 each round
     exp a u64: j = j + 4
   EndLoop
-  
-  exp a u64: i = xlen * 32
+
+  ; Return data
+  exp a u64: i = xlen * 128
+  Mov equal, equalx
 Ret
 
 

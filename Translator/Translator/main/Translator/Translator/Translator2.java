@@ -402,6 +402,7 @@ public class Translator2 {
         ArrayAddString(ins, "Bsf".toCharArray());
         ArrayAddString(ins, "Bsr".toCharArray());
         ArrayAddString(ins, "Bt".toCharArray());
+        ArrayAddString(ins, "IsZero".toCharArray());
 
         ArrayAddString(ins, "Lt".toCharArray());
         ArrayAddString(ins, "Lte".toCharArray());
@@ -416,10 +417,6 @@ public class Translator2 {
         ArrayAddString(ins, "Equal".toCharArray());
         ArrayAddString(ins, "Neq".toCharArray());
         ArrayAddString(ins, "Unequal".toCharArray());
-
-        ArrayAddString(ins, "Idr".toCharArray());
-        ArrayAddString(ins, "Idw".toCharArray());
-        ArrayAddString(ins, "Idro".toCharArray());
 
         ArrayAddString(ins, "Rdrand".toCharArray());
 
@@ -574,6 +571,9 @@ public class Translator2 {
         ArrayAddString(ins, "Call".toCharArray());
 
         // Structural
+        ArrayAddString(ins, "Idr".toCharArray());
+        ArrayAddString(ins, "Idw".toCharArray());
+        ArrayAddString(ins, "Idro".toCharArray());
         ArrayAddString(ins, "Len".toCharArray());
         ArrayAddString(ins, "Acw".toCharArray());
         ArrayAddString(ins, "Acr".toCharArray());

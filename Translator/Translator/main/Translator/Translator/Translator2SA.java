@@ -457,6 +457,7 @@ public class Translator2SA {
         ArrayAddString(p2, "Call".toCharArray());
         ArrayAddString(p2, "New".toCharArray());
         ArrayAddString(p2, "Set".toCharArray());
+        ArrayAddString(p2, "IsZero".toCharArray());
         ArrayAddString(p2, "Movzx".toCharArray());
         ArrayAddString(p2, "u8tou16".toCharArray());
         ArrayAddString(p2, "u8tou32".toCharArray());
@@ -1060,6 +1061,8 @@ public class Translator2SA {
             valid = CheckLen(ins, message);
         }else if(StringsEqual(ins.name, "Call".toCharArray())){
             valid = CheckCall(ins, message);
+        }else if(StringsEqual(ins.name, "IsZero".toCharArray())){
+            valid = CheckIsZero(ins, message);
         }else{
             valid = false;
             message.string = ("Unknown typing rules for instruction: " + new String(ins.name)).toCharArray();
@@ -1225,6 +1228,33 @@ public class Translator2SA {
         }else{
             valid = false;
             message.string = ("Input to ExtractMask must be multiple b8 type: was " + new String(type)).toCharArray();
+        }
+
+        return valid;
+    }
+
+    private static boolean CheckIsZero(Instruction ins, StringReference message) {
+        boolean valid;
+
+        valid = true;
+
+        // Parameters: bX <- b or u or s
+
+        char[] type0 = ins.params[0].var.type;
+        char[] type1 = ins.params[1].var.type;
+        ins.hasTypePostfix = true;
+        ins.typePostfix = type1;
+
+        if(!TypeIsMultipleType(type1) && !TypeIsArrayType(type1)){
+            if(TypeIsBitfieldType(type0) && !TypeIsMultipleType(type0) && !TypeIsArrayType(type0)){
+
+            }else{
+                valid = false;
+                message.string = ("Output from IsZero must be bit field type: was " + new String(type0)).toCharArray();
+            }
+        }else{
+            valid = false;
+            message.string = ("Input to IsZero cannot be multiple type: was " + new String(type1)).toCharArray();
         }
 
         return valid;
