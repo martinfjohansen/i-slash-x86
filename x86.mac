@@ -2544,8 +2544,8 @@
   mov rax, qword [rdi + %2]
   mov rdx, qword [rdi + %3]
   shl rdx, 6
-  vmovdqu64 zmm0, zword [rax + rdx]
-  vmovdqu64 zword [rdi + %1], zmm0
+  vmovdqu16 zmm0, zword [rax + rdx]
+  vmovdqu16 zword [rdi + %1], zmm0
 %endmacro
 
 %macro Idr.rmmu8x32a 3
@@ -3289,8 +3289,8 @@
 %endmacro
 
 %macro Neq.mmb512 3
-  vmovdqu zmm0, zword [rdi + %2]
-  vmovdqu zmm1, zword [rdi + %3]
+  vmovdqu64 zmm0, zword [rdi + %2]
+  vmovdqu64 zmm1, zword [rdi + %3]
   vpxorq zmm2, zmm0, zmm1
   vptest zmm2, zmm2
   setnz al
@@ -5118,7 +5118,7 @@ extern free
 %endmacro
 
 %macro Xb8x64.mb16x32 2
-  vmovdqu32 zmm0, zword [rdi + %2]
+  vmovdqu16 zmm0, zword [rdi + %2]
   vmovdqu8 zword [rdi + %1], zmm0
 %endmacro
 
@@ -5604,7 +5604,7 @@ extern free
 ;%endmacro
 
 %macro ExtractMask.mb8x64 2
-  vmovdqu64 zmm0, zword [rdi + %2]
+  vmovdqu8 zmm0, zword [rdi + %2]
   vpcmpub k1, zmm0, zmm0, 6
   kmovq qword [rdi + %1], k1
 %endmacro
