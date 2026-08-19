@@ -18,8 +18,8 @@
 ; Unused: ymm4-ymm15 (31)
 
 ; AVX-512
-; Working registers -- zmm0, zmm1, zmm2, zmm3
-; Unused: zmm4-zmm31
+; Working registers -- zmm0, zmm1, zmm2, zmm3, k0, k1, k2
+; Unused: zmm4-zmm31, k3-k7
 
 ; The use of pointers for arrays and structures might be OK. The memory can be made nicely contigous by using a suitable allocator to initialize static structures and arrays.
 
@@ -2045,6 +2045,12 @@
   mov dword [rdi + %1], eax
 %endmacro
 
+%macro Not.mm32 2
+  kmovd k1, dword [rdi + %2]
+  knotd k1, k1
+  kmovd dword [rdi + %1], k1
+%endmacro
+
 %macro Not.mb64 2
   mov rax, qword [rdi + %2]
   not rax
@@ -2117,6 +2123,13 @@
   mov ecx, dword [rdi + %3]
   and eax, ecx
   mov dword [rdi + %1], eax
+%endmacro
+
+%macro And.mmm32 3
+  kmovd k1, dword [rdi + %2]
+  kmovd k2, dword [rdi + %3]
+  kandd k1, k1, k2
+  kmovd dword [rdi + %1], k1
 %endmacro
 
 %macro And.mmb64 3
@@ -3088,6 +3101,13 @@
   vmovdqu16 zword [rdi + %1], zmm0
 %endmacro
 
+%macro Eq.mmm32u16x32 3
+  vmovdqu16 zmm0, zword [rdi + %2]
+  vmovdqu16 zmm1, zword [rdi + %3]
+  vpcmpeqw k1, zmm0, zmm1
+  kmovd dword [rdi + %1], k1
+%endmacro
+
 %macro Eq.mmb32u16x32 3
   vmovdqu16 zmm0, zword [rdi + %2]
   vmovdqu16 zmm1, zword [rdi + %3]
@@ -3724,6 +3744,13 @@
 
 
 ; Future
+
+%macro Or.mmm32 3
+  kmovd k1, dword [rdi + %2]
+  kmovd k2, dword [rdi + %3]
+  kord k1, k1, k2
+  kmovd dword [rdi + %1], k1
+%endmacro
 
 %macro Or.mmb8x32 3
   vmovdqu ymm0, yword [rdi + %2]
@@ -4982,6 +5009,11 @@ extern free
 %endmacro
 
 %macro Xu32.mb32 2
+  mov eax, dword [rdi + %2]
+  mov dword [rdi + %1], eax
+%endmacro
+
+%macro Xu32.mm32 2
   mov eax, dword [rdi + %2]
   mov dword [rdi + %1], eax
 %endmacro

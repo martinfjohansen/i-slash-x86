@@ -2017,7 +2017,7 @@ public class Translator2SA {
     private static boolean TypeIsBitfieldType(char[] type) {
         char first = type[0];
 
-        return first == 'b';
+        return first == 'b' || first == 'm';
     }
 
     private static boolean TypeIsNumberType(char [] type) {

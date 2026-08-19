@@ -199,6 +199,11 @@ public class Translator2 {
         ArrayAddString(ins, "b256".toCharArray());
         ArrayAddString(ins, "b512".toCharArray());
 
+        ArrayAddString(ins, "m8".toCharArray());
+        ArrayAddString(ins, "m16".toCharArray());
+        ArrayAddString(ins, "m32".toCharArray());
+        ArrayAddString(ins, "m64".toCharArray());
+
         ArrayAddString(ins, "f16".toCharArray());
         ArrayAddString(ins, "f32".toCharArray());
         ArrayAddString(ins, "f64".toCharArray());

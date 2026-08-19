@@ -204,13 +204,13 @@ public class Translator {
               "u32": {"nasmType": "resd", "ctype": "uint32_t"},
               "u64": {"nasmType": "resq", "ctype": "uint64_t"},
               "u128": {"nasmType": "reso", "ctype": "unsigned __int128"},
-            
+        
               "s8": {"nasmType": "resb", "ctype": "int8_t"},
               "s16": {"nasmType": "resw", "ctype": "int16_t"},
               "s32": {"nasmType": "resd", "ctype": "int32_t"},
               "s64": {"nasmType": "resq", "ctype": "int64_t"},
               "s128": {"nasmType": "resq", "ctype": "__int128"},
-            
+        
               "b1": {"nasmType": "resb", "ctype": "uint8_t"},
               "b8": {"nasmType": "resb", "ctype": "uint8_t"},
               "b16": {"nasmType": "resw", "ctype": "uint16_t"},
@@ -219,6 +219,11 @@ public class Translator {
               "b128": {"nasmType": "reso", "ctype": "__m128"},
               "b256": {"nasmType": "resy", "ctype": "__m256"},
               "b512": {"nasmType": "resz", "ctype": "__m512"},
+              
+              "m8": {"nasmType": "resb", "ctype": "uint8_t"},
+              "m16": {"nasmType": "resw", "ctype": "uint16_t"},
+              "m32": {"nasmType": "resd", "ctype": "uint32_t"},
+              "m64": {"nasmType": "resq", "ctype": "uint64_t"},
             
               "f16": {"nasmType": "resw", "ctype": "_Float16"},
               "f32": {"nasmType": "resd", "ctype": "float"},
