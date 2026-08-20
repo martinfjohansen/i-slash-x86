@@ -201,7 +201,7 @@ public class Translator2T {
                 if (StringsEqual(param.type, "literal".toCharArray())) {
 
                     // What parameters should remain immediates.
-                    if(!(StringsEqual(ins.name, "Idro".toCharArray()) && i == 3) && !(StringsEqual(ins.name, "Idr".toCharArray()) && i == 2) && !(StringsEqual(ins.name, "Idw".toCharArray()) && i == 1)) {
+                    if(KeepImmediate(ins, i)) {
 
                         param.useImmediateVar = true;
 
@@ -312,6 +312,15 @@ public class Translator2T {
         }
 
         return success;
+    }
+
+    private static boolean KeepImmediate(Instruction ins, double i) {
+        return !(StringsEqual(ins.name, "Idro".toCharArray()) && i == 3) &&
+               !(StringsEqual(ins.name, "Idr".toCharArray()) && i == 2) &&
+               !(StringsEqual(ins.name, "Idw".toCharArray()) && i == 1) &&
+               !(StringsEqual(ins.name, "Shl".toCharArray()) && i == 2) &&
+               !(StringsEqual(ins.name, "Shr".toCharArray()) && i == 2)
+                ;
     }
 
     private static Structure GetAliases() {

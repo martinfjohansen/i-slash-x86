@@ -519,6 +519,7 @@ public class Translator2SA {
         ArrayAddString(p2, "Xu32x4".toCharArray());
         ArrayAddString(p2, "Xu16x8a".toCharArray());
         ArrayAddString(p2, "Xu8x16a".toCharArray());
+        ArrayAddString(p2, "Xb8x16a".toCharArray());
         ArrayAddString(p2, "Xu8x16".toCharArray());
         ArrayAddString(p2, "Xu16x8a".toCharArray());
         ArrayAddString(p2, "Xu16x16a".toCharArray());
@@ -653,6 +654,8 @@ public class Translator2SA {
         ArrayAddString(p3, "ShiftLeft".toCharArray());
         ArrayAddString(p3, "ShiftRight".toCharArray());
         ArrayAddString(p3, "ShiftArithmeticRight".toCharArray());
+        ArrayAddString(p3, "InterleaveLow".toCharArray());
+        ArrayAddString(p3, "InterleaveHigh".toCharArray());
 
         p4 = CreateArray();
         ArrayAddString(p4, "DivMod".toCharArray());
@@ -890,6 +893,8 @@ public class Translator2SA {
         ArrayAddString(sameAsAssigneeBitfields, "Xor".toCharArray());
         ArrayAddString(sameAsAssigneeBitfields, "Pdep".toCharArray());
         ArrayAddString(sameAsAssigneeBitfields, "Pext".toCharArray());
+        ArrayAddString(sameAsAssigneeBitfields, "InterleaveLow".toCharArray());
+        ArrayAddString(sameAsAssigneeBitfields, "InterleaveHigh".toCharArray());
 
         // bw <- bw, number
         Array bitwiseAndNumberToBitwise = CreateArray();
@@ -970,6 +975,7 @@ public class Translator2SA {
         ArrayAddString(reint, "Xu16x8a".toCharArray());
         ArrayAddString(reint, "Xu32x4".toCharArray());
         ArrayAddString(reint, "Xu8x16a".toCharArray());
+        ArrayAddString(reint, "Xb8x16a".toCharArray());
         ArrayAddString(reint, "Xu8x16".toCharArray());
         ArrayAddString(reint, "Xb8x16".toCharArray());
         ArrayAddString(reint, "Xb8".toCharArray());
@@ -1099,11 +1105,11 @@ public class Translator2SA {
 
         if(TypeIsBitfieldType(btype) && !TypeIsArrayType(btype)){
             if(StringsEqual(btype, ins.params[1].var.type)){
-                if(TypeIsNumberType(ntype) && !TypeIsArrayType(ntype) && !TypeIsMultipleType(type)){
+                if(TypeIsNumberType(ntype) && !TypeIsArrayType(ntype) && !TypeIsMultipleType(ntype)){
                     // OK
                 }else{
                     valid = false;
-                    message.string = ("Third parameter to operation must be number type: was " + new String(ins.params[1].var.type)).toCharArray();
+                    message.string = ("Third parameter to operation must be number type: was " + new String(ntype)).toCharArray();
                 }
             }else{
                 valid = false;
@@ -1702,6 +1708,8 @@ public class Translator2SA {
                     success = false;
                     message.string = "Input variable in broadcast must be same as element type of assigned variable.".toCharArray();
                 }
+            }else if (ParamIsLiteral(ins.params[1])) {
+                ins.params[1].immediateType = parts[0].string;
             }
         }else{
             success = false;
@@ -2044,7 +2052,7 @@ public class Translator2SA {
                 if (StringsEqual(ins.params[(int) (i + 1)].type, "var".toCharArray())) {
                     memoryPostfix[(int) i] = 'm';
                 } else {
-                    if(StringsEqual(ins.name, "Mov".toCharArray()) || StringsEqual(ins.name, "Movx8".toCharArray()) || StringsEqual(ins.name, "Idw".toCharArray()) && i == 0 || StringsEqual(ins.name, "Idr".toCharArray()) && i == 1) {
+                    if(KeepImmediates2(ins, i)) {
                         memoryPostfix[(int) i] = 'i';
                     }else{
                         memoryPostfix[(int) i] = 'm';
@@ -2074,6 +2082,16 @@ public class Translator2SA {
         }
 
         ins.memoryPostfix = memoryPostfix;
+    }
+
+    private static boolean KeepImmediates2(Instruction ins, double i) {
+        return StringsEqual(ins.name, "Mov".toCharArray()) ||
+               StringsEqual(ins.name, "Movx8".toCharArray()) ||
+               StringsEqual(ins.name, "Idw".toCharArray()) && i == 0 ||
+               StringsEqual(ins.name, "Idr".toCharArray()) && i == 1 ||
+               StringsEqual(ins.name, "Shl".toCharArray()) && i == 1 ||
+               StringsEqual(ins.name, "Shr".toCharArray()) && i == 1
+        ;
     }
 
     public static boolean ParamIsVariable(Param param) {

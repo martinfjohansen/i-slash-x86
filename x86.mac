@@ -1385,6 +1385,28 @@
   vmovdqu16 zword [rdi + %1], zmm0
 %endmacro
 
+%macro Broadcast.mu8x16 2
+  ;vpbroadcastb xmm0, byte [rdi + %2]
+  mov rax, 0
+  mov al, byte [rdi + %2]
+	mov rcx, 0x0101010101010101
+	imul rax, rcx
+	vmovq xmm0, rax
+	vpunpcklqdq xmm0, xmm0, xmm0
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+%macro Broadcast.mb8x16 2
+  ;vpbroadcastb xmm0, byte [rdi + %2]
+  mov rax, 0
+  mov al, byte [rdi + %2]
+	mov rcx, 0x0101010101010101
+	imul rax, rcx
+	vmovq xmm0, rax
+	vpunpcklqdq xmm0, xmm0, xmm0
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
 ; -----------------------------------------------------------------------------
 ; Loop
 ; No parameters
@@ -2621,6 +2643,14 @@
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
+%macro Idr.mib8x16a 3
+  mov rax, qword [rdi + %2]
+  mov rdx, %3
+  shl rdx, 4
+  movdqu xmm0, oword [rax + rdx]
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
 ; -----------------------------------------------------------------------------
 ; Idro -- Index Read Array with offset
 ; x = a[b + c]. b and c must be numbers. a must be an array. x must be of the same type as the array's elements.
@@ -3661,12 +3691,6 @@
   mov qword [rdi + %1], rax
 %endmacro
 
-%macro Shr.mib128 3
-  movdqu xmm0, oword [rdi + %2]
-  psrldq xmm0, %3
-  movdqu oword [rdi + %1], xmm0
-%endmacro
-
 %macro Shr.mmu32x4 3
   movdqu xmm0, oword [rdi + %2]
   movdqu xmm1, oword [rdi + %3]
@@ -3674,11 +3698,18 @@
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
+%macro Shr.mib16x8u8 3
+  movdqu xmm0, oword [rdi + %2]
+  psrlw xmm0, %3
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+
 ; -----------------------------------------------------------------------------
 ; Sar - Shift arithmetic right
 ; x = a op b. x and a must be bit fields. b must be a number type
 
-%macro Shr.mis32 3
+%macro Sar.mis32 3
   mov eax, dword [rdi + %2]
   sar eax, %3
   mov dword [rdi + %1], eax
@@ -4372,6 +4403,22 @@ extern free
   vpinsrq xmm0, rax, %2
   movdqu oword [rdi + %1], xmm0
 %endmacro
+
+%macro Idw.imu8x16 3
+  movdqu xmm0, oword [rdi + %1]
+  mov al, byte [rdi + %3]
+  vpinsrb xmm0, al, %2
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+%macro Idw.imb8x16 3
+  movdqu xmm0, oword [rdi + %1]
+  mov al, byte [rdi + %3]
+  vpinsrb xmm0, al, %2
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+
 
 ; -----------------------------------------------------------------------------
 ; Rdrand
@@ -5100,7 +5147,17 @@ extern free
   mov qword [rdi + %1], rax
 %endmacro
 
+%macro Xu8x16a.mu8a 2
+  mov rax, qword [rdi + %2]
+  mov qword [rdi + %1], rax
+%endmacro
+
 %macro Xb16x8.mu16x8 2
+  movdqu xmm0, oword [rdi + %2]
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+%macro Xb16x8.mb8x16 2
   movdqu xmm0, oword [rdi + %2]
   movdqu oword [rdi + %1], xmm0
 %endmacro
@@ -5120,6 +5177,11 @@ extern free
   mov qword [rdi + %1], rax
 %endmacro
 
+%macro Xb8x16a.mu8a 2
+  mov rax, qword [rdi + %2]
+  mov qword [rdi + %1], rax
+%endmacro
+
 %macro Xu16a.mu32a 2
   mov rax, qword [rdi + %2]
   mov qword [rdi + %1], rax
@@ -5134,6 +5196,11 @@ extern free
 ; Between bit-array types
 
 %macro Xb128.mu8x16 2
+  movdqu xmm0, oword [rdi + %2]
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+%macro Xb128.mb8x16 2
   movdqu xmm0, oword [rdi + %2]
   movdqu oword [rdi + %1], xmm0
 %endmacro
@@ -5696,6 +5763,14 @@ extern free
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
+%macro Shuffle.mmb8x16 3
+  movdqu xmm0, oword [rdi + %1]
+  movdqu xmm1, oword [rdi + %2]
+  movdqu xmm2, oword [rdi + %3]
+  vpshufb xmm0, xmm1, xmm2
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
 %macro Shuffle.miu32x4 6
   movdqu xmm0, oword [rdi + %1]
   movdqu xmm1, oword [rdi + %2]
@@ -6045,14 +6120,42 @@ extern free
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
+%macro InterleaveLow.mmu8x16 3
+  movdqu xmm0, oword [rdi + %2]
+  movdqu xmm1, oword [rdi + %3]
+  punpcklwd xmm0, xmm1
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+%macro InterleaveLow.mmb8x16 3
+  movdqu xmm0, oword [rdi + %2]
+  movdqu xmm1, oword [rdi + %3]
+  punpcklbw xmm0, xmm1
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
 ; -----------------------------------------------------------------------------
 ; InterleaveHigh -- Interleaves pairs from high data from both vectors
-; x = InterleaveLow(a, b). a, b, x are the same packed number types.
+; x = InterleaveHigh(a, b). a, b, x are the same packed number types.
 
 %macro InterleaveHigh.mmu32x4 3
   movdqu xmm0, oword [rdi + %2]
   movdqu xmm1, oword [rdi + %3]
   punpckhdq xmm0, xmm1
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+%macro InterleaveHigh.mmu8x16 3
+  movdqu xmm0, oword [rdi + %2]
+  movdqu xmm1, oword [rdi + %3]
+  punpckhbw xmm0, xmm1
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+%macro InterleaveHigh.mmb8x16 3
+  movdqu xmm0, oword [rdi + %2]
+  movdqu xmm1, oword [rdi + %3]
+  punpckhbw xmm0, xmm1
   movdqu oword [rdi + %1], xmm0
 %endmacro
 

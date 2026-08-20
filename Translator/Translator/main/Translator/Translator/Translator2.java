@@ -374,6 +374,8 @@ public class Translator2 {
         ArrayAddString(ins, "Mov".toCharArray());
         ArrayAddString(ins, "Movx8".toCharArray());
         ArrayAddString(ins, "Broadcast".toCharArray());
+        ArrayAddString(ins, "InterleaveLow".toCharArray());
+        ArrayAddString(ins, "InterleaveHigh".toCharArray());
 
         ArrayAddString(ins, "Add".toCharArray());
         ArrayAddString(ins, "Sub".toCharArray());
@@ -504,6 +506,7 @@ public class Translator2 {
         ArrayAddString(ins, "Xb256".toCharArray());
         ArrayAddString(ins, "Xu16x8a".toCharArray());
         ArrayAddString(ins, "Xu8x16a".toCharArray());
+        ArrayAddString(ins, "Xb8x16a".toCharArray());
         ArrayAddString(ins, "Xu8x16".toCharArray());
         ArrayAddString(ins, "Xb8x16".toCharArray());
         ArrayAddString(ins, "Xb16x8".toCharArray());
