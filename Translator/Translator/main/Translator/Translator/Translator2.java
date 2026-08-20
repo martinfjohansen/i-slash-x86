@@ -507,8 +507,10 @@ public class Translator2 {
         ArrayAddString(ins, "Xu16x8a".toCharArray());
         ArrayAddString(ins, "Xu8x16a".toCharArray());
         ArrayAddString(ins, "Xb8x16a".toCharArray());
+        ArrayAddString(ins, "Xb8x32a".toCharArray());
         ArrayAddString(ins, "Xu8x16".toCharArray());
         ArrayAddString(ins, "Xb8x16".toCharArray());
+        ArrayAddString(ins, "Xb32x8".toCharArray());
         ArrayAddString(ins, "Xb16x8".toCharArray());
         ArrayAddString(ins, "Xu16x16a".toCharArray());
         ArrayAddString(ins, "Xu16x32a".toCharArray());

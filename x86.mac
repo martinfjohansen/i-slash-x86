@@ -1386,24 +1386,22 @@
 %endmacro
 
 %macro Broadcast.mu8x16 2
-  ;vpbroadcastb xmm0, byte [rdi + %2]
-  mov rax, 0
-  mov al, byte [rdi + %2]
-	mov rcx, 0x0101010101010101
-	imul rax, rcx
-	vmovq xmm0, rax
-	vpunpcklqdq xmm0, xmm0, xmm0
+  vpbroadcastb xmm0, byte [rdi + %2]
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
 %macro Broadcast.mb8x16 2
-  ;vpbroadcastb xmm0, byte [rdi + %2]
-  mov rax, 0
-  mov al, byte [rdi + %2]
-	mov rcx, 0x0101010101010101
-	imul rax, rcx
-	vmovq xmm0, rax
-	vpunpcklqdq xmm0, xmm0, xmm0
+  vpbroadcastb xmm0, byte [rdi + %2]
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+%macro Broadcast.mb8x32 2
+  vpbroadcastb ymm0, byte [rdi + %2]
+  vmovdqu yword [rdi + %1], ymm0
+%endmacro
+
+%macro Broadcast.mb16x8 2
+  vpbroadcastw xmm0, word [rdi + %2]
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
@@ -2572,6 +2570,14 @@
   vmovdqu yword [rdi + %1], ymm0
 %endmacro
 
+%macro Idr.mmb8x32a 3
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  shl rdx, 5
+  vmovdqu ymm0, yword [rax + rdx]
+  vmovdqu yword [rdi + %1], ymm0
+%endmacro
+
 %macro Idr.mmu16x16a 3
   mov rax, qword [rdi + %2]
   mov rdx, qword [rdi + %3]
@@ -2628,6 +2634,14 @@
 %endmacro
 
 %macro Idr.mmu8x16a 3
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  shl rdx, 4
+  movdqu xmm0, oword [rax + rdx]
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+%macro Idr.mmb8x16a 3
   mov rax, qword [rdi + %2]
   mov rdx, qword [rdi + %3]
   shl rdx, 4
@@ -3704,6 +3718,13 @@
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
+%macro Shr.mib32x8u8 3
+  movdqu xmm0, oword [rdi + %2]
+  psrld xmm0, %3
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+
 
 ; -----------------------------------------------------------------------------
 ; Sar - Shift arithmetic right
@@ -4265,6 +4286,22 @@ extern free
   movdqu oword [rax + rcx], xmm0
 %endmacro
 
+%macro Idw.mmb8x16a 3
+  movdqu xmm0, oword [rdi + %3]
+  mov rax, qword [rdi + %1]
+  mov rcx, qword [rdi + %2]
+  shl rcx, 4
+  movdqu oword [rax + rcx], xmm0
+%endmacro
+
+%macro Idw.mmb8x32a 3
+  vmovdqu ymm0, yword [rdi + %3]
+  mov rax, qword [rdi + %1]
+  mov rcx, qword [rdi + %2]
+  shl rcx, 5
+  vmovdqu yword [rax + rcx], ymm0
+%endmacro
+
 %macro Idw.mmu32x4a 3
   movdqu xmm0, oword [rdi + %3]
   mov rax, qword [rdi + %1]
@@ -4418,6 +4455,22 @@ extern free
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
+%macro Idw.imb8x16a 3
+  movdqu xmm0, oword [rdi + %3]
+  mov rax, qword [rdi + %1]
+  mov rcx, %2
+  shl rcx, 4
+  movdqu oword [rax + rcx], xmm0
+%endmacro
+
+%macro Idw.imb8x32 3
+  vmovdqu ymm0, yword [rdi + %1]
+  vextracti128 xmm1, ymm0, %2 / 16
+  mov al, byte [rdi + %3]
+  vpinsrb xmm1, al, %2 % 16
+  vinserti128 ymm0, xmm1, %2 / 16
+  vmovdqu yword [rdi + %1], ymm0
+%endmacro
 
 
 ; -----------------------------------------------------------------------------
@@ -5182,6 +5235,11 @@ extern free
   mov qword [rdi + %1], rax
 %endmacro
 
+%macro Xb8x16a.mu16a 2
+  mov rax, qword [rdi + %2]
+  mov qword [rdi + %1], rax
+%endmacro
+
 %macro Xu16a.mu32a 2
   mov rax, qword [rdi + %2]
   mov qword [rdi + %1], rax
@@ -5236,6 +5294,18 @@ extern free
   vmovdqu yword [rdi + %1], ymm0
 %endmacro
 
+%macro Xb8x32.mb32x8 2
+  vmovdqu ymm0, yword [rdi + %2]
+  vmovdqu yword [rdi + %1], ymm0
+%endmacro
+
+%macro Xb32x8.mb8x32 2
+  vmovdqu ymm0, yword [rdi + %2]
+  vmovdqu yword [rdi + %1], ymm0
+%endmacro
+
+
+
 %macro Xb8x64.mb16x32 2
   vmovdqu16 zmm0, zword [rdi + %2]
   vmovdqu8 zword [rdi + %1], zmm0
@@ -5247,6 +5317,16 @@ extern free
 %endmacro
 
 %macro Xu16x32a.mu16a 2
+  mov rax, qword [rdi + %2]
+  mov qword [rdi + %1], rax
+%endmacro
+
+%macro Xb8x32a.mu8a 2
+  mov rax, qword [rdi + %2]
+  mov qword [rdi + %1], rax
+%endmacro
+
+%macro Xb8x32a.mu16a 2
   mov rax, qword [rdi + %2]
   mov qword [rdi + %1], rax
 %endmacro
@@ -5771,6 +5851,14 @@ extern free
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
+%macro Shuffle.mmb8x32 3
+  vmovdqu ymm0, yword [rdi + %1]
+  vmovdqu ymm1, yword [rdi + %2]
+  vmovdqu ymm2, yword [rdi + %3]
+  vpshufb ymm0, ymm1, ymm2
+  vmovdqu yword [rdi + %1], ymm0
+%endmacro
+
 %macro Shuffle.miu32x4 6
   movdqu xmm0, oword [rdi + %1]
   movdqu xmm1, oword [rdi + %2]
@@ -6134,6 +6222,20 @@ extern free
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
+%macro InterleaveLow.mmb16x8 3
+  movdqu xmm0, oword [rdi + %2]
+  movdqu xmm1, oword [rdi + %3]
+  punpcklwd xmm0, xmm1
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+%macro InterleaveLow.mmb8x32 3
+  vmovdqu ymm0, yword [rdi + %2]
+  vmovdqu ymm1, yword [rdi + %3]
+  vpunpcklbw ymm0, ymm1
+  vmovdqu yword [rdi + %1], ymm0
+%endmacro
+
 ; -----------------------------------------------------------------------------
 ; InterleaveHigh -- Interleaves pairs from high data from both vectors
 ; x = InterleaveHigh(a, b). a, b, x are the same packed number types.
@@ -6150,6 +6252,13 @@ extern free
   movdqu xmm1, oword [rdi + %3]
   punpckhbw xmm0, xmm1
   movdqu oword [rdi + %1], xmm0
+%endmacro
+
+%macro InterleaveHigh.mmb8x32 3
+  vmovdqu ymm0, yword [rdi + %2]
+  vmovdqu ymm1, yword [rdi + %3]
+  vpunpckhbw ymm0, ymm1
+  vmovdqu yword [rdi + %1], ymm0
 %endmacro
 
 %macro InterleaveHigh.mmb8x16 3
