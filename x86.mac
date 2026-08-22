@@ -394,9 +394,12 @@
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
-; Polyfill:
-; Mul.mmu16x8
-
+%macro Mul.mmu16x8 3
+  movdqu xmm0, oword [rdi + %2]
+  movdqu xmm1, oword [rdi + %3]
+  pmullw xmm0, xmm1
+  movdqu oword [rdi + %1], xmm0
+%endmacro
 
 
 ; Future
@@ -1377,6 +1380,11 @@
 
 %macro Broadcast.mu16x8 2
   vpbroadcastw xmm0, word [rdi + %2]
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+%macro Broadcast.mu32x4 2
+  vpbroadcastd xmm0, dword [rdi + %2]
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
@@ -5242,6 +5250,11 @@ extern free
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
+%macro Xb8x16.mu32x4 2
+  movdqu xmm0, oword [rdi + %2]
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
 %macro Xs8x16.mb8x16 2
   movdqu xmm0, oword [rdi + %2]
   movdqu oword [rdi + %1], xmm0
@@ -5302,6 +5315,13 @@ extern free
   mov qword [rdi + %1], rax
 %endmacro
 
+%macro Xb8x16a.mu64 2
+  mov rax, qword [rdi + %2]
+  mov qword [rdi + %1], rax
+%endmacro
+
+
+
 %macro Xu16a.mu32a 2
   mov rax, qword [rdi + %2]
   mov qword [rdi + %1], rax
@@ -5316,6 +5336,16 @@ extern free
 ; Between bit-array types
 
 %macro Xb128.mu8x16 2
+  movdqu xmm0, oword [rdi + %2]
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+%macro Xu16x8.mb8x16 2
+  movdqu xmm0, oword [rdi + %2]
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+%macro Xb8x16.mu16x8 2
   movdqu xmm0, oword [rdi + %2]
   movdqu oword [rdi + %1], xmm0
 %endmacro
@@ -5337,6 +5367,18 @@ extern free
   movdqu xmm0, oword [rdi + %2]
   movdqu oword [rdi + %1], xmm0
 %endmacro
+
+%macro Xu16x8.mb16x8 2
+  movdqu xmm0, oword [rdi + %2]
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+%macro Xu16x8.mu32x4 2
+  movdqu xmm0, oword [rdi + %2]
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
+
 
 
 ; SIMD array types

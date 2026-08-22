@@ -74,7 +74,7 @@ void print_m128_b8(__m128 reg) {
 void print_m128_c8(__m128 reg) {
     uint8_t *values = (uint8_t *)&reg;
     
-    printf("b8: %c, %c, %c, %c, %c, %c, %c, %c, %c, %c, %c, %c, %c, %c, %c, %c\n", values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7], values[8], values[9], values[10], values[11], values[12], values[13], values[14], values[15]);
+    printf("c8: %c, %c, %c, %c, %c, %c, %c, %c, %c, %c, %c, %c, %c, %c, %c, %c\n", values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7], values[8], values[9], values[10], values[11], values[12], values[13], values[14], values[15]);
 }
 
 void print_m256_b8(__m256 reg) {
