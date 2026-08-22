@@ -556,7 +556,7 @@
 
 %macro Div.mms16 3
   mov ax, word [rdi + %2]
-  mov dx, 0
+  cwd
   mov cx, word [rdi + %3]
   idiv cx
   mov word [rdi + %1], ax
@@ -564,7 +564,7 @@
 
 %macro Div.mms32 3
   mov eax, dword [rdi + %2]
-  mov edx, 0
+  cdq
   mov ecx, dword [rdi + %3]
   idiv ecx
   mov dword [rdi + %1], eax
@@ -572,7 +572,7 @@
 
 %macro Div.mms64 3
   mov rax, qword [rdi + %2]
-  mov rdx, 0
+  cqo
   mov rcx, qword [rdi + %3]
   idiv rcx
   mov qword [rdi + %1], rax
