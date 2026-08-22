@@ -5196,6 +5196,16 @@ extern free
   mov qword [rdi + %1], rax
 %endmacro
 
+%macro Xu64.mu8a 2
+  mov rax, qword [rdi + %2]
+  mov qword [rdi + %1], rax
+%endmacro
+
+%macro Xu8x16a.mu64 2
+  mov rax, qword [rdi + %2]
+  mov qword [rdi + %1], rax
+%endmacro
+
 %macro Xb64.mu64 2
   mov rax, qword [rdi + %2]
   mov qword [rdi + %1], rax

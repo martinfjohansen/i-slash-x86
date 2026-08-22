@@ -598,7 +598,7 @@ public class Translator2SA {
         ArrayAddString(p2, "Xu16x16a".toCharArray());
         ArrayAddString(p2, "Xb8x32".toCharArray());
         ArrayAddString(p2, "Xb8x64".toCharArray());
-
+        ArrayAddString(p2, "Xu16x8".toCharArray());
 
         p3 = CreateArray();
         ArrayAddString(p3, "Add".toCharArray());
@@ -1002,6 +1002,7 @@ public class Translator2SA {
         ArrayAddString(reint, "Xb32x8".toCharArray());
         ArrayAddString(reint, "Xb8x64".toCharArray());
         ArrayAddString(reint, "Xb64x8".toCharArray());
+        ArrayAddString(reint, "Xu16x8".toCharArray());
 
         // No parameters
         Array noParameters = CreateArray();
@@ -1530,7 +1531,7 @@ public class Translator2SA {
                     }
                 } else {
                     success = false;
-                    message.string = "Input variable must be element type of multiple type.".toCharArray();
+                    message.string = ("Input variable to Idw must be element type of multiple type: " + new String(ins.params[2].var.type) + " vs " + new String(elementType)).toCharArray();
                 }
             }
         }else{
@@ -1649,7 +1650,7 @@ public class Translator2SA {
                         // OK
                     } else {
                         success = false;
-                        message.string = "Input variable must be element type of multiple type.".toCharArray();
+                        message.string = "Input variable to Idr must be element type of multiple type.".toCharArray();
                     }
                 }
             } else if (ins.params[1].var.isStructArray){

@@ -22,8 +22,8 @@ Bgs base64AS
   
   ; Constants
   u8x16 cInputShuffle
-  exp decl: u32x4 c1, c2, c3, c4
-  exp decl: u8x16 c5, c6, c7, cLut
+  exp decl: b32x4 c1, c2, c3, c4
+  exp decl: b8x16 c5, c6, c7, cLut
   b8x16 cLutb
 Ens
 
@@ -60,7 +60,7 @@ Fnc base64A
   Idw cLut, 15, 0
 
   Xb8x16 cLutb, cLut
-  
+
   Idw cInputShuffle, 0, 1
   Idw cInputShuffle, 1, 0
   Idw cInputShuffle, 2, 2
@@ -80,28 +80,28 @@ Fnc base64A
   Idw cInputShuffle, 13, 9
   Idw cInputShuffle, 14, 11
   Idw cInputShuffle, 15, 10
-  
+
   Mov c1, 0x0fc0fc00
   Mov c2, 0x04000040
   Mov c3, 0x003f03f0
   Mov c4, 0x01000010
-  
+
   Mov c5, 51
   Mov c6, 26
   Mov c7, 13
 
   ; We have to have 4 extra bytes on the end because we need 12 bytes in each iteration in a 16 bit register, so we need that 4 byte padding.
   Sub dataLength, dataLength, 4
-  
+
   ; We do 12 bytes in each iteration
   Div len, dataLength, 12
-  
+
   ; We use a raw pointer to data
   Xu64 datap, data
 
   ; i is our tracks input progress
   Mov i, 0
-  
+
   Loop
   If exp b: i < len
 
@@ -110,20 +110,20 @@ Fnc base64A
     Idr elementu, datax, 0
     Xb8x16 element, elementu
 
-    ; Part 1  
+    ; Part 1
     Shuffle in, element, cInputShuffle
-    
+
     ; Part 2
-    ;And t0, in, c1
+    And t0, in, c1
     MulStoreHigh t1, t0, c2
-    ;And t0, in, c3
+    And t0, in, c3
     Mul t0, t0, c4
-    ;Or input, t1, t0
+    Or input, t1, t0
 
     ; Part 3
     SubSaturated resultu, input, c5
     Xb8x16 result, resultu
-    ;exp b u8x16: result = ((c6 > input) & c7) | result
+    exp b u8x16: result = ((c6 > input) & c7) | result
     Shuffle result, cLutb, result
     Xu8x16 resultu, result
     Add resultu, resultu, input

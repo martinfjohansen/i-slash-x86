@@ -518,6 +518,7 @@ public class Translator2 {
         ArrayAddString(ins, "Xu16x32a".toCharArray());
         ArrayAddString(ins, "Xb8x32".toCharArray());
         ArrayAddString(ins, "Xb8x64".toCharArray());
+        ArrayAddString(ins, "Xu16x8".toCharArray());
 
         ArrayAddString(ins, "Cmov".toCharArray());
         ArrayAddString(ins, "Set".toCharArray());
