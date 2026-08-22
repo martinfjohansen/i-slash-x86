@@ -1248,6 +1248,16 @@
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
+%macro Mov.mu8x64 2
+  vmovdqu8 zmm0, zword [rdi + %2]
+  vmovdqu8 zword [rdi + %1], zmm0
+%endmacro
+
+%macro Mov.mb8x64 2
+  vmovdqu8 zmm0, zword [rdi + %2]
+  vmovdqu8 zword [rdi + %1], zmm0
+%endmacro
+
 %macro Mov.mu32x4 2
   movdqu xmm0, oword [rdi + %2]
   movdqu oword [rdi + %1], xmm0
@@ -1398,6 +1408,11 @@
 %macro Broadcast.mb8x32 2
   vpbroadcastb ymm0, byte [rdi + %2]
   vmovdqu yword [rdi + %1], ymm0
+%endmacro
+
+%macro Broadcast.mb8x64 2
+  vpbroadcastb zmm0, byte [rdi + %2]
+  vmovdqu8 zword [rdi + %1], zmm0
 %endmacro
 
 %macro Broadcast.mb16x8 2
@@ -2192,6 +2207,13 @@
   vmovdqu yword [rdi + %1], ymm0
 %endmacro
 
+%macro And.mmb8x64 3
+  vmovdqu8 zmm0, zword [rdi + %2]
+  vmovdqu8 zmm1, zword [rdi + %3]
+  vpandq zmm0, zmm0, zmm1
+  vmovdqu8 zword [rdi + %1], zmm0
+%endmacro
+
 
 %macro And.mmb128 3
   movdqu xmm0, oword [rdi + %2]
@@ -2576,6 +2598,14 @@
   shl rdx, 5
   vmovdqu ymm0, yword [rax + rdx]
   vmovdqu yword [rdi + %1], ymm0
+%endmacro
+
+%macro Idr.mmb8x64a 3
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  shl rdx, 6
+  vmovdqu8 zmm0, zword [rax + rdx]
+  vmovdqu8 zword [rdi + %1], zmm0
 %endmacro
 
 %macro Idr.mmu16x16a 3
@@ -3719,11 +3749,16 @@
 %endmacro
 
 %macro Shr.mib32x8u8 3
-  movdqu xmm0, oword [rdi + %2]
-  psrld xmm0, %3
-  movdqu oword [rdi + %1], xmm0
+  vmovdqu ymm0, yword [rdi + %2]
+  vpsrld ymm0, ymm0, %3
+  vmovdqu yword [rdi + %1], ymm0
 %endmacro
 
+%macro Shr.mib64x8u8 3
+  vmovdqu64 zmm0, zword [rdi + %2]
+  vpsrlq zmm0, zmm0, %3
+  vmovdqu64 zword [rdi + %1], zmm0
+%endmacro
 
 
 ; -----------------------------------------------------------------------------
@@ -4302,6 +4337,14 @@ extern free
   vmovdqu yword [rax + rcx], ymm0
 %endmacro
 
+%macro Idw.mmb8x64a 3
+  vmovdqu8 zmm0, zword [rdi + %3]
+  mov rax, qword [rdi + %1]
+  mov rcx, qword [rdi + %2]
+  shl rcx, 6
+  vmovdqu8 zword [rax + rcx], zmm0
+%endmacro
+
 %macro Idw.mmu32x4a 3
   movdqu xmm0, oword [rdi + %3]
   mov rax, qword [rdi + %1]
@@ -4470,6 +4513,15 @@ extern free
   vpinsrb xmm1, al, %2 % 16
   vinserti128 ymm0, xmm1, %2 / 16
   vmovdqu yword [rdi + %1], ymm0
+%endmacro
+
+%macro Idw.imb8x64 3
+  vmovdqu8 zmm0, zword [rdi + %1]
+  vextracti32x4 xmm1, zmm0, %2 / 16
+  mov al, byte [rdi + %3]
+  vpinsrb xmm1, al, %2 % 16
+  vinserti32x4 zmm0, xmm1, %2 / 16
+  vmovdqu8 zword [rdi + %1], zmm0
 %endmacro
 
 
@@ -5304,6 +5356,15 @@ extern free
   vmovdqu yword [rdi + %1], ymm0
 %endmacro
 
+%macro Xb64x8.mb8x64 2
+  vmovdqu8 zmm0, zword [rdi + %2]
+  vmovdqu64 zword [rdi + %1], zmm0
+%endmacro
+
+%macro Xb8x64.mb64x8 2
+  vmovdqu64 zmm0, zword [rdi + %2]
+  vmovdqu8 zword [rdi + %1], zmm0
+%endmacro
 
 
 %macro Xb8x64.mb16x32 2
@@ -5327,6 +5388,16 @@ extern free
 %endmacro
 
 %macro Xb8x32a.mu16a 2
+  mov rax, qword [rdi + %2]
+  mov qword [rdi + %1], rax
+%endmacro
+
+%macro Xb8x64a.mu8a 2
+  mov rax, qword [rdi + %2]
+  mov qword [rdi + %1], rax
+%endmacro
+
+%macro Xb8x64a.mu16a 2
   mov rax, qword [rdi + %2]
   mov qword [rdi + %1], rax
 %endmacro
@@ -5851,12 +5922,21 @@ extern free
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
+; vpshufd Only works on two halfs separately
 %macro Shuffle.mmb8x32 3
   vmovdqu ymm0, yword [rdi + %1]
   vmovdqu ymm1, yword [rdi + %2]
   vmovdqu ymm2, yword [rdi + %3]
-  vpshufb ymm0, ymm1, ymm2
+  vpermi2b ymm0, ymm1, ymm2
   vmovdqu yword [rdi + %1], ymm0
+%endmacro
+
+%macro Shuffle.mmb8x64 3
+  vmovdqu8 zmm0, zword [rdi + %1]
+  vmovdqu8 zmm1, zword [rdi + %2]
+  vmovdqu8 zmm2, zword [rdi + %3]
+  vpermi2b zmm0, zmm1, zmm2
+  vmovdqu8 zword [rdi + %1], zmm0
 %endmacro
 
 %macro Shuffle.miu32x4 6
@@ -6229,12 +6309,13 @@ extern free
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
-%macro InterleaveLow.mmb8x32 3
-  vmovdqu ymm0, yword [rdi + %2]
-  vmovdqu ymm1, yword [rdi + %3]
-  vpunpcklbw ymm0, ymm1
-  vmovdqu yword [rdi + %1], ymm0
-%endmacro
+; This only works on ymm0 as two 128-bit parts
+;%macro InterleaveLow.mmb8x32 3
+;  vmovdqu ymm0, yword [rdi + %2]
+;  vmovdqu ymm1, yword [rdi + %3]
+;  vpunpcklbw ymm0, ymm0, ymm1
+;  vmovdqu yword [rdi + %1], ymm0
+;%endmacro
 
 ; -----------------------------------------------------------------------------
 ; InterleaveHigh -- Interleaves pairs from high data from both vectors
@@ -6254,12 +6335,13 @@ extern free
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
-%macro InterleaveHigh.mmb8x32 3
-  vmovdqu ymm0, yword [rdi + %2]
-  vmovdqu ymm1, yword [rdi + %3]
-  vpunpckhbw ymm0, ymm1
-  vmovdqu yword [rdi + %1], ymm0
-%endmacro
+; This only works on ymm0 as two 128-bit parts
+;%macro InterleaveHigh.mmb8x32 3
+;  vmovdqu ymm0, yword [rdi + %2]
+;  vmovdqu ymm1, yword [rdi + %3]
+;  vpunpckhbw ymm0, ymm0, ymm1
+;  vmovdqu yword [rdi + %1], ymm0
+;%endmacro
 
 %macro InterleaveHigh.mmb8x16 3
   movdqu xmm0, oword [rdi + %2]

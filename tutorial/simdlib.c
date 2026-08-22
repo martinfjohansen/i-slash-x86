@@ -88,14 +88,12 @@ void print_m256_b8(__m256 reg) {
       }
     }
     printf("\n");
-    
-    printf("b8: %c, %c, %c, %c, %c, %c, %c, %c, %c, %c, %c, %c, %c, %c, %c, %c\n", values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7], values[8], values[9], values[10], values[11], values[12], values[13], values[14], values[15]);
 }
 
 void print_m256_c8(__m256 reg) {
     uint8_t *values = (uint8_t *)&reg;
     
-    printf("b8: ");
+    printf("c8: ");
     for(int i = 0; i < 32; i++){
       printf("%c", values[i]);
       if(i + 1 != 32){
@@ -103,8 +101,32 @@ void print_m256_c8(__m256 reg) {
       }
     }
     printf("\n");
+}
+
+void print_m512_b8(__m512 reg) {
+    uint8_t *values = (uint8_t *)&reg;
     
-    printf("b8: %c, %c, %c, %c, %c, %c, %c, %c, %c, %c, %c, %c, %c, %c, %c, %c\n", values[0], values[1], values[2], values[3], values[4], values[5], values[6], values[7], values[8], values[9], values[10], values[11], values[12], values[13], values[14], values[15]);
+    printf("b8: ");
+    for(int i = 0; i < 64; i++){
+      printf("%.2x", values[i]);
+      if(i + 1 != 64){
+        printf(",");
+      }
+    }
+    printf("\n");
+}
+
+void print_m512_c8(__m512 reg) {
+    uint8_t *values = (uint8_t *)&reg;
+    
+    printf("c8: ");
+    for(int i = 0; i < 64; i++){
+      printf("%c", values[i]);
+      if(i + 1 != 64){
+        printf(",");
+      }
+    }
+    printf("\n");
 }
 
 void print_m128_b32(__m128 reg) {
