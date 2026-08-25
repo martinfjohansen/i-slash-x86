@@ -518,6 +518,7 @@ public class Translator2 {
         ArrayAddString(ins, "Xu16x32a".toCharArray());
         ArrayAddString(ins, "Xb8x32".toCharArray());
         ArrayAddString(ins, "Xb8x64".toCharArray());
+        ArrayAddString(ins, "Xu8x64".toCharArray());
         ArrayAddString(ins, "Xu16x8".toCharArray());
 
         ArrayAddString(ins, "Cmov".toCharArray());
@@ -546,6 +547,7 @@ public class Translator2 {
         ArrayAddString(ins, "Pext".toCharArray());
         ArrayAddString(ins, "ExtractMask".toCharArray());
         ArrayAddString(ins, "Shuffle".toCharArray());
+        ArrayAddString(ins, "Shuffle2".toCharArray());
         ArrayAddString(ins, "MulStoreHigh".toCharArray());
         ArrayAddString(ins, "AddSaturated".toCharArray());
         ArrayAddString(ins, "SubSaturated".toCharArray());

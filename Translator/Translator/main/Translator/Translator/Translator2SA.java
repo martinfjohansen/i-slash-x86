@@ -598,6 +598,7 @@ public class Translator2SA {
         ArrayAddString(p2, "Xu16x16a".toCharArray());
         ArrayAddString(p2, "Xb8x32".toCharArray());
         ArrayAddString(p2, "Xb8x64".toCharArray());
+        ArrayAddString(p2, "Xu8x64".toCharArray());
         ArrayAddString(p2, "Xu16x8".toCharArray());
 
         p3 = CreateArray();
@@ -674,6 +675,7 @@ public class Translator2SA {
         ArrayAddString(p4, "MultiplyAndAdd".toCharArray());
         ArrayAddString(p4, "CombineExtract".toCharArray());
         ArrayAddString(p4, "Gather".toCharArray());
+        ArrayAddString(p4, "Shuffle2".toCharArray());
 
         p5 = CreateArray();
         ArrayAddString(p5, "StringSubset".toCharArray());
@@ -1005,6 +1007,7 @@ public class Translator2SA {
         ArrayAddString(reint, "Xb8x64".toCharArray());
         ArrayAddString(reint, "Xb64x8".toCharArray());
         ArrayAddString(reint, "Xu16x8".toCharArray());
+        ArrayAddString(reint, "Xu8x64".toCharArray());
 
         // No parameters
         Array noParameters = CreateArray();
@@ -1071,6 +1074,8 @@ public class Translator2SA {
             valid = CheckExtractMask(ins, message);
         }else if(StringsEqual(ins.name, "Shuffle".toCharArray())){
             valid = CheckShuffle(ins, message);
+        }else if(StringsEqual(ins.name, "Shuffle2".toCharArray())){
+            valid = CheckShuffle2(ins, message);
         }else if(StringsEqual(ins.name, "Acw".toCharArray())){
             valid = CheckAcw(ins, message);
         }else if(StringsEqual(ins.name, "Acr".toCharArray())){
@@ -1197,7 +1202,7 @@ public class Translator2SA {
 
         valid = true;
 
-        // Parameters: bXxY <- bXxY, uXxY
+        // Parameters: bXxY <- bXxY, bXxY
 
         char[] type = ins.params[0].var.type;
         ins.hasTypePostfix = true;
@@ -1205,7 +1210,12 @@ public class Translator2SA {
 
         if(TypeIsMultipleType(type) && TypeIsBitfieldType(type) && !TypeIsArrayType(type)){
             if(StringsEqual(type, ins.params[1].var.type)){
+                if(StringsEqual(type, ins.params[2].var.type)){
 
+                }else{
+                    valid = false;
+                    message.string = ("Third parameter to shuffle must have the same type as the assigned type: was " + new String(ins.params[2].var.type)).toCharArray();
+                }
             }else{
                 valid = false;
                 message.string = ("Second parameter to shuffle must have the same type as the assigned type: was " + new String(ins.params[1].var.type)).toCharArray();
@@ -1213,6 +1223,42 @@ public class Translator2SA {
         }else{
             valid = false;
             message.string = ("Shuffle must assign to non-array multiple bitfield type: was " + new String(type)).toCharArray();
+        }
+
+        return valid;
+    }
+
+    private static boolean CheckShuffle2(Instruction ins, StringReference message) {
+        boolean valid;
+
+        valid = true;
+
+        // Parameters: bXxY <- bXxY, bXxY, bXxY
+
+        char[] type = ins.params[0].var.type;
+        ins.hasTypePostfix = true;
+        ins.typePostfix = type;
+
+        if(TypeIsMultipleType(type) && TypeIsBitfieldType(type) && !TypeIsArrayType(type)){
+            if(StringsEqual(type, ins.params[1].var.type)){
+                if(StringsEqual(type, ins.params[2].var.type)){
+                    if(StringsEqual(type, ins.params[3].var.type)){
+
+                    }else{
+                        valid = false;
+                        message.string = ("All parameter to Shuffle2 must have the same type as the assigned type: was " + new String(ins.params[3].var.type)).toCharArray();
+                    }
+                }else{
+                    valid = false;
+                    message.string = ("All parameter to Shuffle2 must have the same type as the assigned type: was " + new String(ins.params[2].var.type)).toCharArray();
+                }
+            }else{
+                valid = false;
+                message.string = ("All parameter to Shuffle2 must have the same type as the assigned type: was " + new String(ins.params[1].var.type)).toCharArray();
+            }
+        }else{
+            valid = false;
+            message.string = ("Shuffle2 must assign to non-array multiple bitfield type: was " + new String(type)).toCharArray();
         }
 
         return valid;

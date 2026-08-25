@@ -6050,11 +6050,13 @@ extern free
 
 
 ; -----------------------------------------------------------------------------
-; Shuffle -- Shuffle data
+; Shuffle -- Multiple index: x = a[b] for each element
 ; x = Shuffle(a, b). a, b, x are the same packed number type.
 
+; vpshufb result, array, index
+; vpermb result, index, array
+
 %macro Shuffle.mmu8x16 3
-  movdqu xmm0, oword [rdi + %1]
   movdqu xmm1, oword [rdi + %2]
   movdqu xmm2, oword [rdi + %3]
   vpshufb xmm0, xmm1, xmm2
@@ -6062,35 +6064,52 @@ extern free
 %endmacro
 
 %macro Shuffle.mmb8x16 3
-  movdqu xmm0, oword [rdi + %1]
   movdqu xmm1, oword [rdi + %2]
   movdqu xmm2, oword [rdi + %3]
   vpshufb xmm0, xmm1, xmm2
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
+%macro Shuffle.miu32x4 6
+  movdqu xmm1, oword [rdi + %2]
+  vpshufd xmm0, xmm1, (%3<<6)|(%4<<4)|(%5<<2)|(%6<<0)
+  movdqu oword [rdi + %1], xmm0
+%endmacro
+
 ; vpshufd Only works on two halfs separately
 %macro Shuffle.mmb8x32 3
-  vmovdqu ymm0, yword [rdi + %1]
   vmovdqu ymm1, yword [rdi + %2]
   vmovdqu ymm2, yword [rdi + %3]
-  vpermi2b ymm0, ymm1, ymm2
+  vpermb ymm0, ymm2, ymm1
   vmovdqu yword [rdi + %1], ymm0
 %endmacro
 
 %macro Shuffle.mmb8x64 3
-  vmovdqu8 zmm0, zword [rdi + %1]
   vmovdqu8 zmm1, zword [rdi + %2]
   vmovdqu8 zmm2, zword [rdi + %3]
-  vpermi2b zmm0, zmm1, zmm2
+  vpermb zmm0, zmm2, zmm1
   vmovdqu8 zword [rdi + %1], zmm0
 %endmacro
 
-%macro Shuffle.miu32x4 6
-  movdqu xmm0, oword [rdi + %1]
-  movdqu xmm1, oword [rdi + %2]
-  vpshufd xmm0, xmm1, (%3<<6)|(%4<<4)|(%5<<2)|(%6<<0)
-  movdqu oword [rdi + %1], xmm0
+; -----------------------------------------------------------------------------
+; Shuffle2 -- Shuffle data from two sources
+; x = Shuffle2(a, b, c). a, b, c, x are the same packed number type.
+
+; vpshufd Only works on two halfs separately
+%macro Shuffle2.mmmb8x32 4
+  vmovdqu ymm0, yword [rdi + %2]
+  vmovdqu ymm1, yword [rdi + %3]
+  vmovdqu ymm2, yword [rdi + %4]
+  vpermi2b ymm2, ymm0, ymm1
+  vmovdqu yword [rdi + %1], ymm2
+%endmacro
+
+%macro Shuffle2.mmmb8x64 4
+  vmovdqu8 zmm0, zword [rdi + %2]
+  vmovdqu8 zmm1, zword [rdi + %3]
+  vmovdqu8 zmm2, zword [rdi + %4]
+  vpermi2b zmm2, zmm0, zmm1
+  vmovdqu8 zword [rdi + %1], zmm2
 %endmacro
 
 ; -----------------------------------------------------------------------------
