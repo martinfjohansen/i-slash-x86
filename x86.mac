@@ -1374,6 +1374,30 @@
   vmovdqu yword [rdi + %1], ymm0
 %endmacro
 
+%macro Movx8.iiiiiiiiu64x8 9
+  mov rax, %2
+  vpinsrq xmm1, rax, 0
+  mov rax, %3
+  vpinsrq xmm1, rax, 1
+  vinserti64x2 zmm0, xmm1, 0
+  mov rax, %4
+  vpinsrq xmm1, rax, 0
+  mov rax, %5
+  vpinsrq xmm1, rax, 1
+  vinserti64x2 zmm0, xmm1, 1
+  mov rax, %6
+  vpinsrq xmm1, rax, 0
+  mov rax, %7
+  vpinsrq xmm1, rax, 1
+  vinserti64x2 zmm0, xmm1, 2
+  mov rax, %8
+  vpinsrq xmm1, rax, 0
+  mov rax, %9
+  vpinsrq xmm1, rax, 1
+  vinserti64x2 zmm0, xmm1, 3
+  vmovdqu64 zword [rdi + %1], zmm0
+%endmacro
+
 ; -----------------------------------------------------------------------------
 ; Broadcast
 ; x = (AtoB)a.
@@ -1427,6 +1451,13 @@
   vpbroadcastw xmm0, word [rdi + %2]
   movdqu oword [rdi + %1], xmm0
 %endmacro
+
+%macro Broadcast.mu64x8 2
+  vpbroadcastq zmm0, qword [rdi + %2]
+  vmovdqu64 zword [rdi + %1], zmm0
+%endmacro
+
+
 
 ; -----------------------------------------------------------------------------
 ; Loop
@@ -2701,6 +2732,14 @@
   shl rdx, 4
   movdqu xmm0, oword [rax + rdx]
   movdqu oword [rdi + %1], xmm0
+%endmacro
+
+%macro Idr.mib8x64a 3
+  mov rax, qword [rdi + %2]
+  mov rdx, %3
+  shl rdx, 6
+  vmovdqu8 zmm0, zword [rax + rdx]
+  vmovdqu8 zword [rdi + %1], zmm0
 %endmacro
 
 ; -----------------------------------------------------------------------------
@@ -4523,6 +4562,16 @@ extern free
   vmovdqu yword [rdi + %1], ymm0
 %endmacro
 
+%macro Idw.imu8x64 3
+  vmovdqu8 zmm0, zword [rdi + %1]
+  vextracti32x4 xmm1, zmm0, %2 / 16
+  mov al, byte [rdi + %3]
+  vpinsrb xmm1, al, %2 % 16
+  vinserti32x4 zmm0, xmm1, %2 / 16
+  vmovdqu8 zword [rdi + %1], zmm0
+%endmacro
+
+; TODO: Should we allow this one?
 %macro Idw.imb8x64 3
   vmovdqu8 zmm0, zword [rdi + %1]
   vextracti32x4 xmm1, zmm0, %2 / 16
@@ -4532,6 +4581,22 @@ extern free
   vmovdqu8 zword [rdi + %1], zmm0
 %endmacro
 
+%macro Idw.imu32x16 3
+  vmovdqu8 zmm0, zword [rdi + %1]
+  vextracti32x4 xmm1, zmm0, %2 / 4
+  mov eax, dword [rdi + %3]
+  vpinsrd xmm1, eax, %2 % 4
+  vinserti32x4 zmm0, xmm1, %2 / 4
+  vmovdqu8 zword [rdi + %1], zmm0
+%endmacro
+
+%macro Idw.imu64x8 3
+  vmovdqu64 zmm0, zword [rdi + %1]
+  vextracti64x2 xmm1, zmm0, %2 / 2
+  vpinsrq xmm1, qword [rdi + %3], %2 % 2
+  vinserti64x2 zmm0, xmm1, %2 / 2
+  vmovdqu64 zword [rdi + %1], zmm0
+%endmacro
 
 ; -----------------------------------------------------------------------------
 ; Rdrand
@@ -5310,6 +5375,11 @@ extern free
   mov qword [rdi + %1], rax
 %endmacro
 
+%macro Xb8x16a.mb16a 2
+  mov rax, qword [rdi + %2]
+  mov qword [rdi + %1], rax
+%endmacro
+
 %macro Xb8x16a.mu16a 2
   mov rax, qword [rdi + %2]
   mov qword [rdi + %1], rax
@@ -5418,8 +5488,22 @@ extern free
   vmovdqu8 zword [rdi + %1], zmm0
 %endmacro
 
+%macro Xb8x64.mu32x16 2
+  vmovdqu64 zmm0, zword [rdi + %2]
+  vmovdqu8 zword [rdi + %1], zmm0
+%endmacro
+
+%macro Xb8x64.mu8x64 2
+  vmovdqu8 zmm0, zword [rdi + %2]
+  vmovdqu8 zword [rdi + %1], zmm0
+%endmacro
 
 %macro Xb8x64.mb16x32 2
+  vmovdqu16 zmm0, zword [rdi + %2]
+  vmovdqu8 zword [rdi + %1], zmm0
+%endmacro
+
+%macro Xb8x64.mu64x8 2
   vmovdqu16 zmm0, zword [rdi + %2]
   vmovdqu8 zword [rdi + %1], zmm0
 %endmacro
@@ -5453,6 +5537,17 @@ extern free
   mov rax, qword [rdi + %2]
   mov qword [rdi + %1], rax
 %endmacro
+
+%macro Xb8x64a.mb16a 2
+  mov rax, qword [rdi + %2]
+  mov qword [rdi + %1], rax
+%endmacro
+
+%macro Xb8x64a.mu64 2
+  mov rax, qword [rdi + %2]
+  mov qword [rdi + %1], rax
+%endmacro
+
 
 ; -----------------------------------------------------------------------------
 ; Signed integer to smaller signed type with saturation
@@ -6612,6 +6707,16 @@ extern free
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
+; -----------------------------------------------------------------------------
+; ExtractBytes -- Extract bytes from bit offsets in b64
+; x = ExtractBytes(a, b). All are the same bitfield type.
+
+%macro ExtractBytes.mmb8x64 3
+  vmovdqu8 zmm1, zword [rdi + %3]
+  vmovdqu8 zmm2, zword [rdi + %2]
+  vpmultishiftqb zmm0, zmm1, zmm2
+  vmovdqu8 zword [rdi + %1], zmm0
+%endmacro
 
 
 

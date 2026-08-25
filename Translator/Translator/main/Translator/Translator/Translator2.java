@@ -576,6 +576,8 @@ public class Translator2 {
         ArrayAddString(ins, "MatchString".toCharArray());
         ArrayAddString(ins, "FindSubstring".toCharArray());
 
+        ArrayAddString(ins, "ExtractBytes".toCharArray());
+
         // Control
         ArrayAddString(ins, "If".toCharArray());
         ArrayAddString(ins, "Loop".toCharArray());

@@ -660,6 +660,7 @@ public class Translator2SA {
         ArrayAddString(p3, "ShiftArithmeticRight".toCharArray());
         ArrayAddString(p3, "InterleaveLow".toCharArray());
         ArrayAddString(p3, "InterleaveHigh".toCharArray());
+        ArrayAddString(p3, "ExtractBytes".toCharArray());
 
         p4 = CreateArray();
         ArrayAddString(p4, "DivMod".toCharArray());
@@ -899,6 +900,7 @@ public class Translator2SA {
         ArrayAddString(sameAsAssigneeBitfields, "Pext".toCharArray());
         ArrayAddString(sameAsAssigneeBitfields, "InterleaveLow".toCharArray());
         ArrayAddString(sameAsAssigneeBitfields, "InterleaveHigh".toCharArray());
+        ArrayAddString(sameAsAssigneeBitfields, "ExtractBytes".toCharArray());
 
         // bw <- bw, number
         Array bitwiseAndNumberToBitwise = CreateArray();

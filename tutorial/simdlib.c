@@ -129,6 +129,23 @@ void print_m512_c8(__m512 reg) {
     printf("\n");
 }
 
+void print_m512_b64(__m512 reg) {
+    union {
+        __m512   v;
+        uint64_t u[8];
+    } u;
+    u.v = reg;
+    
+    printf("b64: ");
+    for(int i = 0; i < 8; i++){
+      printf("%.16lx", u.u[i]);
+      if(i + 1 != 8){
+        printf(",");
+      }
+    }
+    printf("\n");
+}
+
 void print_m128_b32(__m128 reg) {
     uint32_t *values = (uint32_t *)&reg;
     
