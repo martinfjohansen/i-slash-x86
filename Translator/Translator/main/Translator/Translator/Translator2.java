@@ -590,8 +590,9 @@ public class Translator2 {
 
         // Structural
         ArrayAddString(ins, "Idr".toCharArray());
-        ArrayAddString(ins, "Idw".toCharArray());
         ArrayAddString(ins, "Idro".toCharArray());
+        ArrayAddString(ins, "Idw".toCharArray());
+        ArrayAddString(ins, "Idwo".toCharArray());
         ArrayAddString(ins, "Len".toCharArray());
         ArrayAddString(ins, "Acw".toCharArray());
         ArrayAddString(ins, "Acr".toCharArray());

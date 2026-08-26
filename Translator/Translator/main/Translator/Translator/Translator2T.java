@@ -316,6 +316,7 @@ public class Translator2T {
 
     private static boolean KeepImmediate(Instruction ins, double i) {
         return !(StringsEqual(ins.name, "Idro".toCharArray()) && i == 3) &&
+               !(StringsEqual(ins.name, "Idwo".toCharArray()) && i == 2) &&
                !(StringsEqual(ins.name, "Idr".toCharArray()) && i == 2) &&
                !(StringsEqual(ins.name, "Idw".toCharArray()) && i == 1) &&
                !(StringsEqual(ins.name, "Shl".toCharArray()) && i == 2) &&

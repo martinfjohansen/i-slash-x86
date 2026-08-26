@@ -4058,7 +4058,7 @@ extern free
 
 ; -----------------------------------------------------------------------------
 ; Idw
-; x = a[b]. b must be a number type. a must be array. x must be the same as a's element types.
+; x[a] = b. a must be a number type. x must be array. b must be the same as a's element types.
 
 ; v0.1
 
@@ -4596,6 +4596,26 @@ extern free
   vpinsrq xmm1, qword [rdi + %3], %2 % 2
   vinserti64x2 zmm0, xmm1, %2 / 2
   vmovdqu64 zword [rdi + %1], zmm0
+%endmacro
+
+; -----------------------------------------------------------------------------
+; Idwo -- Index Write Array with offset
+; x[a + b] = c. a and b must be number types. x must be array. c must be the same as a's element types.
+
+%macro Idwo.mimub8x64a 4
+  vmovdqu8 zmm0, zword [rdi + %4]
+  mov rax, qword [rdi + %1]
+  mov rcx, qword [rdi + %2]
+  shl rcx, 6
+  vmovdqu8 zword [rax + rcx + (%3 << 6)], zmm0
+%endmacro
+
+%macro Idwo.mimb8x64a 4
+  vmovdqu8 zmm0, zword [rdi + %4]
+  mov rax, qword [rdi + %1]
+  mov rcx, qword [rdi + %2]
+  shl rcx, 6
+  vmovdqu8 zword [rax + rcx + (%3 << 6)], zmm0
 %endmacro
 
 ; -----------------------------------------------------------------------------
@@ -6052,6 +6072,7 @@ extern free
 ; -----------------------------------------------------------------------------
 ; Shuffle -- Multiple index: x = a[b] for each element
 ; x = Shuffle(a, b). a, b, x are the same packed number type.
+; TODO: Rename to Idwx (or Idw, because it is basically an index write)
 
 ; vpshufb result, array, index
 ; vpermb result, index, array

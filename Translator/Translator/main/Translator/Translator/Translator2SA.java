@@ -667,6 +667,7 @@ public class Translator2SA {
         ArrayAddString(p4, "DivMod".toCharArray());
         ArrayAddString(p4, "MulDiv".toCharArray());
         ArrayAddString(p4, "Idro".toCharArray());
+        ArrayAddString(p4, "Idwo".toCharArray());
         ArrayAddString(p4, "Cmoveq".toCharArray());
         ArrayAddString(p4, "Cmps".toCharArray());
         ArrayAddString(p4, "Scas".toCharArray());
@@ -1062,6 +1063,8 @@ public class Translator2SA {
             valid = CheckIdro(ins, message);
         }else if(StringsEqual(ins.name, "Idw".toCharArray())){
             valid = CheckIdw(ins, message);
+        }else if(StringsEqual(ins.name, "Idwo".toCharArray())){
+            valid = CheckIdwo(ins, message);
         }else if(StringsEqual(ins.name, "Mov".toCharArray())){
             valid = CheckMov(ins, message);
         }else if(StringsEqual(ins.name, "Movx8".toCharArray())){
@@ -1097,6 +1100,77 @@ public class Translator2SA {
         }
 
         return valid;
+    }
+
+    private static boolean CheckIdwo(Instruction ins, StringReference message) {
+        char[] type1, type2;
+        boolean success;
+
+        success = true;
+
+        // Determine the type
+        type1 = ins.params[0].var.type;
+
+        if(ParamIsVariable(ins.params[1])){
+            type2 = ins.params[1].var.type;
+        }else{
+            type2 = "s64".toCharArray();
+        }
+
+        if (ParamIsLiteral(ins.params[1])) {
+            ins.params[1].immediateType = type2;
+        }
+
+        ins.hasTypePostfix = true;
+        ins.typePostfix = type1;
+
+        if (TypeIsArrayType(type1)) {
+            char[] elementType = Substring(type1, 0, type1.length - 1d);
+
+            if (ParamIsLiteral(ins.params[2])) {
+                ins.params[2].immediateType = elementType;
+            }
+
+            if(ParamIsVariable(ins.params[2])) {
+                if (StringsEqual(ins.params[2].var.type, elementType)) {
+                    if (TypeIsNumberType(type2) && !TypeIsArrayType(type2)) {
+                        // OK
+                    } else {
+                        success = false;
+                        message.string = "Index variable must be a number.".toCharArray();
+                    }
+                } else {
+                    success = false;
+                    message.string = "Input variable must be element type of array.".toCharArray();
+                }
+            }
+        }else if (TypeIsMultipleType(type1)){
+            StringReference[] parts = SplitByCharacter(type1, 'x');
+            char[] elementType = parts[0].string;
+
+            if (ParamIsLiteral(ins.params[2])) {
+                ins.params[2].immediateType = elementType;
+            }
+
+            if(ParamIsVariable(ins.params[2])) {
+                if (StringsEqual(ins.params[2].var.type, elementType)) {
+                    if (TypeIsNumberType(type2) && !TypeIsArrayType(type2)) {
+                        // OK
+                    } else {
+                        success = false;
+                        message.string = "Index variable must be a number.".toCharArray();
+                    }
+                } else {
+                    success = false;
+                    message.string = ("Input variable to Idw must be element type of multiple type: " + new String(ins.params[2].var.type) + " vs " + new String(elementType)).toCharArray();
+                }
+            }
+        }else{
+            success = false;
+            message.string = "First parameter to Idw must be an array.".toCharArray();
+        }
+
+        return success;
     }
 
     private static boolean CheckBitwiseAndNumberToBitwise(Instruction ins, StringReference message) {
@@ -2117,6 +2191,10 @@ public class Translator2SA {
                 }
 
                 if(StringsEqual(ins.name, "Idro".toCharArray()) && i == 2){
+                    memoryPostfix[(int) i] = 'i';
+                }
+
+                if(StringsEqual(ins.name, "Idwo".toCharArray()) && i == 1){
                     memoryPostfix[(int) i] = 'i';
                 }
             }
