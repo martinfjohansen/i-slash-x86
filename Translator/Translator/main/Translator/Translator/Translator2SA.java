@@ -327,14 +327,13 @@ public class Translator2SA {
         return valid;
     }
 
+    static int next = 1;
+
     private static boolean CheckControlFlowAndComputeLabels(Function fnc, StringReference message) {
         double i, ind;
         boolean success, loopPreState;
         Stack<String> labels;
-        int next;
         String label;
-
-        next = 1;
 
         labels = new Stack<>();
 
@@ -642,7 +641,7 @@ public class Translator2SA {
         ArrayAddString(p3, "Bzhi".toCharArray());
         ArrayAddString(p3, "Pdep".toCharArray());
         ArrayAddString(p3, "Pext".toCharArray());
-        ArrayAddString(p3, "Shuffle".toCharArray());
+        ArrayAddString(p3, "Idrx".toCharArray());
         ArrayAddString(p3, "MulStoreHigh".toCharArray());
         ArrayAddString(p3, "Avg".toCharArray());
         ArrayAddString(p3, "Min".toCharArray());
@@ -676,7 +675,7 @@ public class Translator2SA {
         ArrayAddString(p4, "MultiplyAndAdd".toCharArray());
         ArrayAddString(p4, "CombineExtract".toCharArray());
         ArrayAddString(p4, "Gather".toCharArray());
-        ArrayAddString(p4, "Shuffle2".toCharArray());
+        ArrayAddString(p4, "Idrx2".toCharArray());
 
         p5 = CreateArray();
         ArrayAddString(p5, "StringSubset".toCharArray());
@@ -1075,10 +1074,10 @@ public class Translator2SA {
             valid = true;
         }else if(StringsEqual(ins.name, "ExtractMask".toCharArray())){
             valid = CheckExtractMask(ins, message);
-        }else if(StringsEqual(ins.name, "Shuffle".toCharArray())){
-            valid = CheckShuffle(ins, message);
-        }else if(StringsEqual(ins.name, "Shuffle2".toCharArray())){
-            valid = CheckShuffle2(ins, message);
+        }else if(StringsEqual(ins.name, "Idrx".toCharArray())){
+            valid = CheckIdrx(ins, message);
+        }else if(StringsEqual(ins.name, "Idrx2".toCharArray())){
+            valid = CheckIdrx2(ins, message);
         }else if(StringsEqual(ins.name, "Acw".toCharArray())){
             valid = CheckAcw(ins, message);
         }else if(StringsEqual(ins.name, "Acr".toCharArray())){
@@ -1271,7 +1270,7 @@ public class Translator2SA {
         return valid;
     }
 
-    private static boolean CheckShuffle(Instruction ins, StringReference message) {
+    private static boolean CheckIdrx(Instruction ins, StringReference message) {
         boolean valid;
 
         valid = true;
@@ -1302,7 +1301,7 @@ public class Translator2SA {
         return valid;
     }
 
-    private static boolean CheckShuffle2(Instruction ins, StringReference message) {
+    private static boolean CheckIdrx2(Instruction ins, StringReference message) {
         boolean valid;
 
         valid = true;

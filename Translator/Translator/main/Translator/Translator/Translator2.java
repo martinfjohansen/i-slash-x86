@@ -546,8 +546,8 @@ public class Translator2 {
         ArrayAddString(ins, "Pdep".toCharArray());
         ArrayAddString(ins, "Pext".toCharArray());
         ArrayAddString(ins, "ExtractMask".toCharArray());
-        ArrayAddString(ins, "Shuffle".toCharArray());
-        ArrayAddString(ins, "Shuffle2".toCharArray());
+        ArrayAddString(ins, "Idrx".toCharArray());
+        ArrayAddString(ins, "Idrx2".toCharArray());
         ArrayAddString(ins, "MulStoreHigh".toCharArray());
         ArrayAddString(ins, "AddSaturated".toCharArray());
         ArrayAddString(ins, "SubSaturated".toCharArray());

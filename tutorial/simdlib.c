@@ -104,11 +104,15 @@ void print_m256_c8(__m256 reg) {
 }
 
 void print_m512_b8(__m512 reg) {
-    uint8_t *values = (uint8_t *)&reg;
+    union {
+        __m512   v;
+        uint8_t u[64];
+    } u;
+    u.v = reg;
     
     printf("b8: ");
     for(int i = 0; i < 64; i++){
-      printf("%.2x", values[i]);
+      printf("%.2x", u.u[i]);
       if(i + 1 != 64){
         printf(",");
       }
@@ -117,11 +121,15 @@ void print_m512_b8(__m512 reg) {
 }
 
 void print_m512_c8(__m512 reg) {
-    uint8_t *values = (uint8_t *)&reg;
+    union {
+        __m512   v;
+        uint8_t u[64];
+    } u;
+    u.v = reg;
     
     printf("c8: ");
     for(int i = 0; i < 64; i++){
-      printf("%c", values[i]);
+      printf("%c", u.u[i]);
       if(i + 1 != 64){
         printf(",");
       }

@@ -206,6 +206,13 @@
   vmovdqu32 zword [rdi + %1], zmm0
 %endmacro
 
+%macro Add.mmu8x64 3
+  vmovdqu8 zmm0, zword [rdi + %2]
+  vmovdqu8 zmm1, zword [rdi + %3]
+  vpaddb zmm0, zmm0, zmm1
+  vmovdqu8 zword [rdi + %1], zmm0
+%endmacro
+
 ; -----------------------------------------------------------------------------
 ; Sub
 ; x = a - b. a, b, c of the same type.
@@ -310,6 +317,13 @@
   vmovdqu ymm1, yword [rdi + %3]
   vsubps ymm0, ymm0, ymm1
   vmovdqu yword [rdi + %1], ymm0
+%endmacro
+
+%macro Sub.mmu8x64 3
+  vmovdqu8 zmm0, zword [rdi + %2]
+  vmovdqu8 zmm1, zword [rdi + %3]
+  vpsubb zmm0, zmm0, zmm1
+  vmovdqu8 zword [rdi + %1], zmm0
 %endmacro
 
 ; -----------------------------------------------------------------------------
@@ -1457,6 +1471,17 @@
   vmovdqu64 zword [rdi + %1], zmm0
 %endmacro
 
+%macro Broadcast.mu8x64 2
+  vpbroadcastb zmm0, byte [rdi + %2]
+  vmovdqu8 zword [rdi + %1], zmm0
+%endmacro
+
+%macro Broadcast.mb16x32 2
+  vpbroadcastw zmm0, word [rdi + %2]
+  vmovdqu16 zword [rdi + %1], zmm0
+%endmacro
+
+
 
 
 ; -----------------------------------------------------------------------------
@@ -2086,6 +2111,16 @@
   vpcmpeqd xmm1, xmm1, xmm1 ; zero
   vpxor xmm0, xmm0, xmm1    ; not
   movdqu oword [rdi + %1], xmm0
+%endmacro
+
+%macro Gte.mmb8x64u8x64 3
+  vmovdqu8 zmm0, zword [rdi + %2]
+  vmovdqu8 zmm1, zword [rdi + %3]
+  vpcmpgtb k0, zmm0, zmm1
+  vpcmpeqb k1, zmm0, zmm1
+  korq k0, k0, k1
+  vpmovm2b zmm0, k0
+  vmovdqu8 zword [rdi + %1], zmm0
 %endmacro
 
 ; -----------------------------------------------------------------------------
@@ -2902,6 +2937,16 @@
   movdqu xmm0, oword [rax + rdx + %4 * 16]
   movdqu oword [rdi + %1], xmm0
 %endmacro
+
+%macro Idro.mmib8x64a 4
+  mov rax, qword [rdi + %2]
+  mov rdx, qword [rdi + %3]
+  shl rdx, 6
+  vmovdqu8 zmm0, zword [rax + rdx + %4 * 64]
+  vmovdqu8 zword [rdi + %1], zmm0
+%endmacro
+
+
 
 ; -----------------------------------------------------------------------------
 ; Eq -- Equal
@@ -3724,6 +3769,12 @@
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
+%macro Shl.mib64x8u8 3
+  vmovdqu64 zmm0, zword [rdi + %2]
+  vpsllq zmm0, zmm0, %3
+  vmovdqu64 zword [rdi + %1], zmm0
+%endmacro
+
 ; -----------------------------------------------------------------------------
 ; Shr - Shift right
 ; x = a >> b. x and a must be bit fields. b must be a number type
@@ -3907,6 +3958,13 @@
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
+%macro Or.mmb8x64 3
+  vmovdqu8 zmm0, zword [rdi + %2]
+  vmovdqu8 zmm1, zword [rdi + %3]
+  vporq zmm0, zmm0, zmm1
+  vmovdqu8 zword [rdi + %1], zmm0
+%endmacro
+
 %macro Or.mmb16x32 3
   vmovdqu16 zmm0, zword [rdi + %2]
   vmovdqu16 zmm1, zword [rdi + %3]
@@ -3927,6 +3985,8 @@
   vpor xmm0, xmm0, xmm1
   movdqu oword [rdi + %1], xmm0
 %endmacro
+
+
 
 ; -----------------------------------------------------------------------------
 ; Xor
@@ -5524,9 +5584,16 @@ extern free
 %endmacro
 
 %macro Xb8x64.mu64x8 2
-  vmovdqu16 zmm0, zword [rdi + %2]
+  vmovdqu64 zmm0, zword [rdi + %2]
   vmovdqu8 zword [rdi + %1], zmm0
 %endmacro
+
+%macro Xu8x64.mb8x64 2
+  vmovdqu8 zmm0, zword [rdi + %2]
+  vmovdqu8 zword [rdi + %1], zmm0
+%endmacro
+
+
 
 %macro Xu16x16a.mu16a 2
   mov rax, qword [rdi + %2]
@@ -6070,42 +6137,41 @@ extern free
 
 
 ; -----------------------------------------------------------------------------
-; Shuffle -- Multiple index: x = a[b] for each element
-; x = Shuffle(a, b). a, b, x are the same packed number type.
-; TODO: Rename to Idwx (or Idw, because it is basically an index write)
+; Idrx -- Multiple index: x = a[b] for each element
+; x = Idrx(a, b). a, b, x are the same packed number type.
 
 ; vpshufb result, array, index
 ; vpermb result, index, array
 
-%macro Shuffle.mmu8x16 3
+%macro Idrx.mmu8x16 3
   movdqu xmm1, oword [rdi + %2]
   movdqu xmm2, oword [rdi + %3]
   vpshufb xmm0, xmm1, xmm2
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
-%macro Shuffle.mmb8x16 3
+%macro Idrx.mmb8x16 3
   movdqu xmm1, oword [rdi + %2]
   movdqu xmm2, oword [rdi + %3]
   vpshufb xmm0, xmm1, xmm2
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
-%macro Shuffle.miu32x4 6
+%macro Idrx.miu32x4 6
   movdqu xmm1, oword [rdi + %2]
   vpshufd xmm0, xmm1, (%3<<6)|(%4<<4)|(%5<<2)|(%6<<0)
   movdqu oword [rdi + %1], xmm0
 %endmacro
 
 ; vpshufd Only works on two halfs separately
-%macro Shuffle.mmb8x32 3
+%macro Idrx.mmb8x32 3
   vmovdqu ymm1, yword [rdi + %2]
   vmovdqu ymm2, yword [rdi + %3]
   vpermb ymm0, ymm2, ymm1
   vmovdqu yword [rdi + %1], ymm0
 %endmacro
 
-%macro Shuffle.mmb8x64 3
+%macro Idrx.mmb8x64 3
   vmovdqu8 zmm1, zword [rdi + %2]
   vmovdqu8 zmm2, zword [rdi + %3]
   vpermb zmm0, zmm2, zmm1
@@ -6113,11 +6179,11 @@ extern free
 %endmacro
 
 ; -----------------------------------------------------------------------------
-; Shuffle2 -- Shuffle data from two sources
-; x = Shuffle2(a, b, c). a, b, c, x are the same packed number type.
+; Idrx2 -- Index read data selectively from two sources: x = a[c] or b[c] for each element
+; x = Idrx2(a, b, c). a, b, c, x are the same packed number type.
 
 ; vpshufd Only works on two halfs separately
-%macro Shuffle2.mmmb8x32 4
+%macro Idrx2.mmmb8x32 4
   vmovdqu ymm0, yword [rdi + %2]
   vmovdqu ymm1, yword [rdi + %3]
   vmovdqu ymm2, yword [rdi + %4]
@@ -6125,7 +6191,7 @@ extern free
   vmovdqu yword [rdi + %1], ymm2
 %endmacro
 
-%macro Shuffle2.mmmb8x64 4
+%macro Idrx2.mmmb8x64 4
   vmovdqu8 zmm0, zword [rdi + %2]
   vmovdqu8 zmm1, zword [rdi + %3]
   vmovdqu8 zmm2, zword [rdi + %4]
